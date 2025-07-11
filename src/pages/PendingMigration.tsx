@@ -25,15 +25,16 @@ const PendingMigration = () => {
   const [selectAll, setSelectAll] = useState(false);
   const { toast } = useToast();
 
-  // Check for updated records from URL params
+  // Check for updated records from URL hash
   useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const updatedId = urlParams.get('updated');
-    if (updatedId) {
-      const id = parseInt(updatedId);
+    const hash = window.location.hash;
+    const updatedMatch = hash.match(/updated=(\d+)/);
+    if (updatedMatch) {
+      const id = parseInt(updatedMatch[1]);
       setSelectedRows(prev => prev.includes(id) ? prev : [...prev, id]);
-      // Clean up URL
-      window.history.replaceState({}, '', window.location.pathname);
+      // Clean up URL hash
+      const cleanHash = hash.replace(/&updated=\d+/, '');
+      window.history.replaceState({}, '', window.location.pathname + cleanHash);
     }
   }, []);
 
