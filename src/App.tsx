@@ -14,6 +14,9 @@ import RunDetail from "./pages/RunDetail";
 import NotFound from "./pages/NotFound";
 import MigrationSyncConfig from "./pages/MigrationSyncConfig";
 import FirmDetails from "./pages/FirmDetails";
+import RecordDetail from "./pages/RecordDetail";
+import PendingMigration from "./pages/PendingMigration";
+import MigrationHistory from "./pages/MigrationHistory";
 
 const queryClient = new QueryClient();
 
@@ -103,6 +106,9 @@ const AppContent = () => {
           <Routes>
             <Route path="/migration-sync-config" element={<MigrationSyncConfig />} />
             <Route path="/firm/:firmId" element={<FirmDetails />} />
+            <Route path="/pending-migration" element={<PendingMigration />} />
+            <Route path="/migration-history" element={<MigrationHistory />} />
+            <Route path="/record/:id" element={<RecordDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </main>

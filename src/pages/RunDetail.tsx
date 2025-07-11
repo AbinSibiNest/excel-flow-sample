@@ -29,6 +29,7 @@ import {
   Database,
   RefreshCw,
   Filter,
+  ArrowLeft,
 } from "lucide-react";
 
 const RunDetail = () => {
@@ -169,11 +170,21 @@ const RunDetail = () => {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-100">
-            Migration Run Details
-          </h1>
-          <p className="text-gray-400 mt-1">Run ID: {id}</p>
+        <div className="flex items-center space-x-4">
+          <Button
+            variant="ghost"
+            onClick={() => window.location.href = '/migration-history'}
+            className="text-gray-300 hover:text-gray-100"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to History
+          </Button>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-100">
+              Migration Run Details
+            </h1>
+            <p className="text-gray-400 mt-1">Run ID: {id}</p>
+          </div>
         </div>
         <div className="flex items-center space-x-3">
           <Button

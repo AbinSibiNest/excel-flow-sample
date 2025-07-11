@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -24,6 +24,18 @@ const PendingMigration = () => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const { toast } = useToast();
+
+  // Check for updated records from URL params
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const updatedId = urlParams.get('updated');
+    if (updatedId) {
+      const id = parseInt(updatedId);
+      setSelectedRows(prev => prev.includes(id) ? prev : [...prev, id]);
+      // Clean up URL
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, []);
 
   // Mock parsed CSV data
   const parsedData = [
@@ -201,9 +213,8 @@ const PendingMigration = () => {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader>
-                <TableRow className="border-gray-800">
+                 <TableRow className="border-gray-800">
                   <TableHead className="text-gray-300">Select</TableHead>
-                  <TableHead className="text-gray-300">Reference ID</TableHead>
                   <TableHead className="text-gray-300">Full Name</TableHead>
                   <TableHead className="text-gray-300">Email</TableHead>
                   <TableHead className="text-gray-300">Phone</TableHead>
@@ -211,6 +222,7 @@ const PendingMigration = () => {
                   <TableHead className="text-gray-300">
                     Settled Amount
                   </TableHead>
+                  <TableHead className="text-gray-300">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -224,9 +236,6 @@ const PendingMigration = () => {
                         }
                       />
                     </TableCell>
-                    <TableCell className="text-gray-100 font-medium">
-                      {row.referenceId}
-                    </TableCell>
                     <TableCell className="text-gray-300">
                       {row.fullName}
                     </TableCell>
@@ -237,6 +246,16 @@ const PendingMigration = () => {
                     </TableCell>
                     <TableCell className="text-green-400 font-medium">
                       ${row.settledAmount.toLocaleString()}
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => window.location.href = `/record/${row.id}`}
+                        className="text-cyan-400 hover:text-cyan-300"
+                      >
+                        View Details
+                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}
