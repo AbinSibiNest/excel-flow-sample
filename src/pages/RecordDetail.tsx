@@ -25,8 +25,7 @@ interface RecordData {
   birthdate: string;
   address: string;
   settledAmount: number;
-  lienAmount:number;
-  advanceAmount:number;
+  deductions: Array<{ type: string; amount: number }>;
 }
 
 const RecordDetail = () => {
@@ -50,8 +49,10 @@ const RecordDetail = () => {
       birthdate: "1985-03-15",
       address: "123 Main St, New York, NY 10001",
       settledAmount: 15000,
-      lienAmount:7500,
-      advanceAmount:2500,
+      deductions: [
+        { type: "Attorney Fees", amount: 7500 },
+        { type: "Medical Expenses", amount: 2500 },
+      ],
     };
     setRecordData(mockData);
   }, [id]);
@@ -63,9 +64,32 @@ const RecordDetail = () => {
     setHasChanges(true);
   };
 
-  
+  const handleDeductionChange = (index: number, field: 'type' | 'amount', value: string | number) => {
+    if (!recordData) return;
+    
+    const newDeductions = [...recordData.deductions];
+    newDeductions[index] = { ...newDeductions[index], [field]: value };
+    setRecordData(prev => prev ? { ...prev, deductions: newDeductions } : null);
+    setHasChanges(true);
+  };
 
- 
+  const addDeduction = () => {
+    if (!recordData) return;
+    
+    setRecordData(prev => prev ? {
+      ...prev,
+      deductions: [...prev.deductions, { type: "", amount: 0 }]
+    } : null);
+    setHasChanges(true);
+  };
+
+  const removeDeduction = (index: number) => {
+    if (!recordData) return;
+    
+    const newDeductions = recordData.deductions.filter((_, i) => i !== index);
+    setRecordData(prev => prev ? { ...prev, deductions: newDeductions } : null);
+    setHasChanges(true);
+  };
 
   const handleSave = () => {
     // Here you would save the data to the API
@@ -160,7 +184,7 @@ const RecordDetail = () => {
         {/* Defendants Section */}
         <Card className="bg-gray-900 border-gray-800">
           <CardHeader>
-            <CardTitle className="text-gray-100">Settlement</CardTitle>
+            <CardTitle className="text-gray-100">Defendants</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
@@ -170,16 +194,6 @@ const RecordDetail = () => {
                 type="number"
                 value={recordData.grossSettlementAmount}
                 onChange={(e) => handleInputChange('grossSettlementAmount', parseFloat(e.target.value))}
-                className="bg-gray-800 border-gray-700 text-gray-100"
-              />
-            </div>
-            <div>
-              <Label htmlFor="settledAmount" className="text-gray-300">Settled Amount</Label>
-              <Input
-                id="settledAmount"
-                type="number"
-                value={recordData.settledAmount}
-                onChange={(e) => handleInputChange('settledAmount', parseFloat(e.target.value))}
                 className="bg-gray-800 border-gray-700 text-gray-100"
               />
             </div>
@@ -249,29 +263,65 @@ const RecordDetail = () => {
             <CardTitle className="text-gray-100">Settlement</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-           <div>
-              <Label htmlFor="lien" className="text-gray-300">Lien</Label>
-              <Input
-                id="lienAmount"
-                type="number"
-                value={recordData.lienAmount}
-                onChange={(e) => handleInputChange('lienAmount', parseFloat(e.target.value))}
-                className="bg-gray-800 border-gray-700 text-gray-100"
-              />
-            </div> 
             <div>
-              <Label htmlFor="advance" className="text-gray-300">Advance</Label>
+              <Label htmlFor="settledAmount" className="text-gray-300">Settled Amount</Label>
               <Input
-                id="advanceAmount"
+                id="settledAmount"
                 type="number"
-                value={recordData.advanceAmount}
-                onChange={(e) => handleInputChange('advanceAmount', parseFloat(e.target.value))}
+                value={recordData.settledAmount}
+                onChange={(e) => handleInputChange('settledAmount', parseFloat(e.target.value))}
                 className="bg-gray-800 border-gray-700 text-gray-100"
               />
-            </div> 
+            </div>
           </CardContent>
         </Card>
       </div>
+
+      {/* Deductions Section */}
+      <Card className="bg-gray-900 border-gray-800">
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-gray-100">Deductions</CardTitle>
+            <Button
+              variant="outline"
+              onClick={addDeduction}
+              className="border-gray-700 text-gray-300 hover:bg-gray-800"
+            >
+              Add Deduction
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {recordData.deductions.map((deduction, index) => (
+            <div key={index} className="flex items-center space-x-4">
+              <div className="flex-1">
+                <Input
+                  placeholder="Deduction Type"
+                  value={deduction.type}
+                  onChange={(e) => handleDeductionChange(index, 'type', e.target.value)}
+                  className="bg-gray-800 border-gray-700 text-gray-100"
+                />
+              </div>
+              <div className="w-32">
+                <Input
+                  type="number"
+                  placeholder="Amount"
+                  value={deduction.amount}
+                  onChange={(e) => handleDeductionChange(index, 'amount', parseFloat(e.target.value))}
+                  className="bg-gray-800 border-gray-700 text-gray-100"
+                />
+              </div>
+              <Button
+                variant="ghost"
+                onClick={() => removeDeduction(index)}
+                className="text-red-400 hover:text-red-300"
+              >
+                Remove
+              </Button>
+            </div>
+          ))}
+        </CardContent>
+      </Card>
     </div>
   );
 };
