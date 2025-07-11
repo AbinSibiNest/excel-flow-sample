@@ -1,8 +1,11 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Excel Migration Tool Design System - Professional data-focused theme */
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
 
 @layer base {
   :root {
@@ -15,114 +18,74 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    /* Data-focused primary colors - Professional blue */
-    --primary: 217 91% 60%;
-    --primary-foreground: 0 0% 98%;
-    --primary-glow: 217 91% 70%;
+    --primary: 189 100% 24%;
+    --primary-foreground: 0 0% 100%;
 
-    /* Success/processing colors - Professional green */
-    --secondary: 142 76% 36%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    /* Accent for highlights and interactions */
-    --accent: 269 100% 92%;
-    --accent-foreground: 269 100% 25%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 217 91% 60%;
-
-    /* Custom design tokens for Excel migration tool */
-    --upload-bg: 217 91% 97%;
-    --upload-border: 217 91% 85%;
-    --data-header: 217 20% 95%;
-    --processing: 142 76% 95%;
-    
-    /* Gradients for modern look */
-    --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(217 91% 70%));
-    --gradient-upload: linear-gradient(180deg, hsl(217 91% 97%), hsl(217 91% 92%));
-    --gradient-success: linear-gradient(135deg, hsl(142 76% 36%), hsl(142 76% 46%));
-    
-    /* Shadows for depth */
-    --shadow-card: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-upload: 0 10px 15px -3px rgb(217 91% 60% / 0.1), 0 4px 6px -4px rgb(217 91% 60% / 0.1);
-    
-    /* Animations */
-    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    --transition-bounce: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 220 13% 18%;
+    --sidebar-foreground: 220 9% 46%;
+    --sidebar-primary: 189 100% 24%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 13% 20%;
+    --sidebar-accent-foreground: 220 9% 85%;
+    --sidebar-border: 220 13% 25%;
+    --sidebar-ring: 189 100% 24%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    --background: 220 13% 9%;
+    --foreground: 220 9% 85%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    --card: 220 13% 12%;
+    --card-foreground: 220 9% 85%;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 220 13% 12%;
+    --popover-foreground: 220 9% 85%;
 
-    --primary: 217 91% 65%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --primary-glow: 217 91% 75%;
+    --primary: 189 100% 24%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 142 76% 45%;
-    --secondary-foreground: 222.2 84% 4.9%;
+    --secondary: 220 13% 16%;
+    --secondary-foreground: 220 9% 85%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 220 13% 16%;
+    --muted-foreground: 220 9% 46%;
 
-    --accent: 269 100% 20%;
-    --accent-foreground: 269 100% 92%;
+    --accent: 220 13% 16%;
+    --accent-foreground: 220 9% 85%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 217 91% 65%;
-
-    /* Dark mode custom tokens */
-    --upload-bg: 217.2 32.6% 17.5%;
-    --upload-border: 217 91% 25%;
-    --data-header: 217.2 32.6% 15.5%;
-    --processing: 142 76% 15%;
+    --border: 220 13% 25%;
+    --input: 220 13% 16%;
+    --ring: 189 100% 24%;
     
-    --gradient-primary: linear-gradient(135deg, hsl(217 91% 65%), hsl(217 91% 75%));
-    --gradient-upload: linear-gradient(180deg, hsl(217.2 32.6% 17.5%), hsl(217.2 32.6% 15.5%));
-    --gradient-success: linear-gradient(135deg, hsl(142 76% 45%), hsl(142 76% 55%));
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-background: 220 13% 12%;
+    --sidebar-foreground: 220 9% 85%;
+    --sidebar-primary: 189 100% 24%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 220 13% 16%;
+    --sidebar-accent-foreground: 220 9% 85%;
+    --sidebar-border: 220 13% 25%;
+    --sidebar-ring: 189 100% 24%;
   }
 }
 
