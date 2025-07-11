@@ -246,7 +246,7 @@ const RecordDetail = () => {
         {/* Settlement Section */}
         <Card className="bg-gray-900 border-gray-800">
           <CardHeader>
-            <CardTitle className="text-gray-100">Settlement</CardTitle>
+            <CardTitle className="text-gray-100">Deduction</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
            <div>
