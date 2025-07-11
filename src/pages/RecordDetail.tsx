@@ -99,7 +99,7 @@ const RecordDetail = () => {
     });
     
     // Navigate back to pending migration with the record marked as processed
-    navigate("/pending-migration?updated=" + id);
+    navigate("/firm/firm-001#pending&updated=" + id);
   };
 
   const handleBack = () => {
@@ -109,7 +109,7 @@ const RecordDetail = () => {
       );
       if (!confirmLeave) return;
     }
-    navigate("/pending-migration");
+    navigate("/firm/firm-001#pending");
   };
 
   if (!recordData) {

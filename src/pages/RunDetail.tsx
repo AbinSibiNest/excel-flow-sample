@@ -173,7 +173,7 @@ const RunDetail = () => {
         <div className="flex items-center space-x-4">
           <Button
             variant="ghost"
-            onClick={() => window.location.href = '/migration-history'}
+            onClick={() => window.location.href = '/firm/firm-001#history'}
             className="text-gray-300 hover:text-gray-100"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
