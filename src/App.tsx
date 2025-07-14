@@ -104,6 +104,7 @@ const AppContent = () => {
         <AppSidebar />
         <main className="flex-1 bg-[#1a1f26]">
           <Routes>
+            <Route path="/" element={<MigrationSyncConfig />} />
             <Route path="/migration-sync-config" element={<MigrationSyncConfig />} />
             <Route path="/firm/:firmId" element={<FirmDetails />} />
             <Route path="/pending-migration" element={<PendingMigration />} />
