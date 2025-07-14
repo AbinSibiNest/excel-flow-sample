@@ -1,3 +1,4 @@
+
 import {
   Card,
   CardContent,
@@ -25,43 +26,67 @@ const MigrationSyncConfig = () => {
       name: "Anderson & Associates",
       location: "New York, NY",
       totalCases: 1247,
-      activeMigrations: 3,
       lastSync: "2024-01-10",
-      status: "Active",
+      status: "success",
     },
     {
       id: "firm-002",
       name: "Smith Legal Group",
       location: "Los Angeles, CA",
       totalCases: 892,
-      activeMigrations: 1,
       lastSync: "2024-01-09",
-      status: "Active",
+      status: "in progress",
     },
     {
       id: "firm-003",
       name: "Johnson Law Firm",
       location: "Chicago, IL",
       totalCases: 634,
-      activeMigrations: 0,
       lastSync: "2024-01-08",
-      status: "Inactive",
+      status: "failed",
     },
     {
       id: "firm-004",
       name: "Brown & Partners",
       location: "Houston, TX",
       totalCases: 1156,
-      activeMigrations: 2,
       lastSync: "2024-01-10",
-      status: "Active",
+      status: "success",
     },
   ];
 
   const getStatusBadge = (status: string) => {
-    return status === "Active"
-      ? "bg-green-900/50 text-green-400 border-green-600"
-      : "bg-gray-900/50 text-gray-400 border-gray-600";
+    switch (status) {
+      case "success":
+        return "bg-green-900/50 text-green-400 border-green-600";
+      case "in progress":
+        return "bg-blue-900/50 text-blue-400 border-blue-600";
+      case "failed":
+        return "bg-red-900/50 text-red-400 border-red-600";
+      default:
+        return "bg-gray-900/50 text-gray-400 border-gray-600";
+    }
+  };
+
+  const renderStatus = (firm: any) => {
+    if (firm.status === "in progress") {
+      return (
+        <Link
+          to={`/firm/${firm.id}#pending`}
+          className="inline-block"
+        >
+          <Badge className={getStatusBadge(firm.status)}>
+            {firm.status}
+          </Badge>
+        </Link>
+      );
+    }
+    
+    return (
+      <Badge className={getStatusBadge(firm.status)}>
+        {firm.status}
+      </Badge>
+    );
   };
 
   return (
@@ -85,9 +110,6 @@ const MigrationSyncConfig = () => {
                 <TableHead className="text-gray-300">Firm Name</TableHead>
                 <TableHead className="text-gray-300">Location</TableHead>
                 <TableHead className="text-gray-300">Total Cases</TableHead>
-                <TableHead className="text-gray-300">
-                  Active Migrations
-                </TableHead>
                 <TableHead className="text-gray-300">Last Sync</TableHead>
                 <TableHead className="text-gray-300">Status</TableHead>
               </TableRow>
@@ -113,15 +135,10 @@ const MigrationSyncConfig = () => {
                     {firm.totalCases.toLocaleString()}
                   </TableCell>
                   <TableCell className="text-gray-300">
-                    {firm.activeMigrations}
-                  </TableCell>
-                  <TableCell className="text-gray-300">
                     {firm.lastSync}
                   </TableCell>
                   <TableCell>
-                    <Badge className={getStatusBadge(firm.status)}>
-                      {firm.status}
-                    </Badge>
+                    {renderStatus(firm)}
                   </TableCell>
                 </TableRow>
               ))}
