@@ -172,8 +172,18 @@ const Cases = () => {
               </TableHeader>
               <TableBody>
                 {casesData.map((row, index) => (
-                  <TableRow key={index} className="border-gray-700 hover:bg-gray-800/50">
-                    <TableCell className="text-cyan-400 cursor-pointer hover:underline">{row.case}</TableCell>
+                   <TableRow key={index} className="border-gray-700 hover:bg-gray-800/50">
+                     <TableCell>
+                       <div className="space-y-1">
+                         <div className="text-cyan-400 cursor-pointer hover:underline font-medium">{row.case}</div>
+                         <div 
+                           className="text-xs text-blue-400 hover:underline cursor-pointer"
+                           onClick={handleViewCaseDetails}
+                         >
+                           View Case Details →
+                         </div>
+                       </div>
+                     </TableCell>
                     <TableCell className="text-gray-300">{row.leadCounsel}</TableCell>
                     <TableCell className="text-gray-300">{row.plaintiff}</TableCell>
                     <TableCell className="text-gray-300">{row.defendant}</TableCell>
