@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Save } from "lucide-react";
 
@@ -27,6 +28,10 @@ interface RecordData {
   settledAmount: number;
   lienAmount:number;
   advanceAmount:number;
+  defendantName: string;
+  defendantFirm: string;
+  firmName: string;
+  firmRole: string;
 }
 
 const RecordDetail = () => {
@@ -52,6 +57,10 @@ const RecordDetail = () => {
       settledAmount: 15000,
       lienAmount:7500,
       advanceAmount:2500,
+      defendantName: "XYZ Corporation",
+      defendantFirm: "Corporate Legal LLC",
+      firmName: "Anderson & Associates",
+      firmRole: "co counsel",
     };
     setRecordData(mockData);
   }, [id]);
@@ -157,7 +166,64 @@ const RecordDetail = () => {
           </CardContent>
         </Card>
 
-        {/* Defendants Section */}
+        {/* Defendant Card */}
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <CardTitle className="text-gray-100">Defendant</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="defendantName" className="text-gray-300">Defendant Name</Label>
+              <Input
+                id="defendantName"
+                value={recordData.defendantName}
+                onChange={(e) => handleInputChange('defendantName', e.target.value)}
+                className="bg-gray-800 border-gray-700 text-gray-100"
+              />
+            </div>
+            <div>
+              <Label htmlFor="defendantFirm" className="text-gray-300">Defendant Firm</Label>
+              <Input
+                id="defendantFirm"
+                value={recordData.defendantFirm}
+                onChange={(e) => handleInputChange('defendantFirm', e.target.value)}
+                className="bg-gray-800 border-gray-700 text-gray-100"
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Firms Card */}
+        <Card className="bg-gray-900 border-gray-800">
+          <CardHeader>
+            <CardTitle className="text-gray-100">Firms</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <Label htmlFor="firmName" className="text-gray-300">Firm Name</Label>
+              <Input
+                id="firmName"
+                value={recordData.firmName}
+                onChange={(e) => handleInputChange('firmName', e.target.value)}
+                className="bg-gray-800 border-gray-700 text-gray-100"
+              />
+            </div>
+            <div>
+              <Label htmlFor="firmRole" className="text-gray-300">Firm Role</Label>
+              <Select value={recordData.firmRole} onValueChange={(value) => handleInputChange('firmRole', value)}>
+                <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-100">
+                  <SelectValue placeholder="Select firm role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="co counsel">Co Counsel</SelectItem>
+                  <SelectItem value="referring counsel">Referring Counsel</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Settlement Section */}
         <Card className="bg-gray-900 border-gray-800">
           <CardHeader>
             <CardTitle className="text-gray-100">Settlement</CardTitle>

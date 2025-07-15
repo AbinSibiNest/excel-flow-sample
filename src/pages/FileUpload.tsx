@@ -19,6 +19,8 @@ import {
   Play,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Label } from "@/components/ui/label";
 
 const FileUpload = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -27,6 +29,7 @@ const FileUpload = () => {
   const [uploadStatus, setUploadStatus] = useState<
     "idle" | "uploading" | "success" | "error"
   >("idle");
+  const [caseType, setCaseType] = useState<string>("");
   const { toast } = useToast();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -87,6 +90,15 @@ const FileUpload = () => {
   };
 
   const startMigration = () => {
+    if (!caseType) {
+      toast({
+        title: "Case Type Required",
+        description: "Please select a case type before starting migration.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     if (files.length > 0) {
       simulateUpload();
     }
@@ -196,11 +208,31 @@ const FileUpload = () => {
             </Alert>
           )}
 
+          {/* Case Type Selection */}
+          <div className="mt-6 space-y-2">
+            <Label htmlFor="case-type" className="text-gray-300">
+              Case Type <span className="text-red-400">*</span>
+            </Label>
+            <Select value={caseType} onValueChange={setCaseType}>
+              <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-100">
+                <SelectValue placeholder="Select case type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="personal-injury">Personal Injury</SelectItem>
+                <SelectItem value="medical-malpractice">Medical Malpractice</SelectItem>
+                <SelectItem value="workers-compensation">Workers' Compensation</SelectItem>
+                <SelectItem value="auto-accident">Auto Accident</SelectItem>
+                <SelectItem value="product-liability">Product Liability</SelectItem>
+                <SelectItem value="wrongful-death">Wrongful Death</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
           {/* Action Button */}
           <div className="mt-6 flex justify-end">
             <Button
               onClick={startMigration}
-              disabled={files.length === 0 || isUploading}
+              disabled={files.length === 0 || isUploading || !caseType}
               className="bg-cyan-600 hover:bg-cyan-700 text-white"
             >
               <Play className="h-4 w-4 mr-2" />

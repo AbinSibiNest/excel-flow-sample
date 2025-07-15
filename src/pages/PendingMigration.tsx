@@ -17,13 +17,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CheckCircle, Database, FileText, Users } from "lucide-react";
+import { CheckCircle, Database, FileText, Users, Filter } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 const PendingMigration = () => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Check for updated records from URL hash
   useEffect(() => {
@@ -48,6 +52,7 @@ const PendingMigration = () => {
       phone: "+1-555-0101",
       address: "123 Main St, New York, NY 10001",
       settledAmount: 15000,
+      status: "new",
     },
     {
       id: 2,
@@ -57,6 +62,7 @@ const PendingMigration = () => {
       phone: "+1-555-0102",
       address: "456 Oak Ave, Los Angeles, CA 90210",
       settledAmount: 22500,
+      status: "updated",
     },
     {
       id: 3,
@@ -66,6 +72,7 @@ const PendingMigration = () => {
       phone: "+1-555-0103",
       address: "789 Pine Dr, Chicago, IL 60601",
       settledAmount: 18750,
+      status: "new",
     },
     {
       id: 4,
@@ -75,6 +82,7 @@ const PendingMigration = () => {
       phone: "+1-555-0104",
       address: "321 Elm St, Houston, TX 77001",
       settledAmount: 31200,
+      status: "same",
     },
     {
       id: 5,
@@ -84,13 +92,23 @@ const PendingMigration = () => {
       phone: "+1-555-0105",
       address: "654 Maple Ln, Phoenix, AZ 85001",
       settledAmount: 27800,
+      status: "new",
     },
   ];
+
+  // Filter data based on status filter
+  const filteredData = statusFilter === "all" 
+    ? parsedData 
+    : parsedData.filter(item => item.status === statusFilter);
+
+  const handleRowClick = (id: number) => {
+    navigate(`/record/${id}`);
+  };
 
   const handleSelectAll = (checked: boolean) => {
     setSelectAll(checked);
     if (checked) {
-      setSelectedRows(parsedData.map((row) => row.id));
+      setSelectedRows(filteredData.map((row) => row.id));
     } else {
       setSelectedRows([]);
     }
@@ -138,7 +156,7 @@ const PendingMigration = () => {
               <div>
                 <p className="text-sm text-gray-400">Total Records</p>
                 <p className="text-2xl font-bold text-gray-100">
-                  {parsedData.length}
+                  {filteredData.length}
                 </p>
               </div>
               <FileText className="h-8 w-8 text-cyan-400" />
@@ -167,7 +185,7 @@ const PendingMigration = () => {
                 <p className="text-sm text-gray-400">Total Amount</p>
                 <p className="text-2xl font-bold text-green-400">
                   $
-                  {parsedData
+                  {filteredData
                     .reduce((sum, row) => sum + row.settledAmount, 0)
                     .toLocaleString()}
                 </p>
@@ -189,6 +207,20 @@ const PendingMigration = () => {
               </CardDescription>
             </div>
             <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <Filter className="h-4 w-4 text-gray-400" />
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-32 bg-gray-800 border-gray-700 text-gray-100">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="new">New</SelectItem>
+                    <SelectItem value="updated">Updated</SelectItem>
+                    <SelectItem value="same">Same</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="select-all"
@@ -216,6 +248,7 @@ const PendingMigration = () => {
               <TableHeader>
                  <TableRow className="border-gray-800">
                   <TableHead className="text-gray-300">Select</TableHead>
+                  <TableHead className="text-gray-300">Status</TableHead>
                   <TableHead className="text-gray-300">Full Name</TableHead>
                   <TableHead className="text-gray-300">Email</TableHead>
                   <TableHead className="text-gray-300">Phone</TableHead>
@@ -223,19 +256,29 @@ const PendingMigration = () => {
                   <TableHead className="text-gray-300">
                     Settled Amount
                   </TableHead>
-                  <TableHead className="text-gray-300">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {parsedData.map((row) => (
-                  <TableRow key={row.id} className="border-gray-800">
-                    <TableCell>
+                {filteredData.map((row) => (
+                  <TableRow 
+                    key={row.id} 
+                    className="border-gray-800 hover:bg-gray-800/50 cursor-pointer"
+                    onClick={() => handleRowClick(row.id)}
+                  >
+                    <TableCell onClick={(e) => e.stopPropagation()}>
                       <Checkbox
                         checked={selectedRows.includes(row.id)}
                         onCheckedChange={(checked) =>
                           handleRowSelect(row.id, checked as boolean)
                         }
                       />
+                    </TableCell>
+                    <TableCell>
+                      {row.status === "new" && (
+                        <Badge className="bg-blue-900/50 text-blue-400 border-blue-600">
+                          NEW
+                        </Badge>
+                      )}
                     </TableCell>
                     <TableCell className="text-gray-300">
                       {row.fullName}
@@ -247,16 +290,6 @@ const PendingMigration = () => {
                     </TableCell>
                     <TableCell className="text-green-400 font-medium">
                       ${row.settledAmount.toLocaleString()}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => window.location.href = `/record/${row.id}`}
-                        className="text-cyan-400 hover:text-cyan-300"
-                      >
-                        View Details
-                      </Button>
                     </TableCell>
                   </TableRow>
                 ))}

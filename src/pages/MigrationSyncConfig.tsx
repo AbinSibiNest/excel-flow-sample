@@ -15,10 +15,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { Building, Users, FileText, Calendar } from "lucide-react";
+import { Building, Users, FileText, Calendar, Search } from "lucide-react";
 import { Link } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 const MigrationSyncConfig = () => {
+  const [searchTerm, setSearchTerm] = useState("");
+  
   // Mock firm data
   const firms = [
     {
@@ -54,6 +58,12 @@ const MigrationSyncConfig = () => {
       status: "success",
     },
   ];
+
+  // Filter firms based on search term
+  const filteredFirms = firms.filter(firm =>
+    firm.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    firm.location.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -101,7 +111,18 @@ const MigrationSyncConfig = () => {
       {/* Firms Table */}
       <Card className="bg-gray-900 border-gray-800">
         <CardHeader>
-          <CardTitle className="text-gray-100">Law Firms</CardTitle>
+          <div className="flex items-center justify-between">
+            <CardTitle className="text-gray-100">Law Firms</CardTitle>
+            <div className="relative w-64">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Search by firm name or location..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 bg-gray-800 border-gray-700 text-gray-100"
+              />
+            </div>
+          </div>
         </CardHeader>
         <CardContent>
           <Table>
@@ -115,7 +136,7 @@ const MigrationSyncConfig = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {firms.map((firm) => (
+              {filteredFirms.map((firm) => (
                 <TableRow
                   key={firm.id}
                   className="border-gray-700 hover:bg-gray-800/50"
