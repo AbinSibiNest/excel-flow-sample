@@ -21,6 +21,7 @@ import {
 import { CheckCircle, Database, FileText, Users, Filter } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+// Fixed Select import and null handling issues
 
 const PendingMigration = () => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
