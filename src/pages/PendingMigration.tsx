@@ -205,7 +205,6 @@ const PendingMigration = () => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
                 <label htmlFor="show-new-only" className="text-sm text-gray-300 flex items-center space-x-2">
-                  <Filter className="h-4 w-4" />
                   <span>Show NEW Only</span>
                 </label>
                 <Switch
@@ -278,7 +277,7 @@ const PendingMigration = () => {
                     <TableCell className="text-gray-300">{row.caseType}</TableCell>
                     <TableCell className="text-gray-300">{row.createDate}</TableCell>
                     <TableCell className="text-green-400 font-medium">
-                      {row.settledAmount ? `$${row.settledAmount.toLocaleString()}` : '-'}
+                      {row.settledAmount ? `$${row.settledAmount.toLocaleString()}` : '$--'}
                     </TableCell>
                   </TableRow>
                 ))}
