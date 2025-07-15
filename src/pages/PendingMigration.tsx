@@ -9,7 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Toggle } from "@/components/ui/toggle";
+import { Switch } from "@/components/ui/switch";
 import {
   Table,
   TableBody,
@@ -204,14 +204,15 @@ const PendingMigration = () => {
             </div>
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <Toggle
-                  pressed={showNewOnly}
-                  onPressedChange={setShowNewOnly}
-                  className="text-gray-300 data-[state=on]:bg-blue-900/50 data-[state=on]:text-blue-400"
-                >
-                  <Filter className="h-4 w-4 mr-2" />
-                  Show NEW Only
-                </Toggle>
+                <label htmlFor="show-new-only" className="text-sm text-gray-300 flex items-center space-x-2">
+                  <Filter className="h-4 w-4" />
+                  <span>Show NEW Only</span>
+                </label>
+                <Switch
+                  id="show-new-only"
+                  checked={showNewOnly}
+                  onCheckedChange={setShowNewOnly}
+                />
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox
