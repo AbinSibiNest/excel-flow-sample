@@ -216,8 +216,6 @@ const PendingMigration = () => {
                   <SelectContent>
                     <SelectItem value="all">All</SelectItem>
                     <SelectItem value="new">New</SelectItem>
-                    <SelectItem value="updated">Updated</SelectItem>
-                    <SelectItem value="same">Same</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
