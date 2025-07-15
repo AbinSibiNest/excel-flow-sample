@@ -81,25 +81,35 @@ const MigrationSyncConfig = () => {
   };
 
   const renderStatus = (firm: any) => {
-    if (firm.status === "pending verification") {
-      return (
-        <Link
-          to={`/firm/${firm.id}#pending`}
-          className="inline-block"
-        >
-          <Badge className={getStatusBadge(firm.status)}>
-            {firm.status}
-          </Badge>
-        </Link>
-      );
-    }
-    
-    return (
-      <Badge className={getStatusBadge(firm.status)}>
-        {firm.status}
-      </Badge>
-    );
+  const { id, status } = firm;
+
+  // Configuration for statuses that should be links and their URL hashes.
+  const linkConfig: { [key: string]: string } = {
+    "pending verification": "#pending",
+    "active": "", // The 'active' status links to the base URL with no hash.
+    "failed": "#history",
   };
+
+  // Create the badge component once to avoid repeating code.
+  const StatusBadge = (
+    <Badge className={getStatusBadge(status)}>
+      {status.toUpperCase()}
+    </Badge>
+  );
+
+  // Check if the current status exists in our link configuration.
+  if (Object.prototype.hasOwnProperty.call(linkConfig, status)) {
+    const destination = `/firm/${id}${linkConfig[status]}`;
+    return (
+      <Link to={destination} className="inline-block">
+        {StatusBadge}
+      </Link>
+    );
+  }
+
+  // If the status is not in the configuration, return only the badge.
+  return StatusBadge;
+};
 
   return (
     <div className="p-6 space-y-6">
