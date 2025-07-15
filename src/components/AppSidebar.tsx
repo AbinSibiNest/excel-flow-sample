@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/sidebar";
 
 const menuItems = [
-  { title: "Cases", icon: Briefcase },
+  { title: "Cases", icon: Briefcase, url: "/cases" },
   { title: "Requests", icon: FileText },
   { title: "Payments", icon: CreditCard },
   { type: "separator" },
@@ -68,6 +68,9 @@ export function AppSidebar() {
         location.pathname === "/migration-sync-config" ||
         location.pathname.startsWith("/firm/")
       );
+    }
+    if (item.url === "/cases") {
+      return location.pathname.startsWith("/cases");
     }
     return false;
   };

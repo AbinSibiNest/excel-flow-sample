@@ -3,6 +3,8 @@
 This document contains sample JSON responses for all pages in the Migration Application.
 
 ## Table of Contents
+- [Cases](#cases)
+- [Upload Settlement Document](#upload-settlement-document)
 - [Dashboard](#dashboard)
 - [Migration History](#migration-history)
 - [Configuration](#configuration)
@@ -10,6 +12,193 @@ This document contains sample JSON responses for all pages in the Migration Appl
 - [Run Detail](#run-detail)
 - [Pending Migration](#pending-migration)
 - [File Upload](#file-upload)
+
+## Cases
+
+### GET /api/cases
+```json
+{
+  "cases": [
+    {
+      "id": "case-001",
+      "case": "Kenneth v. Star Insurance",
+      "leadCounsel": "Andrews Law Firm",
+      "plaintiff": "Brian Kenneth",
+      "defendant": "Star Insurance Co.",
+      "caseType": "Stryker Hip Replacement",
+      "created": "7/14/2025",
+      "filed": "7/15/2025",
+      "sol": "7/31/2025",
+      "status": "Active",
+      "grossSettlement": "$25,000.00"
+    },
+    {
+      "id": "case-002",
+      "case": "Clarke v. Amelia",
+      "leadCounsel": "Kirkland & Ellis",
+      "plaintiff": "Ashlyn Clarke",
+      "defendant": "Amelia Olivia Insurance",
+      "caseType": "MVA Injury",
+      "created": "7/10/2025",
+      "filed": "7/10/2024",
+      "sol": "1/15/2026",
+      "status": "Active",
+      "grossSettlement": "$985,000.00"
+    },
+    {
+      "id": "case-003",
+      "case": "Clarke v. Liam",
+      "leadCounsel": "Norton Rose",
+      "plaintiff": "Ashlyn Clarke",
+      "defendant": "Liam Olivia",
+      "caseType": "MVA Injury",
+      "created": "7/10/2025",
+      "filed": null,
+      "sol": null,
+      "status": "Draft",
+      "grossSettlement": "$800,000.00"
+    }
+  ]
+}
+```
+
+### GET /api/settlements
+```json
+{
+  "settlements": [
+    {
+      "id": "settlement-001",
+      "case": "John v. Fas-duval",
+      "caseId": "case-001",
+      "entryDate": "4/21/2025",
+      "settledAmount": "$1,000.00",
+      "attorneysFees": null,
+      "deductions": null,
+      "netSettlement": null,
+      "status": "Draft",
+      "paymentDate": null
+    },
+    {
+      "id": "settlement-002",
+      "case": "Smith v. Uber Tech",
+      "caseId": "case-002",
+      "entryDate": "3/12/2025",
+      "settledAmount": "$200,000.00",
+      "attorneysFees": "$66,666.67",
+      "deductions": "$5,000.00",
+      "netSettlement": "$128,333.33",
+      "status": "Paid",
+      "paymentDate": "3/15/2025"
+    },
+    {
+      "id": "settlement-003",
+      "case": "Myers v. CooperSur",
+      "caseId": "case-003",
+      "entryDate": "4/7/2025",
+      "settledAmount": "$100,000.00",
+      "attorneysFees": "$33,333.33",
+      "deductions": "$2,500.00",
+      "netSettlement": "$64,166.67",
+      "status": "Active",
+      "paymentDate": null
+    }
+  ]
+}
+```
+
+### GET /api/cases/filters
+```json
+{
+  "filters": {
+    "firms": [
+      { "id": "firm-001", "name": "Andrews Law Firm" },
+      { "id": "firm-002", "name": "Kirkland & Ellis" },
+      { "id": "firm-003", "name": "Norton Rose" }
+    ],
+    "clients": [
+      { "id": "client-001", "name": "Brian Kenneth" },
+      { "id": "client-002", "name": "Ashlyn Clarke" },
+      { "id": "client-003", "name": "John Smith" }
+    ],
+    "defendants": [
+      { "id": "defendant-001", "name": "Star Insurance Co." },
+      { "id": "defendant-002", "name": "Amelia Olivia Insurance" },
+      { "id": "defendant-003", "name": "Uber Technologies" }
+    ],
+    "caseTypes": [
+      { "id": "type-001", "name": "Stryker Hip Replacement" },
+      { "id": "type-002", "name": "MVA Injury" },
+      { "id": "type-003", "name": "Personal Injury" }
+    ],
+    "timeRanges": [
+      "Today",
+      "This Week", 
+      "Last Week",
+      "This Month",
+      "Last Month",
+      "Earlier"
+    ],
+    "settlementStatuses": [
+      "Draft",
+      "Unpaid",
+      "Initiating Funding",
+      "Waiting Funds",
+      "Distributing Atty Fees",
+      "Distributing Deductions",
+      "Distributing Net Settlement",
+      "Paid",
+      "Error",
+      "Critical Error"
+    ]
+  }
+}
+```
+
+## Upload Settlement Document
+
+### POST /api/settlements/upload
+Request (multipart/form-data):
+```
+files: [Document files]
+caseReference: "case-001"
+documentType: "Settlement Agreement"
+description: "Final settlement agreement for case"
+```
+
+Response:
+```json
+{
+  "success": true,
+  "uploadId": "upload-001",
+  "documents": [
+    {
+      "id": "doc-001",
+      "filename": "settlement_agreement.pdf",
+      "size": 2048576,
+      "type": "application/pdf",
+      "uploadedAt": "2025-01-15T10:30:00Z",
+      "status": "uploaded"
+    }
+  ],
+  "metadata": {
+    "caseReference": "case-001",
+    "documentType": "Settlement Agreement",
+    "description": "Final settlement agreement for case"
+  }
+}
+```
+
+### GET /api/settlements/document-types
+```json
+{
+  "documentTypes": [
+    "Settlement Agreement",
+    "Release Form",
+    "Court Order", 
+    "Other"
+  ]
+}
+```
 
 ## Dashboard
 
