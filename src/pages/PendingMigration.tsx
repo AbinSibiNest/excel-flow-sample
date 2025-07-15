@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Toggle } from "@/components/ui/toggle";
 import {
   Table,
   TableBody,
@@ -18,14 +19,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { CheckCircle, Database, FileText, Users, Filter } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 const PendingMigration = () => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [showNewOnly, setShowNewOnly] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -47,59 +47,54 @@ const PendingMigration = () => {
     {
       id: 1,
       referenceId: "REF-001",
-      fullName: "John Smith",
-      email: "john.smith@email.com",
-      phone: "+1-555-0101",
-      address: "123 Main St, New York, NY 10001",
+      plaintiff: "John Smith",
+      caseType: "Personal Injury",
+      createDate: "2024-01-15",
       settledAmount: 15000,
       status: "new",
     },
     {
       id: 2,
       referenceId: "REF-002",
-      fullName: "Sarah Johnson",
-      email: "sarah.johnson@email.com",
-      phone: "+1-555-0102",
-      address: "456 Oak Ave, Los Angeles, CA 90210",
+      plaintiff: "Sarah Johnson",
+      caseType: "Medical Malpractice",
+      createDate: "2024-01-18",
       settledAmount: 22500,
       status: "updated",
     },
     {
       id: 3,
       referenceId: "REF-003",
-      fullName: "Michael Brown",
-      email: "michael.brown@email.com",
-      phone: "+1-555-0103",
-      address: "789 Pine Dr, Chicago, IL 60601",
+      plaintiff: "Michael Brown",
+      caseType: "Auto Accident",
+      createDate: "2024-01-20",
       settledAmount: 18750,
       status: "new",
     },
     {
       id: 4,
       referenceId: "REF-004",
-      fullName: "Emily Davis",
-      email: "emily.davis@email.com",
-      phone: "+1-555-0104",
-      address: "321 Elm St, Houston, TX 77001",
-      settledAmount: 31200,
+      plaintiff: "Emily Davis",
+      caseType: "Slip and Fall",
+      createDate: "2024-01-22",
+      settledAmount: null,
       status: "same",
     },
     {
       id: 5,
       referenceId: "REF-005",
-      fullName: "David Wilson",
-      email: "david.wilson@email.com",
-      phone: "+1-555-0105",
-      address: "654 Maple Ln, Phoenix, AZ 85001",
+      plaintiff: "David Wilson",
+      caseType: "Workers' Compensation",
+      createDate: "2024-01-25",
       settledAmount: 27800,
       status: "new",
     },
   ];
 
-  // Filter data based on status filter
-  const filteredData = statusFilter === "all" 
-    ? parsedData 
-    : parsedData.filter(item => item.status === statusFilter);
+  // Filter data based on new status filter
+  const filteredData = showNewOnly 
+    ? parsedData.filter(item => item.status === "new")
+    : parsedData;
 
   const handleRowClick = (id: number) => {
     navigate(`/record/${id}`);
@@ -186,7 +181,7 @@ const PendingMigration = () => {
                 <p className="text-2xl font-bold text-green-400">
                   $
                   {filteredData
-                    .reduce((sum, row) => sum + row.settledAmount, 0)
+                    .reduce((sum, row) => sum + (row.settledAmount || 0), 0)
                     .toLocaleString()}
                 </p>
               </div>
@@ -208,16 +203,14 @@ const PendingMigration = () => {
             </div>
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
-                <Filter className="h-4 w-4 text-gray-400" />
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-32 bg-gray-800 border-gray-700 text-gray-100">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
-                    <SelectItem value="new">New</SelectItem>
-                  </SelectContent>
-                </Select>
+                <Toggle
+                  pressed={showNewOnly}
+                  onPressedChange={setShowNewOnly}
+                  className="text-gray-300 data-[state=on]:bg-blue-900/50 data-[state=on]:text-blue-400"
+                >
+                  <Filter className="h-4 w-4 mr-2" />
+                  Show NEW Only
+                </Toggle>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox
@@ -243,14 +236,13 @@ const PendingMigration = () => {
         <CardContent>
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader>
+               <TableHeader>
                  <TableRow className="border-gray-800">
                   <TableHead className="text-gray-300">Select</TableHead>
                   <TableHead className="text-gray-300">Status</TableHead>
-                  <TableHead className="text-gray-300">Full Name</TableHead>
-                  <TableHead className="text-gray-300">Email</TableHead>
-                  <TableHead className="text-gray-300">Phone</TableHead>
-                  <TableHead className="text-gray-300">Address</TableHead>
+                  <TableHead className="text-gray-300">Plaintiff</TableHead>
+                  <TableHead className="text-gray-300">Case Type</TableHead>
+                  <TableHead className="text-gray-300">Create Date</TableHead>
                   <TableHead className="text-gray-300">
                     Settled Amount
                   </TableHead>
@@ -279,15 +271,12 @@ const PendingMigration = () => {
                       )}
                     </TableCell>
                     <TableCell className="text-gray-300">
-                      {row.fullName}
+                      {row.plaintiff}
                     </TableCell>
-                    <TableCell className="text-gray-300">{row.email}</TableCell>
-                    <TableCell className="text-gray-300">{row.phone}</TableCell>
-                    <TableCell className="text-gray-300">
-                      {row.address}
-                    </TableCell>
+                    <TableCell className="text-gray-300">{row.caseType}</TableCell>
+                    <TableCell className="text-gray-300">{row.createDate}</TableCell>
                     <TableCell className="text-green-400 font-medium">
-                      ${row.settledAmount.toLocaleString()}
+                      {row.settledAmount ? `$${row.settledAmount.toLocaleString()}` : '-'}
                     </TableCell>
                   </TableRow>
                 ))}
