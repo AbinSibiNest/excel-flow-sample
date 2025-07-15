@@ -31,7 +31,7 @@ const MigrationSyncConfig = () => {
       location: "New York, NY",
       totalCases: 1247,
       lastSync: "2024-01-10",
-      status: "success",
+      status: "active",
     },
     {
       id: "firm-002",
@@ -39,7 +39,7 @@ const MigrationSyncConfig = () => {
       location: "Los Angeles, CA",
       totalCases: 892,
       lastSync: "2024-01-09",
-      status: "in progress",
+      status: "pending verification",
     },
     {
       id: "firm-003",
@@ -55,7 +55,7 @@ const MigrationSyncConfig = () => {
       location: "Houston, TX",
       totalCases: 1156,
       lastSync: "2024-01-10",
-      status: "success",
+      status: "not yet synced",
     },
   ];
 
@@ -67,19 +67,21 @@ const MigrationSyncConfig = () => {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
-      case "success":
+      case "active":
         return "bg-green-900/50 text-green-400 border-green-600";
-      case "in progress":
+      case "pending verification":
         return "bg-blue-900/50 text-blue-400 border-blue-600";
       case "failed":
         return "bg-red-900/50 text-red-400 border-red-600";
+      case "not yet synced":
+        return "bg-gray-900/50 text-gray-400 border-gray-600";
       default:
         return "bg-gray-900/50 text-gray-400 border-gray-600";
     }
   };
 
   const renderStatus = (firm: any) => {
-    if (firm.status === "in progress") {
+    if (firm.status === "pending verification") {
       return (
         <Link
           to={`/firm/${firm.id}#pending`}

@@ -129,7 +129,7 @@ const RecordDetail = () => {
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Basic Information */}
         <Card className="bg-gray-900 border-gray-800">
           <CardHeader>
@@ -223,6 +223,63 @@ const RecordDetail = () => {
           </CardContent>
         </Card>
 
+        {/* Client Section */}
+        <Card className="bg-gray-900 border-gray-800 lg:col-span-2">
+          <CardHeader>
+            <CardTitle className="text-gray-100">Client Information</CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor="fullName" className="text-gray-300">Full Name</Label>
+              <Input
+                id="fullName"
+                value={recordData.clientFullName}
+                onChange={(e) => handleInputChange('clientFullName', e.target.value)}
+                className="bg-gray-800 border-gray-700 text-gray-100"
+              />
+            </div>
+            <div>
+              <Label htmlFor="email" className="text-gray-300">Email</Label>
+              <Input
+                id="email"
+                type="email"
+                value={recordData.clientEmail}
+                onChange={(e) => handleInputChange('clientEmail', e.target.value)}
+                className="bg-gray-800 border-gray-700 text-gray-100"
+              />
+            </div>
+            <div>
+              <Label htmlFor="phone" className="text-gray-300">Phone</Label>
+              <Input
+                id="phone"
+                value={recordData.clientPhone}
+                onChange={(e) => handleInputChange('clientPhone', e.target.value)}
+                className="bg-gray-800 border-gray-700 text-gray-100"
+              />
+            </div>
+            <div>
+              <Label htmlFor="birthdate" className="text-gray-300">Birth Date</Label>
+              <Input
+                id="birthdate"
+                type="date"
+                value={recordData.clientBirthdate}
+                onChange={(e) => handleInputChange('clientBirthdate', e.target.value)}
+                className="bg-gray-800 border-gray-700 text-gray-100"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <Label htmlFor="address" className="text-gray-300">Address</Label>
+              <Textarea
+                id="address"
+                value={recordData.clientAddress}
+                onChange={(e) => handleInputChange('clientAddress', e.target.value)}
+                className="bg-gray-800 border-gray-700 text-gray-100"
+                rows={3}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Settlement Section */}
         <Card className="bg-gray-900 border-gray-800">
           <CardHeader>
@@ -269,63 +326,6 @@ const RecordDetail = () => {
                 className="bg-gray-800 border-gray-700 text-gray-100"
               />
             </div> 
-          </CardContent>
-        </Card>
-
-        {/* Client Section */}
-        <Card className="bg-gray-900 border-gray-800">
-          <CardHeader>
-            <CardTitle className="text-gray-100">Client Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <Label htmlFor="fullName" className="text-gray-300">Full Name</Label>
-              <Input
-                id="fullName"
-                value={recordData.clientFullName}
-                onChange={(e) => handleInputChange('clientFullName', e.target.value)}
-                className="bg-gray-800 border-gray-700 text-gray-100"
-              />
-            </div>
-            <div>
-              <Label htmlFor="email" className="text-gray-300">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={recordData.clientEmail}
-                onChange={(e) => handleInputChange('clientEmail', e.target.value)}
-                className="bg-gray-800 border-gray-700 text-gray-100"
-              />
-            </div>
-            <div>
-              <Label htmlFor="phone" className="text-gray-300">Phone</Label>
-              <Input
-                id="phone"
-                value={recordData.clientPhone}
-                onChange={(e) => handleInputChange('clientPhone', e.target.value)}
-                className="bg-gray-800 border-gray-700 text-gray-100"
-              />
-            </div>
-            <div>
-              <Label htmlFor="birthdate" className="text-gray-300">Birth Date</Label>
-              <Input
-                id="birthdate"
-                type="date"
-                value={recordData.clientBirthdate}
-                onChange={(e) => handleInputChange('clientBirthdate', e.target.value)}
-                className="bg-gray-800 border-gray-700 text-gray-100"
-              />
-            </div>
-            <div>
-              <Label htmlFor="address" className="text-gray-300">Address</Label>
-              <Textarea
-                id="address"
-                value={recordData.clientAddress}
-                onChange={(e) => handleInputChange('clientAddress', e.target.value)}
-                className="bg-gray-800 border-gray-700 text-gray-100"
-                rows={3}
-              />
-            </div>
           </CardContent>
         </Card>
       </div>
