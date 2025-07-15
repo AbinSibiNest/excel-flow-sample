@@ -18,6 +18,7 @@ import RecordDetail from "./pages/RecordDetail";
 import PendingMigration from "./pages/PendingMigration";
 import MigrationHistory from "./pages/MigrationHistory";
 import Cases from "./pages/Cases";
+import CaseDetails from "./pages/CaseDetails";
 import UploadSettlementDocument from "./pages/UploadSettlementDocument";
 
 const queryClient = new QueryClient();
@@ -108,8 +109,9 @@ const AppContent = () => {
           <Routes>
             <Route path="/" element={<MigrationSyncConfig />} />
             <Route path="/migration-sync-config" element={<MigrationSyncConfig />} />
-            <Route path="/cases" element={<Cases />} />
-            <Route path="/cases/upload-settlement" element={<UploadSettlementDocument />} />
+        <Route path="/cases" element={<Cases />} />
+        <Route path="/cases/details" element={<CaseDetails />} />
+        <Route path="/cases/upload-settlement" element={<UploadSettlementDocument />} />
             <Route path="/firm/:firmId" element={<FirmDetails />} />
             <Route path="/pending-migration" element={<PendingMigration />} />
             <Route path="/migration-history" element={<MigrationHistory />} />

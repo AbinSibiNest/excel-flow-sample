@@ -15,6 +15,9 @@ This document contains sample JSON responses for all pages in the Migration Appl
 
 ## Cases
 
+### Cases Landing Page
+The landing page displays a table of cases with filters. Users can click "View Case Details" to navigate to the tabbed view.
+
 ### GET /api/cases
 ```json
 {
@@ -59,6 +62,47 @@ This document contains sample JSON responses for all pages in the Migration Appl
       "grossSettlement": "$800,000.00"
     }
   ]
+}
+```
+
+### Case Details Page
+The Case Details page contains multiple tabs (HOME, ATTORNEYS' FEES, DOCUMENT REQUESTS, SIGNATURE REQUESTS, DATA REQUESTS, DEDUCTIONS, SETTLEMENTS).
+
+### GET /api/case-details/:id
+```json
+{
+  "caseDetail": {
+    "id": "case-001",
+    "title": "Kenneth v. Star Insurance",
+    "description": "Complete case information with all associated data",
+    "tabs": {
+      "home": {
+        "cases": [
+          // Same cases data as main cases endpoint
+        ]
+      },
+      "attorneysFees": {
+        "fees": []
+      },
+      "documentRequests": {
+        "documents": []
+      },
+      "signatureRequests": {
+        "signatures": []
+      },
+      "dataRequests": {
+        "requests": []
+      },
+      "deductions": {
+        "deductions": []
+      },
+      "settlements": {
+        "settlements": [
+          // Settlement data - see settlements endpoint below
+        ]
+      }
+    }
+  }
 }
 ```
 
@@ -157,6 +201,8 @@ This document contains sample JSON responses for all pages in the Migration Appl
 ## Upload Settlement Document
 
 ### POST /api/settlements/upload
+Upload settlement documents from the case details settlements tab.
+
 Request (multipart/form-data):
 ```
 files: [Document files]
@@ -187,6 +233,13 @@ Response:
   }
 }
 ```
+
+### File Upload Behavior
+- The entire upload area is clickable to trigger file selection
+- Files can be dragged and dropped anywhere on the upload area
+- Multiple files can be selected at once
+- Supported formats: PDF, DOC, DOCX, JPG, PNG
+- Maximum file size: 10MB per file
 
 ### GET /api/settlements/document-types
 ```json

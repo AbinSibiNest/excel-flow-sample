@@ -11,7 +11,7 @@ const UploadSettlementDocument = () => {
 
   const handleBack = () => {
     const returnTab = location.state?.returnTab || "settlements";
-    navigate("/cases", { state: { activeTab: returnTab } });
+    navigate("/cases/details", { state: { activeTab: returnTab } });
   };
 
   const handleDrag = (e: React.DragEvent) => {
@@ -77,7 +77,7 @@ const UploadSettlementDocument = () => {
           {/* Upload Area */}
           <div className="bg-[#1e2328] rounded-lg border border-gray-700 p-8">
             <div
-              className={`border-2 border-dashed rounded-lg p-12 text-center transition-colors ${
+              className={`relative border-2 border-dashed rounded-lg p-12 text-center transition-colors cursor-pointer ${
                 dragActive
                   ? "border-cyan-500 bg-cyan-500/10"
                   : "border-gray-600 hover:border-gray-500"
@@ -86,6 +86,7 @@ const UploadSettlementDocument = () => {
               onDragLeave={handleDrag}
               onDragOver={handleDrag}
               onDrop={handleDrop}
+              onClick={() => document.getElementById('file-input')?.click()}
             >
               <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <div className="space-y-2">
@@ -101,6 +102,7 @@ const UploadSettlementDocument = () => {
               </div>
               
               <input
+                id="file-input"
                 type="file"
                 multiple
                 accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
