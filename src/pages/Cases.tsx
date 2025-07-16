@@ -128,14 +128,6 @@ const Cases = () => {
         <div className="border-b border-gray-700 p-6">
           <div className="flex items-center justify-between">
             <h1 className="text-2xl font-bold text-white">Cases</h1>
-            <Button
-              variant="outline"
-              onClick={handleViewCaseDetails}
-              className="bg-transparent border-cyan-600 text-cyan-400 hover:bg-cyan-600/20"
-            >
-              View Case Details
-              <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
           </div>
         </div>
 
@@ -175,13 +167,7 @@ const Cases = () => {
                    <TableRow key={index} className="border-gray-700 hover:bg-gray-800/50">
                      <TableCell>
                        <div className="space-y-1">
-                         <div className="text-cyan-400 cursor-pointer hover:underline font-medium">{row.case}</div>
-                         <div 
-                           className="text-xs text-blue-400 hover:underline cursor-pointer"
-                           onClick={handleViewCaseDetails}
-                         >
-                           View Case Details →
-                         </div>
+                         <div className="text-cyan-400 cursor-pointer hover:underline font-medium" onClick={handleViewCaseDetails}>{row.case}</div>
                        </div>
                      </TableCell>
                     <TableCell className="text-gray-300">{row.leadCounsel}</TableCell>

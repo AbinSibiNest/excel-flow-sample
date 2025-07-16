@@ -146,45 +146,6 @@ const UploadSettlementDocument = () => {
               </div>
             </div>
           )}
-
-          {/* Form Fields */}
-          <div className="bg-[#1e2328] rounded-lg border border-gray-700 p-6">
-            <h3 className="text-lg font-medium text-white mb-4">Document Details</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Case Reference
-                </label>
-                <input
-                  type="text"
-                  className="w-full px-3 py-2 bg-[#2a2f36] border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                  placeholder="Enter case reference"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Document Type
-                </label>
-                <select className="w-full px-3 py-2 bg-[#2a2f36] border border-gray-600 rounded-md text-gray-100 focus:outline-none focus:ring-2 focus:ring-cyan-500">
-                  <option>Settlement Agreement</option>
-                  <option>Release Form</option>
-                  <option>Court Order</option>
-                  <option>Other</option>
-                </select>
-              </div>
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-300 mb-2">
-                  Description
-                </label>
-                <textarea
-                  rows={3}
-                  className="w-full px-3 py-2 bg-[#2a2f36] border border-gray-600 rounded-md text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
-                  placeholder="Enter document description..."
-                />
-              </div>
-            </div>
-          </div>
-
           {/* Action Buttons */}
           <div className="flex justify-end gap-3">
             <Button
