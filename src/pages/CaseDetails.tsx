@@ -473,7 +473,7 @@ const CaseDetails = () => {
                   onClick={handleUploadSettlement}
                 >
                   <Upload className="h-4 w-4 mr-2" />
-                  UPLOAD
+                  UPLOAD SETTLEMENT DOC
                 </Button>
                 <Button className="bg-green-600 hover:bg-green-700 text-white">
                   <Plus className="h-4 w-4 mr-2" />
