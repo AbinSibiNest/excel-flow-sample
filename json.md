@@ -466,21 +466,86 @@ Response:
   "record": {
     "id": 1,
     "referenceId": "REF-001",
-    "firmId": "FIRM-001",
-    "trustAccountId": "TRUST-001",
+    "firmName": "Anderson & Associates",
+    "trustAccountNumber": "TA-001234567",
     "grossSettlementAmount": 25000,
     "clientFullName": "John Smith",
     "clientEmail": "john.smith@email.com",
     "clientPhone": "+1-555-0101",
     "clientBirthdate": "1985-03-15",
-    "clientAddress": "123 Main St, New York, NY 10001",
+    "clientAddressLine1": "123 Main St",
+    "clientAddressLine2": "Apt 4B",
+    "clientCity": "New York",
+    "clientState": "NY",
+    "clientZip": "10001",
     "settledAmount": 15000,
     "lienAmount": 7500,
     "advanceAmount": 2500,
     "defendantName": "XYZ Corporation",
     "defendantFirm": "Corporate Legal LLC",
-    "firmName": "Anderson & Associates",
-    "firmRole": "co counsel"
+    "firms": [
+      {
+        "name": "Top Dog",
+        "role": "Referral"
+      },
+      {
+        "name": "VLV Law",
+        "role": "Co-Counsel"
+      }
+    ],
+    "validationErrors": []
+  }
+}
+```
+
+### POST /api/records/:id/validate
+```json
+{
+  "valid": false,
+  "errors": {
+    "clientEmail": "Please enter a valid email address",
+    "clientPhone": "Please enter a valid phone number",
+    "settledAmount": "Settled amount cannot exceed gross settlement amount",
+    "clientZip": "Please enter a valid ZIP code",
+    "clientFullName": "Client name is required",
+    "referenceId": "Reference ID is required",
+    "defendantName": "Defendant name is required",
+    "clientAddressLine1": "Address line 1 is required",
+    "clientCity": "City is required",
+    "clientState": "State is required",
+    "grossSettlementAmount": "Gross settlement amount must be greater than 0"
+  },
+  "warnings": {
+    "grossSettlementAmount": "Settlement amount seems unusually high"
+  }
+}
+```
+
+### POST /api/records/:id/approve
+```json
+{
+  "success": true,
+  "message": "Record approved for migration",
+  "data": {
+    "id": 1,
+    "status": "Approved",
+    "approvedBy": "admin@firm.com",
+    "approvedAt": "2024-03-10T14:30:00Z"
+  }
+}
+```
+
+### POST /api/records/:id/migrate
+```json
+{
+  "success": true,
+  "message": "Migration initiated successfully",
+  "data": {
+    "migrationId": "MIG-001",
+    "recordId": 1,
+    "status": "In Progress",
+    "startedAt": "2024-03-10T14:30:00Z",
+    "estimatedCompletion": "2024-03-10T14:45:00Z"
   }
 }
 ```
