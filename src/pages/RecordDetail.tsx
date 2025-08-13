@@ -280,9 +280,9 @@ const RecordDetail = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="space-y-6">
         {/* Client Information - First Priority */}
-        <Card className="bg-gray-900 border-gray-800 lg:col-span-2">
+        <Card className="bg-gray-900 border-gray-800">
           <CardHeader>
             <CardTitle className="text-gray-100">Client Information</CardTitle>
           </CardHeader>
