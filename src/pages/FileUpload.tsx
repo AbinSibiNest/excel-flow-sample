@@ -21,6 +21,8 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 const FileUpload = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -30,19 +32,58 @@ const FileUpload = () => {
     "idle" | "uploading" | "success" | "error"
   >("idle");
   const [caseType, setCaseType] = useState<string>("");
+  const [caseTypeSearch, setCaseTypeSearch] = useState<string>("");
+  const [isDragActive, setIsDragActive] = useState(false);
+  const [previewData, setPreviewData] = useState<any[]>([]);
   const { toast } = useToast();
+
+  // Sample data for preview (in real app, this would come from parsing the CSV)
+  const samplePreviewData = [
+    {
+      projectId: "12302892",
+      date: "01-15-24",
+      phase: "In Treatment",
+      projectType: "Personal Injury",
+      grossSettlement: "458000",
+      defendant: "Cigna ltd",
+      fullName: "Maria Lopez Joynaas Noah Peter",
+      clientEmails: "kj.69@myshoo.com",
+      clientPhones: "+13873256967",
+      clientDetails: "505-12-1773",
+      socialSecurity: "9747",
+      clientAddress1: "Bird Ive Road",
+      clientDateOfBirth: "02-15-98",
+      referralSource: "VLX Law",
+      settlementAmount: "12000",
+      orgClients: "Layfly Law Firm",
+      firstPrimary: "Harry Max",
+      clientName: "John",
+      clientDateDeath: "03-20-23"
+    }
+  ];
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     setFiles(acceptedFiles);
     setUploadStatus("idle");
+    // In real app, parse CSV here and set preview data
+    if (acceptedFiles.length > 0) {
+      setPreviewData(samplePreviewData);
+    }
   }, []);
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+    setIsDragActive(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragActive(false);
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
+    setIsDragActive(false);
     const droppedFiles = Array.from(e.dataTransfer.files);
     onDrop(droppedFiles);
   };
@@ -55,7 +96,29 @@ const FileUpload = () => {
   };
 
   const removeFile = (index: number) => {
-    setFiles(files.filter((_, i) => i !== index));
+    const newFiles = files.filter((_, i) => i !== index);
+    setFiles(newFiles);
+    if (newFiles.length === 0) {
+      setPreviewData([]);
+    }
+  };
+
+  const caseTypes = [
+    "Personal Injury",
+    "Medical Malpractice", 
+    "Workers' Compensation",
+    "Auto Accident",
+    "Product Liability",
+    "Wrongful Death"
+  ];
+
+  const filteredCaseTypes = caseTypes.filter(type =>
+    type.toLowerCase().includes(caseTypeSearch.toLowerCase())
+  );
+
+  const formatDate = (dateStr: string) => {
+    // Convert to MM-DD-YY format
+    return dateStr;
   };
 
   const simulateUpload = async () => {
@@ -122,12 +185,19 @@ const FileUpload = () => {
         </CardHeader>
         <CardContent>
           <div
-            className="border-2 border-dashed border-gray-700 rounded-lg p-8 text-center hover:border-cyan-500 transition-colors cursor-pointer"
+            className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer ${
+              isDragActive 
+                ? "border-cyan-500 bg-cyan-500/10" 
+                : "border-gray-700 hover:border-cyan-500"
+            }`}
             onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
             onDrop={handleDrop}
             onClick={() => document.getElementById("file-input")?.click()}
           >
-            <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+            <Upload className={`h-12 w-12 mx-auto mb-4 transition-colors ${
+              isDragActive ? "text-cyan-400" : "text-gray-400"
+            }`} />
             <p className="text-lg text-gray-300 mb-2">
               Drop your CSV files here
             </p>
@@ -208,24 +278,114 @@ const FileUpload = () => {
             </Alert>
           )}
 
+          {/* File Preview Table */}
+          {previewData.length > 0 && (
+            <div className="mt-6">
+              <Card className="bg-gray-800/50 border-gray-700">
+                <CardHeader>
+                  <CardTitle className="text-gray-100">File Preview - First 5 Rows</CardTitle>
+                  <CardDescription className="text-gray-400">
+                    Please verify the data below before uploading
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="border-gray-700">
+                          <TableHead className="text-gray-300">Project ID</TableHead>
+                          <TableHead className="text-gray-300">Date Filed</TableHead>
+                          <TableHead className="text-gray-300">Phase</TableHead>
+                          <TableHead className="text-gray-300">Project Type</TableHead>
+                          <TableHead className="text-gray-300">Gross Settlement</TableHead>
+                          <TableHead className="text-gray-300">Defendant</TableHead>
+                          <TableHead className="text-gray-300">Client Full Name</TableHead>
+                          <TableHead className="text-gray-300">Client Emails</TableHead>
+                          <TableHead className="text-gray-300">Client Phones</TableHead>
+                          <TableHead className="text-gray-300">Client Details- Social Security Number</TableHead>
+                          <TableHead className="text-gray-300">Client Address 1</TableHead>
+                          <TableHead className="text-gray-300">Client Date of Birth</TableHead>
+                          <TableHead className="text-gray-300">Referral Source</TableHead>
+                          <TableHead className="text-gray-300">Settlement Amount</TableHead>
+                          <TableHead className="text-gray-300">Org Clients</TableHead>
+                          <TableHead className="text-gray-300">First Primary</TableHead>
+                          <TableHead className="text-gray-300">Client Name</TableHead>
+                          <TableHead className="text-gray-300">Client Date of Death</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {previewData.slice(0, 5).map((row, index) => (
+                          <TableRow key={index} className="border-gray-700">
+                            <TableCell className="text-gray-300">{row.projectId}</TableCell>
+                            <TableCell className="text-gray-300">{formatDate(row.date)}</TableCell>
+                            <TableCell className="text-gray-300">{row.phase}</TableCell>
+                            <TableCell className="text-gray-300">{row.projectType}</TableCell>
+                            <TableCell className="text-gray-300">{row.grossSettlement}</TableCell>
+                            <TableCell className="text-gray-300">{row.defendant}</TableCell>
+                            <TableCell className="text-gray-300">{row.fullName}</TableCell>
+                            <TableCell className="text-gray-300">{row.clientEmails}</TableCell>
+                            <TableCell className="text-gray-300">{row.clientPhones}</TableCell>
+                            <TableCell className="text-gray-300">{row.clientDetails}</TableCell>
+                            <TableCell className="text-gray-300">{row.clientAddress1}</TableCell>
+                            <TableCell className="text-gray-300">{formatDate(row.clientDateOfBirth)}</TableCell>
+                            <TableCell className="text-gray-300">{row.referralSource}</TableCell>
+                            <TableCell className="text-gray-300">{row.settlementAmount}</TableCell>
+                            <TableCell className="text-gray-300">{row.orgClients}</TableCell>
+                            <TableCell className="text-gray-300">{row.firstPrimary}</TableCell>
+                            <TableCell className="text-gray-300">{row.clientName}</TableCell>
+                            <TableCell className="text-gray-300">{formatDate(row.clientDateDeath)}</TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
+
           {/* Case Type Selection */}
           <div className="mt-6 space-y-2">
             <Label htmlFor="case-type" className="text-gray-300">
               Case Type <span className="text-red-400">*</span>
             </Label>
-            <Select value={caseType} onValueChange={setCaseType}>
-              <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-100">
-                <SelectValue placeholder="Select case type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="personal-injury">Personal Injury</SelectItem>
-                <SelectItem value="medical-malpractice">Medical Malpractice</SelectItem>
-                <SelectItem value="workers-compensation">Workers' Compensation</SelectItem>
-                <SelectItem value="auto-accident">Auto Accident</SelectItem>
-                <SelectItem value="product-liability">Product Liability</SelectItem>
-                <SelectItem value="wrongful-death">Wrongful Death</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="relative">
+              <Input
+                placeholder="Type to search case types..."
+                value={caseTypeSearch}
+                onChange={(e) => setCaseTypeSearch(e.target.value)}
+                className="bg-gray-800 border-gray-700 text-gray-100"
+              />
+              {caseTypeSearch && filteredCaseTypes.length > 0 && (
+                <div className="absolute z-10 w-full mt-1 bg-gray-800 border border-gray-700 rounded-md shadow-lg max-h-60 overflow-auto">
+                  {filteredCaseTypes.map((type) => (
+                    <div
+                      key={type}
+                      className="px-3 py-2 cursor-pointer hover:bg-gray-700 text-gray-100"
+                      onClick={() => {
+                        setCaseType(type);
+                        setCaseTypeSearch("");
+                      }}
+                    >
+                      {type}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            {caseType && (
+              <div className="flex items-center justify-between bg-gray-800/50 p-2 rounded border border-gray-700">
+                <span className="text-gray-300">Selected: {caseType}</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setCaseType("")}
+                  className="text-gray-400 hover:text-red-400"
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Action Button */}
