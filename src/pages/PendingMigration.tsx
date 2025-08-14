@@ -27,6 +27,7 @@ const PendingMigration = () => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const [showNewOnly, setShowNewOnly] = useState(false);
+  const [filterType, setFilterType] = useState<'all' | 'errors' | 'ready'>('all');
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -53,6 +54,8 @@ const PendingMigration = () => {
       createDate: "2024-01-15",
       settledAmount: 15000,
       status: "new",
+      hasErrors: true,
+      isApproved: false,
     },
     {
       id: 2,
@@ -62,6 +65,8 @@ const PendingMigration = () => {
       createDate: "2024-01-18",
       settledAmount: 22500,
       status: "updated",
+      hasErrors: false,
+      isApproved: true,
     },
     {
       id: 3,
@@ -71,6 +76,8 @@ const PendingMigration = () => {
       createDate: "2024-01-20",
       settledAmount: 18750,
       status: "new",
+      hasErrors: false,
+      isApproved: true,
     },
     {
       id: 4,
@@ -80,6 +87,8 @@ const PendingMigration = () => {
       createDate: "2024-01-22",
       settledAmount: null,
       status: "same",
+      hasErrors: true,
+      isApproved: false,
     },
     {
       id: 5,
@@ -89,13 +98,42 @@ const PendingMigration = () => {
       createDate: "2024-01-25",
       settledAmount: 27800,
       status: "new",
+      hasErrors: false,
+      isApproved: false,
     },
   ];
 
-  // Filter data based on new status filter
-  const filteredData = showNewOnly 
-    ? parsedData.filter(item => item.status === "new")
-    : parsedData;
+  // Filter data based on filter type
+  const filteredData = (() => {
+    let data = parsedData;
+    
+    if (showNewOnly) {
+      data = data.filter(item => item.status === "new");
+    }
+    
+    switch (filterType) {
+      case 'errors':
+        return data.filter(item => item.hasErrors);
+      case 'ready':
+        return data.filter(item => !item.hasErrors);
+      default:
+        return data;
+    }
+  })();
+
+  // Count records with errors and ready to import
+  const recordsWithErrors = parsedData.filter(item => item.hasErrors).length;
+  const recordsReadyToImport = parsedData.filter(item => !item.hasErrors).length;
+
+  // Format date to MM-DD-YY
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      month: '2-digit',
+      day: '2-digit',
+      year: '2-digit'
+    });
+  };
 
   const handleRowClick = (id: number) => {
     navigate(`/record/${id}`);
@@ -160,33 +198,36 @@ const PendingMigration = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900 border-gray-800">
+        <Card 
+          className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'errors' ? 'ring-2 ring-red-500' : 'hover:border-red-600'}`}
+          onClick={() => setFilterType(filterType === 'errors' ? 'all' : 'errors')}
+        >
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Selected</p>
-                <p className="text-2xl font-bold text-blue-400">
-                  {selectedRows.length}
+                <p className="text-sm text-gray-400">Review Required</p>
+                <p className="text-2xl font-bold text-red-400">
+                  {recordsWithErrors}
                 </p>
               </div>
-              <Users className="h-8 w-8 text-blue-400" />
+              <Filter className="h-8 w-8 text-red-400" />
             </div>
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900 border-gray-800">
+        <Card 
+          className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'ready' ? 'ring-2 ring-green-500' : 'hover:border-green-600'}`}
+          onClick={() => setFilterType(filterType === 'ready' ? 'all' : 'ready')}
+        >
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Total Amount</p>
+                <p className="text-sm text-gray-400">Ready to Import</p>
                 <p className="text-2xl font-bold text-green-400">
-                  $
-                  {filteredData
-                    .reduce((sum, row) => sum + (row.settledAmount || 0), 0)
-                    .toLocaleString()}
+                  {recordsReadyToImport}
                 </p>
               </div>
-              <Database className="h-8 w-8 text-green-400" />
+              <CheckCircle className="h-8 w-8 text-green-400" />
             </div>
           </CardContent>
         </Card>
@@ -204,6 +245,16 @@ const PendingMigration = () => {
             </div>
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="select-all"
+                  checked={selectAll}
+                  onCheckedChange={handleSelectAll}
+                />
+                <label htmlFor="select-all" className="text-sm text-gray-300 font-medium">
+                  Select All
+                </label>
+              </div>
+              <div className="flex items-center space-x-2">
                 <label htmlFor="show-new-only" className="text-sm text-gray-300 flex items-center space-x-2">
                   <span>Show NEW Only</span>
                 </label>
@@ -212,16 +263,6 @@ const PendingMigration = () => {
                   checked={showNewOnly}
                   onCheckedChange={setShowNewOnly}
                 />
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="select-all"
-                  checked={selectAll}
-                  onCheckedChange={handleSelectAll}
-                />
-                <label htmlFor="select-all" className="text-sm text-gray-300">
-                  Select All
-                </label>
               </div>
               <Button
                 onClick={handleMigrate}
@@ -247,13 +288,16 @@ const PendingMigration = () => {
                   <TableHead className="text-gray-300">
                     Settled Amount
                   </TableHead>
+                  <TableHead className="text-gray-300">Approval</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredData.map((row) => (
                   <TableRow 
                     key={row.id} 
-                    className="border-gray-800 hover:bg-gray-800/50 cursor-pointer"
+                    className={`border-gray-800 hover:bg-gray-800/50 cursor-pointer ${
+                      row.hasErrors ? 'bg-red-900/20 border-red-800/30' : ''
+                    }`}
                     onClick={() => handleRowClick(row.id)}
                   >
                     <TableCell onClick={(e) => e.stopPropagation()}>
@@ -270,14 +314,30 @@ const PendingMigration = () => {
                           NEW
                         </Badge>
                       )}
+                      {row.hasErrors && (
+                        <Badge className="bg-red-900/50 text-red-400 border-red-600 ml-1">
+                          ERROR
+                        </Badge>
+                      )}
                     </TableCell>
-                    <TableCell className="text-gray-300">
+                    <TableCell className={`${row.hasErrors ? 'text-red-300' : 'text-gray-300'}`}>
                       {row.plaintiff}
                     </TableCell>
-                    <TableCell className="text-gray-300">{row.caseType}</TableCell>
-                    <TableCell className="text-gray-300">{row.createDate}</TableCell>
+                    <TableCell className={`font-mono text-sm ${row.hasErrors ? 'text-red-300' : 'text-gray-300'}`}>
+                      {row.caseType}
+                    </TableCell>
+                    <TableCell className={`font-mono text-sm ${row.hasErrors ? 'text-red-300' : 'text-gray-300'}`}>
+                      {formatDate(row.createDate)}
+                    </TableCell>
                     <TableCell className="text-green-400 font-medium">
                       {row.settledAmount ? `$${row.settledAmount.toLocaleString()}` : '$--'}
+                    </TableCell>
+                    <TableCell>
+                      {row.isApproved && (
+                        <Badge className="bg-green-900/50 text-green-400 border-green-600">
+                          APPROVED
+                        </Badge>
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
