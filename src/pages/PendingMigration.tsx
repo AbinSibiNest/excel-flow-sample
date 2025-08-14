@@ -312,7 +312,7 @@ const PendingMigration = () => {
                         checked={selectAll}
                         onCheckedChange={handleSelectAll}
                       />
-                      <span>Select</span>
+                      <span>Select All</span>
                     </div>
                   </TableHead>
                   <TableHead className="text-gray-300">Status</TableHead>
