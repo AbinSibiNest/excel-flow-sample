@@ -18,8 +18,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CheckCircle, Database, FileText, Users, Filter } from "lucide-react";
+import { CheckCircle, Database, FileText, Users, Filter, Search } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 // Fixed Select import and null handling issues
 
@@ -28,6 +29,7 @@ const PendingMigration = () => {
   const [selectAll, setSelectAll] = useState(false);
   const [showNewOnly, setShowNewOnly] = useState(false);
   const [filterType, setFilterType] = useState<'all' | 'errors' | 'ready'>('all');
+  const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -103,9 +105,16 @@ const PendingMigration = () => {
     },
   ];
 
-  // Filter data based on filter type
+  // Filter data based on filter type and search term
   const filteredData = (() => {
     let data = parsedData;
+    
+    // Filter by search term
+    if (searchTerm) {
+      data = data.filter(item => 
+        item.plaintiff.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
     
     if (showNewOnly) {
       data = data.filter(item => item.status === "new");
@@ -244,6 +253,15 @@ const PendingMigration = () => {
               </CardDescription>
             </div>
             <div className="flex items-center space-x-4">
+              <div className="relative w-64">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  placeholder="Search by plaintiff name..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 bg-gray-800 border-gray-700 text-gray-100"
+                />
+              </div>
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="select-all"
