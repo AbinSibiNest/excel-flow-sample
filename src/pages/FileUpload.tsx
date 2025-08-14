@@ -19,7 +19,6 @@ import {
   Play,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -32,8 +31,9 @@ const FileUpload = () => {
     "idle" | "uploading" | "success" | "error"
   >("idle");
   const [caseType, setCaseType] = useState<string>("");
-  const [caseTypeSearch, setCaseTypeSearch] = useState<string>("");
+  const [caseTypeSearchValue, setCaseTypeSearchValue] = useState<string>(""); // Renamed for clarity
   const [isDragActive, setIsDragActive] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [previewData, setPreviewData] = useState<any[]>([]);
   const { toast } = useToast();
 
@@ -105,15 +105,16 @@ const FileUpload = () => {
 
   const caseTypes = [
     "Personal Injury",
-    "Medical Malpractice", 
+    "Medical Malpractice",
     "Workers' Compensation",
     "Auto Accident",
     "Product Liability",
     "Wrongful Death"
   ];
 
+  // UPDATED: Filter logic now correctly uses the search input's value
   const filteredCaseTypes = caseTypes.filter(type =>
-    type.toLowerCase().includes(caseTypeSearch.toLowerCase())
+    type.toLowerCase().includes(caseTypeSearchValue.toLowerCase())
   );
 
   const formatDate = (dateStr: string) => {
@@ -126,13 +127,11 @@ const FileUpload = () => {
     setUploadStatus("uploading");
     setUploadProgress(0);
 
-    // Simulate upload progress
     for (let i = 0; i <= 100; i += 10) {
       setUploadProgress(i);
       await new Promise((resolve) => setTimeout(resolve, 200));
     }
 
-    // Simulate success/error
     const success = Math.random() > 0.2; // 80% success rate
     if (success) {
       setUploadStatus("success");
@@ -175,20 +174,66 @@ const FileUpload = () => {
         </h1>
       </div>
 
-      {/* Upload Area */}
+      {/* Main Upload Card */}
       <Card className="bg-gray-900 border-gray-800">
         <CardHeader>
           <CardTitle className="text-gray-100">Upload Files</CardTitle>
           <CardDescription className="text-gray-400">
-            Drag and drop your CSV files here or click to browse
+            Select a case type, then drag and drop your CSV files below.
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {/* MOVED: Case Type selector is now here */}
+          <div className="mb-6 space-y-2">
+            <Label htmlFor="case-type-search" className="text-gray-300">
+              Case Type <span className="text-red-400">*</span>
+            </Label>
+            <div className="relative">
+              <Input
+                id="case-type-search"
+                placeholder="Type to search case types..."
+                value={caseTypeSearchValue}
+                onChange={(e) => {
+                  setCaseTypeSearchValue(e.target.value);
+                  setCaseType(""); // Clear final selection while user is typing
+                  setIsDropdownOpen(true);
+                }}
+                onFocus={() => {
+                  if (caseTypeSearchValue) setIsDropdownOpen(true);
+                }}
+                onBlur={() => {
+                  // Delay hiding to allow click event on dropdown items
+                  setTimeout(() => setIsDropdownOpen(false), 150);
+                }}
+                className="bg-gray-800 border-gray-700 text-gray-100"
+              />
+              {isDropdownOpen && caseTypeSearchValue && filteredCaseTypes.length > 0 && (
+                <div className="absolute z-10 w-full mt-1 bg-gray-800 border border-gray-700 rounded-md shadow-lg max-h-60 overflow-auto">
+                  {filteredCaseTypes.map((type) => (
+                    <div
+                      key={type}
+                      className="px-3 py-2 cursor-pointer hover:bg-gray-700 text-gray-100"
+                      onMouseDown={() => { // Use onMouseDown to register click before onBlur hides the dropdown
+                        setCaseTypeSearchValue(type);
+                        setCaseType(type); // UPDATED: This now sets the final caseType state
+                        setIsDropdownOpen(false);
+                      }}
+                    >
+                      {type}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Upload Area */}
           <div
             className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer ${
               isDragActive 
                 ? "border-cyan-500 bg-cyan-500/10" 
-                : "border-gray-700 hover:border-cyan-500"
+                // MODIFIED: Added hover background color
+                : "border-gray-700 hover:border-cyan-500 hover:bg-cyan-500/10"
             }`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
@@ -245,7 +290,8 @@ const FileUpload = () => {
             </div>
           )}
 
-          {/* Upload Progress */}
+          {/* Upload Progress, Status Messages, and Preview Table... (rest of the code is unchanged) */}
+          
           {isUploading && (
             <div className="mt-6">
               <div className="flex items-center justify-between mb-2">
@@ -258,7 +304,6 @@ const FileUpload = () => {
             </div>
           )}
 
-          {/* Status Messages */}
           {uploadStatus === "success" && (
             <Alert className="mt-6 bg-green-900/50 border-green-600">
               <CheckCircle className="h-4 w-4 text-green-400" />
@@ -278,7 +323,6 @@ const FileUpload = () => {
             </Alert>
           )}
 
-          {/* File Preview Table */}
           {previewData.length > 0 && (
             <div className="mt-6">
               <Card className="bg-gray-800/50 border-gray-700">
@@ -343,50 +387,6 @@ const FileUpload = () => {
               </Card>
             </div>
           )}
-
-          {/* Case Type Selection */}
-          <div className="mt-6 space-y-2">
-            <Label htmlFor="case-type" className="text-gray-300">
-              Case Type <span className="text-red-400">*</span>
-            </Label>
-            <div className="relative">
-              <Input
-                placeholder="Type to search case types..."
-                value={caseTypeSearch}
-                onChange={(e) => setCaseTypeSearch(e.target.value)}
-                className="bg-gray-800 border-gray-700 text-gray-100"
-              />
-              {caseTypeSearch && filteredCaseTypes.length > 0 && (
-                <div className="absolute z-10 w-full mt-1 bg-gray-800 border border-gray-700 rounded-md shadow-lg max-h-60 overflow-auto">
-                  {filteredCaseTypes.map((type) => (
-                    <div
-                      key={type}
-                      className="px-3 py-2 cursor-pointer hover:bg-gray-700 text-gray-100"
-                      onClick={() => {
-                        setCaseType(type);
-                        setCaseTypeSearch("");
-                      }}
-                    >
-                      {type}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            {caseType && (
-              <div className="flex items-center justify-between bg-gray-800/50 p-2 rounded border border-gray-700">
-                <span className="text-gray-300">Selected: {caseType}</span>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setCaseType("")}
-                  className="text-gray-400 hover:text-red-400"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </div>
-            )}
-          </div>
 
           {/* Action Button */}
           <div className="mt-6 flex justify-end">

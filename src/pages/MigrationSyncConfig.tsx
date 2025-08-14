@@ -88,6 +88,7 @@ const MigrationSyncConfig = () => {
     "pending verification": "#pending",
     "active": "", // The 'active' status links to the base URL with no hash.
     "failed": "#history",
+    "not yet synced":"#config",
   };
 
   // Create the badge component once to avoid repeating code.
