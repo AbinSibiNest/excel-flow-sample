@@ -192,7 +192,7 @@ const PendingMigration = () => {
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card className="bg-gray-900 border-gray-800">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
@@ -240,6 +240,23 @@ const PendingMigration = () => {
             </div>
           </CardContent>
         </Card>
+
+        <Card className="bg-gray-900 border-gray-800">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400">Total Amount</p>
+                <p className="text-2xl font-bold text-cyan-400">
+                  $
+                  {filteredData
+                    .reduce((sum, row) => sum + (row.settledAmount || 0), 0)
+                    .toLocaleString()}
+                </p>
+              </div>
+              <Database className="h-8 w-8 text-cyan-400" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Data Table */}
@@ -261,16 +278,6 @@ const PendingMigration = () => {
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 bg-gray-800 border-gray-700 text-gray-100"
                 />
-              </div>
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="select-all"
-                  checked={selectAll}
-                  onCheckedChange={handleSelectAll}
-                />
-                <label htmlFor="select-all" className="text-sm text-gray-300 font-medium">
-                  Select All
-                </label>
               </div>
               <div className="flex items-center space-x-2">
                 <label htmlFor="show-new-only" className="text-sm text-gray-300 flex items-center space-x-2">
@@ -298,7 +305,16 @@ const PendingMigration = () => {
             <Table>
                <TableHeader>
                  <TableRow className="border-gray-800">
-                  <TableHead className="text-gray-300">Select</TableHead>
+                  <TableHead className="text-gray-300">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id="select-all-header"
+                        checked={selectAll}
+                        onCheckedChange={handleSelectAll}
+                      />
+                      <span>Select</span>
+                    </div>
+                  </TableHead>
                   <TableHead className="text-gray-300">Status</TableHead>
                   <TableHead className="text-gray-300">Plaintiff</TableHead>
                   <TableHead className="text-gray-300">Case Type</TableHead>
