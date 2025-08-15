@@ -21,6 +21,8 @@ const buttonVariants = cva(
         upload: "bg-gradient-upload border-2 border-upload-border text-primary hover:shadow-upload transition-all duration-300",
         success: "bg-gradient-success text-white hover:opacity-90 transition-all duration-300",
         processing: "bg-processing text-secondary border border-secondary/20 hover:bg-secondary/10",
+        approve: "bg-orange-approve text-orange-approve-foreground hover:bg-orange-approve/90",
+        migrate: "bg-golden-migrate text-golden-migrate-foreground hover:bg-golden-migrate/90",
       },
       size: {
         default: "h-10 px-4 py-2",

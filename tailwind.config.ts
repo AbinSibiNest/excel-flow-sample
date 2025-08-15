@@ -53,6 +53,14 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				'orange-approve': {
+					DEFAULT: 'hsl(var(--orange-approve))',
+					foreground: 'hsl(var(--orange-approve-foreground))'
+				},
+				'golden-migrate': {
+					DEFAULT: 'hsl(var(--golden-migrate))',
+					foreground: 'hsl(var(--golden-migrate-foreground))'
+				},
 				'upload-bg': 'hsl(var(--upload-bg))',
 				'upload-border': 'hsl(var(--upload-border))',
 				'data-header': 'hsl(var(--data-header))',
