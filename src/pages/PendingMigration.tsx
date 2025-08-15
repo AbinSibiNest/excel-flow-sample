@@ -265,9 +265,9 @@ const PendingMigration = () => {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-gray-100">Parsed CSV Data</CardTitle>
-              {/* <CardDescription className="text-gray-400">
+              <CardDescription className="text-gray-400">
                 Select records to migrate to the main database
-              </CardDescription> */}
+              </CardDescription>
             </div>
             <div className="flex items-center space-x-4">
               <div className="relative w-64">
