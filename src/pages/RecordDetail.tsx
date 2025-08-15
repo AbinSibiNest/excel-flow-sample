@@ -65,7 +65,7 @@ const RecordDetail = () => {
       grossSettlementAmount: 25000,
       clientFullName: "John Smith",
       clientEmail: "john.smith@email.com",
-      clientPhone: hasErrors ? "555-INVALID" : "+1-555-0101", // Error example
+      clientPhone: hasErrors ? "555-INVALID" : "+1-555-555-0101", // Error example
       clientBirthdate: "1985-03-15",
       clientSSN: hasErrors ? "123-45-678" : "123-45-6789", // Error example - missing digit
       clientAddressLine1: "123 Main St",
@@ -98,7 +98,7 @@ const RecordDetail = () => {
     // Phone validation (proper format)
     const phoneRegex = /^\+?1?[-.\s]?\(?[0-9]{3}\)?[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}$/;
     if (!phoneRegex.test(data.clientPhone)) {
-      newErrors.clientPhone = "Please enter a valid phone number (e.g., +1-555-0101)";
+      newErrors.clientPhone = "Please enter a valid phone number (e.g., +1-555-555-0101)";
     }
 
     // SSN validation (must be 9 digits)
@@ -235,7 +235,7 @@ const RecordDetail = () => {
 
   const maskDOB = (dob: string) => {
     if (!showDOB) {
-      return "****-**-**";
+      return "**-**-****";
     }
     return dob;
   };

@@ -231,7 +231,7 @@ const PendingMigration = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Ready to Import</p>
+                <p className="text-sm text-gray-400">Ready to Export</p>
                 <p className="text-2xl font-bold text-green-400">
                   {recordsReadyToImport}
                 </p>
