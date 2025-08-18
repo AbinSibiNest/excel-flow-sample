@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CheckCircle, Database, FileText, Users, Filter, Search } from "lucide-react";
+import { CheckCircle, Database, FileText, Users, Filter, Search,ArchiveX,Archive } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -166,7 +166,7 @@ const PendingMigration = () => {
       createDate: "2024-02-12",
       settledAmount: 85000,
       status: "Updates",
-      approval: "Sync Failed",
+      approval: "Needs Review",
     },
     {
       id: 13,
@@ -216,7 +216,7 @@ const PendingMigration = () => {
       createDate: "2024-02-25",
       settledAmount: 39400,
       status: "Updates",
-      approval: "Sync Failed",
+      approval: "Needs Review",
     },
     {
       id: 18,
@@ -361,12 +361,12 @@ const PendingMigration = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Review Required</p>
+                <p className="text-sm text-gray-400">Needs Review</p>
                 <p className="text-2xl font-bold text-red-400">
                   {recordsWithErrors}
                 </p>
               </div>
-              <Filter className="h-8 w-8 text-red-400" />
+              <FileText className="h-8 w-8 text-red-400" />
             </div>
           </CardContent>
         </Card>
@@ -378,7 +378,7 @@ const PendingMigration = () => {
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Ready to Export</p>
+                <p className="text-sm text-gray-400">Ready to Sync</p>
                 <p className="text-2xl font-bold text-green-400">
                   {recordsReadyToImport}
                 </p>
@@ -400,24 +400,24 @@ const PendingMigration = () => {
                   {recordsSynced}
                 </p>
               </div>
-              <CheckCircle className="h-8 w-8 text-blue-400" />
+              <Archive className="h-8 w-8 text-blue-400" />
             </div>
           </CardContent>
         </Card>
 
         <Card 
-          className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'failed' ? 'ring-2 ring-red-500' : 'hover:border-red-600'}`}
+          className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'failed' ? 'ring-2 ring-orange-500' : 'hover:border-orange-600'}`}
           onClick={() => setFilterType(filterType === 'failed' ? 'all' : 'failed')}
         >
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-400">Sync Failed</p>
-                <p className="text-2xl font-bold text-red-400">
+                <p className="text-2xl font-bold text-orange-400">
                   {recordsSyncFailed}
                 </p>
               </div>
-              <Filter className="h-8 w-8 text-red-400" />
+              <ArchiveX className="h-8 w-8 text-orange-400" />
             </div>
           </CardContent>
         </Card>
@@ -445,7 +445,7 @@ const PendingMigration = () => {
               </div>
               <div className="flex items-center space-x-2">
                 <label htmlFor="show-new-only" className="text-sm text-gray-300 flex items-center space-x-2">
-                  <span>Show NEW Only</span>
+                  <span>Show New and Updates Only</span>
                 </label>
                 <Switch
                   id="show-new-only"
@@ -459,7 +459,7 @@ const PendingMigration = () => {
                 className="bg-cyan-600 hover:bg-cyan-700 text-white"
               >
                 <Database className="h-4 w-4 mr-2" />
-                Migrate Selected ({selectedRows.length})
+                Sync Selected ({selectedRows.length})
               </Button>
             </div>
           </div>
@@ -553,7 +553,7 @@ const PendingMigration = () => {
                         </Badge>
                       )}
                       {row.approval === "Sync Failed" && (
-                        <Badge className="bg-red-900/50 text-red-400 border-red-600">
+                        <Badge className="bg-orange-900/50 text-orange-400 border-orange-600">
                           Sync Failed
                         </Badge>
                       )}
