@@ -28,7 +28,7 @@ const PendingMigration = () => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   const [showNewOnly, setShowNewOnly] = useState(true);
-  const [filterType, setFilterType] = useState<'all' | 'errors' | 'ready'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'errors' | 'ready' | 'synced' | 'failed'>('all');
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -270,14 +270,20 @@ const PendingMigration = () => {
         return data.filter(item => item.approval === "Needs Review");
       case 'ready':
         return data.filter(item => item.approval === "Ready to Sync");
+      case 'synced':
+        return data.filter(item => item.approval === "Synced");
+      case 'failed':
+        return data.filter(item => item.approval === "Sync Failed");
       default:
         return data;
     }
   })();
 
-  // Count records with errors and ready to import
+  // Count records for all statuses
   const recordsWithErrors = parsedData.filter(item => item.approval === "Needs Review").length;
   const recordsReadyToImport = parsedData.filter(item => item.approval === "Ready to Sync").length;
+  const recordsSynced = parsedData.filter(item => item.approval === "Synced").length;
+  const recordsSyncFailed = parsedData.filter(item => item.approval === "Sync Failed").length;
 
   // Format date to MM-DD-YY
   const formatDate = (dateString: string) => {
@@ -348,20 +354,6 @@ const PendingMigration = () => {
 
       {/* Summary Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card className="bg-gray-900 border-gray-800">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Total Records</p>
-                <p className="text-2xl font-bold text-gray-100">
-                  {filteredData.length}
-                </p>
-              </div>
-              <FileText className="h-8 w-8 text-cyan-400" />
-            </div>
-          </CardContent>
-        </Card>
-
         <Card 
           className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'errors' ? 'ring-2 ring-red-500' : 'hover:border-red-600'}`}
           onClick={() => setFilterType(filterType === 'errors' ? 'all' : 'errors')}
@@ -396,19 +388,36 @@ const PendingMigration = () => {
           </CardContent>
         </Card>
 
-        <Card className="bg-gray-900 border-gray-800">
+        <Card 
+          className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'synced' ? 'ring-2 ring-blue-500' : 'hover:border-blue-600'}`}
+          onClick={() => setFilterType(filterType === 'synced' ? 'all' : 'synced')}
+        >
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Total Amount</p>
-                <p className="text-2xl font-bold text-cyan-400">
-                  $
-                  {filteredData
-                    .reduce((sum, row) => sum + (row.settledAmount || 0), 0)
-                    .toLocaleString()}
+                <p className="text-sm text-gray-400">Synced</p>
+                <p className="text-2xl font-bold text-blue-400">
+                  {recordsSynced}
                 </p>
               </div>
-              <Database className="h-8 w-8 text-cyan-400" />
+              <CheckCircle className="h-8 w-8 text-blue-400" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'failed' ? 'ring-2 ring-red-500' : 'hover:border-red-600'}`}
+          onClick={() => setFilterType(filterType === 'failed' ? 'all' : 'failed')}
+        >
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400">Sync Failed</p>
+                <p className="text-2xl font-bold text-red-400">
+                  {recordsSyncFailed}
+                </p>
+              </div>
+              <Filter className="h-8 w-8 text-red-400" />
             </div>
           </CardContent>
         </Card>
