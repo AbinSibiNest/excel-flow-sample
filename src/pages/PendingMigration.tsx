@@ -27,7 +27,7 @@ import { useToast } from "@/hooks/use-toast";
 const PendingMigration = () => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [showNewOnly, setShowNewOnly] = useState(false);
+  const [showNewOnly, setShowNewOnly] = useState(true);
   const [filterType, setFilterType] = useState<'all' | 'errors' | 'ready'>('all');
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
@@ -46,8 +46,8 @@ const PendingMigration = () => {
     }
   }, []);
 
-  // Mock parsed CSV data
-  const parsedData = [
+  // Mock parsed CSV data with new status and approval structure
+  const [parsedData, setParsedData] = useState([
     {
       id: 1,
       referenceId: "REF-001",
@@ -55,9 +55,8 @@ const PendingMigration = () => {
       caseType: "Personal Injury",
       createDate: "2024-01-15",
       settledAmount: 15000,
-      status: "new",
-      hasErrors: true,
-      isApproved: false,
+      status: "New",
+      approval: "Needs Review",
     },
     {
       id: 2,
@@ -66,9 +65,8 @@ const PendingMigration = () => {
       caseType: "Medical Malpractice",
       createDate: "2024-01-18",
       settledAmount: 22500,
-      status: "updated",
-      hasErrors: false,
-      isApproved: true,
+      status: "Updates",
+      approval: "Ready to Sync",
     },
     {
       id: 3,
@@ -77,9 +75,8 @@ const PendingMigration = () => {
       caseType: "Auto Accident",
       createDate: "2024-01-20",
       settledAmount: 18750,
-      status: "new",
-      hasErrors: false,
-      isApproved: true,
+      status: "New",
+      approval: "Ready to Sync",
     },
     {
       id: 4,
@@ -88,9 +85,8 @@ const PendingMigration = () => {
       caseType: "Slip and Fall",
       createDate: "2024-01-22",
       settledAmount: null,
-      status: "same",
-      hasErrors: true,
-      isApproved: false,
+      status: "No Updates",
+      approval: "Synced",
     },
     {
       id: 5,
@@ -99,11 +95,10 @@ const PendingMigration = () => {
       caseType: "Workers' Compensation",
       createDate: "2024-01-25",
       settledAmount: 27800,
-      status: "new",
-      hasErrors: false,
-      isApproved: false,
+      status: "Updates",
+      approval: "Needs Review",
     },
-  ];
+  ]);
 
   // Filter data based on filter type and search term
   const filteredData = (() => {
@@ -117,22 +112,22 @@ const PendingMigration = () => {
     }
     
     if (showNewOnly) {
-      data = data.filter(item => item.status === "new");
+      data = data.filter(item => item.status === "New" || item.status === "Updates");
     }
     
     switch (filterType) {
       case 'errors':
-        return data.filter(item => item.hasErrors);
+        return data.filter(item => item.approval === "Needs Review");
       case 'ready':
-        return data.filter(item => !item.hasErrors);
+        return data.filter(item => item.approval === "Ready to Sync");
       default:
         return data;
     }
   })();
 
   // Count records with errors and ready to import
-  const recordsWithErrors = parsedData.filter(item => item.hasErrors).length;
-  const recordsReadyToImport = parsedData.filter(item => !item.hasErrors).length;
+  const recordsWithErrors = parsedData.filter(item => item.approval === "Needs Review").length;
+  const recordsReadyToImport = parsedData.filter(item => item.approval === "Ready to Sync").length;
 
   // Format date to MM-DD-YY
   const formatDate = (dateString: string) => {
@@ -151,7 +146,8 @@ const PendingMigration = () => {
   const handleSelectAll = (checked: boolean) => {
     setSelectAll(checked);
     if (checked) {
-      setSelectedRows(filteredData.map((row) => row.id));
+      // Only select rows that are "Ready to Sync"
+      setSelectedRows(filteredData.filter(row => row.approval === "Ready to Sync").map((row) => row.id));
     } else {
       setSelectedRows([]);
     }
@@ -176,13 +172,22 @@ const PendingMigration = () => {
       return;
     }
 
+    // Update approval status for migrated records
+    setParsedData(prevData => 
+      prevData.map(item => 
+        selectedRows.includes(item.id) 
+          ? { ...item, approval: Math.random() > 0.8 ? "Sync Failed" : "Synced" }
+          : item
+      )
+    );
+
     toast({
       title: "Migration Started",
       description: `${selectedRows.length} records have been queued for migration.`,
     });
 
-    // Here you would typically trigger the actual migration process
-    console.log("Migrating records:", selectedRows);
+    setSelectedRows([]);
+    setSelectAll(false);
   };
 
   return (
@@ -330,46 +335,67 @@ const PendingMigration = () => {
                   <TableRow 
                     key={row.id} 
                     className={`border-gray-800 hover:bg-gray-800/50 cursor-pointer ${
-                      row.hasErrors ? 'bg-red-900/20 border-red-800/30' : ''
+                      row.approval === "Needs Review" ? 'bg-red-900/20 border-red-800/30' : ''
                     }`}
                     onClick={() => handleRowClick(row.id)}
                   >
                     <TableCell onClick={(e) => e.stopPropagation()}>
                       <Checkbox
                         checked={selectedRows.includes(row.id)}
+                        disabled={row.approval !== "Ready to Sync"}
                         onCheckedChange={(checked) =>
                           handleRowSelect(row.id, checked as boolean)
                         }
                       />
                     </TableCell>
                     <TableCell>
-                      {row.status === "new" && (
+                      {row.status === "New" && (
                         <Badge className="bg-blue-900/50 text-blue-400 border-blue-600">
-                          NEW
+                          {row.status}
                         </Badge>
                       )}
-                      {row.hasErrors && (
-                        <Badge className="bg-red-900/50 text-red-400 border-red-600 ml-1">
-                          ERROR
+                      {row.status === "Updates" && (
+                        <Badge className="bg-yellow-900/50 text-yellow-400 border-yellow-600">
+                          {row.status}
+                        </Badge>
+                      )}
+                      {row.status === "No Updates" && (
+                        <Badge className="bg-gray-900/50 text-gray-400 border-gray-600">
+                          {row.status}
                         </Badge>
                       )}
                     </TableCell>
-                    <TableCell className={`${row.hasErrors ? 'text-red-300' : 'text-gray-300'}`}>
+                    <TableCell className={`${row.approval === "Needs Review" ? 'text-red-300' : 'text-gray-300'}`}>
                       {row.plaintiff}
                     </TableCell>
-                    <TableCell className={`font-mono text-sm ${row.hasErrors ? 'text-red-300' : 'text-gray-300'}`}>
+                    <TableCell className={`font-mono text-sm ${row.approval === "Needs Review" ? 'text-red-300' : 'text-gray-300'}`}>
                       {row.caseType}
                     </TableCell>
-                    <TableCell className={`font-mono text-sm ${row.hasErrors ? 'text-red-300' : 'text-gray-300'}`}>
+                    <TableCell className={`font-mono text-sm ${row.approval === "Needs Review" ? 'text-red-300' : 'text-gray-300'}`}>
                       {formatDate(row.createDate)}
                     </TableCell>
                     <TableCell className="text-green-400 font-medium">
                       {row.settledAmount ? `$${row.settledAmount.toLocaleString()}` : '$--'}
                     </TableCell>
                     <TableCell>
-                      {row.isApproved && (
+                      {row.approval === "Ready to Sync" && (
                         <Badge className="bg-green-900/50 text-green-400 border-green-600">
-                          APPROVED
+                          Ready to Sync
+                        </Badge>
+                      )}
+                      {row.approval === "Needs Review" && (
+                        <Badge className="bg-red-900/50 text-red-400 border-red-600">
+                          Needs Review
+                        </Badge>
+                      )}
+                      {row.approval === "Synced" && (
+                        <Badge className="bg-blue-900/50 text-blue-400 border-blue-600">
+                          Synced
+                        </Badge>
+                      )}
+                      {row.approval === "Sync Failed" && (
+                        <Badge className="bg-red-900/50 text-red-400 border-red-600">
+                          Sync Failed
                         </Badge>
                       )}
                     </TableCell>
