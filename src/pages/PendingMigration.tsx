@@ -116,7 +116,7 @@ const PendingMigration = () => {
       createDate: "2024-02-01",
       settledAmount: 42000,
       status: "Updates",
-      approval: "Synced",
+      approval: "Ready to Sync",
     },
     {
       id: 8,
