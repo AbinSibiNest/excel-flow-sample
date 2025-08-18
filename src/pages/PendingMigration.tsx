@@ -470,14 +470,14 @@ const PendingMigration = () => {
                       <span>Select All</span>
                     </div>
                   </TableHead>
-                  <TableHead className="text-gray-300">Status</TableHead>
+                  <TableHead className="text-gray-300">Case Status</TableHead>
                   <TableHead className="text-gray-300">Plaintiff</TableHead>
                   <TableHead className="text-gray-300">Case Type</TableHead>
                   <TableHead className="text-gray-300">Create Date</TableHead>
                   <TableHead className="text-gray-300">
                     Settled Amount
                   </TableHead>
-                  <TableHead className="text-gray-300">Approval</TableHead>
+                  <TableHead className="text-gray-300">Sync Status</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
