@@ -10,12 +10,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Save, AlertCircle, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Save, AlertCircle, Eye, EyeOff, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface RecordData {
   id: number;
   referenceId: string;
+  plaintiff: string;
+  caseType: string;
+  createDate: string;
+  settledAmount: number;
+  status: string;
+  approval: string;
+  // Additional fields for form
   firmName: string;
   trustAccountNumber: string;
   grossSettlementAmount: number;
@@ -29,7 +36,6 @@ interface RecordData {
   clientCity: string;
   clientState: string;
   clientZip: string;
-  settledAmount: number;
   lienAmount: number;
   advanceAmount: number;
   defendant: string;
@@ -54,34 +60,75 @@ const RecordDetail = () => {
   const [showSSN, setShowSSN] = useState(false);
 
   useEffect(() => {
-    // Mock data with different examples based on ID
-    const hasErrors = id === "1";
+    // Use same mock data as PendingMigration screen
+    const mockRecords = [
+      {
+        id: 1,
+        referenceId: "REF-001",
+        plaintiff: "John Smith",
+        caseType: "Personal Injury",
+        createDate: "2024-01-15",
+        settledAmount: 15000,
+        status: "New",
+        approval: "Needs Review",
+        // Additional form fields
+        firmName: "Anderson & Associates",
+        trustAccountNumber: "TA-001234567",
+        grossSettlementAmount: 25000,
+        clientFullName: "John Smith",
+        clientEmail: "john.smith@email.com",
+        clientPhone: "555-INVALID", // Error example
+        clientBirthdate: "1985-03-15",
+        clientSSN: "123-45-678", // Error example - missing digit
+        clientAddressLine1: "123 Main St",
+        clientAddressLine2: "Apt 4B",
+        clientCity: "New York",
+        clientState: "NY",
+        clientZip: "10001",
+        lienAmount: 7500,
+        advanceAmount: 2500,
+        defendant: "XYZ Corporation",
+        firms: [
+          { name: "Top Dog", role: "Referral" },
+          { name: "VLV Law", role: "Co-Counsel" }
+        ],
+      },
+      {
+        id: 2,
+        referenceId: "REF-002",
+        plaintiff: "Sarah Johnson",
+        caseType: "Medical Malpractice",
+        createDate: "2024-01-18",
+        settledAmount: 22500,
+        status: "Updates",
+        approval: "Ready to Sync",
+        firmName: "Johnson Legal Group",
+        trustAccountNumber: "TA-002345678",
+        grossSettlementAmount: 35000,
+        clientFullName: "Sarah Johnson",
+        clientEmail: "sarah.johnson@email.com",
+        clientPhone: "+1-555-555-0102",
+        clientBirthdate: "1990-07-22",
+        clientSSN: "987-65-4321",
+        clientAddressLine1: "456 Oak Avenue",
+        clientAddressLine2: "Suite 201",
+        clientCity: "Los Angeles",
+        clientState: "CA",
+        clientZip: "90210",
+        lienAmount: 8500,
+        advanceAmount: 4000,
+        defendant: "ABC Medical Center",
+        firms: [
+          { name: "Elite Law", role: "Lead Counsel" },
+          { name: "Medical Experts LLC", role: "Expert Witness" }
+        ],
+      },
+      // Add more records as needed...
+    ];
+
+    const recordId = parseInt(id || "1");
+    const mockData = mockRecords.find(record => record.id === recordId) || mockRecords[0];
     
-    const mockData: RecordData = {
-      id: parseInt(id || "1"),
-      referenceId: `REF-00${id}`,
-      firmName: "Anderson & Associates",
-      trustAccountNumber: "TA-001234567",
-      grossSettlementAmount: 25000,
-      clientFullName: "John Smith",
-      clientEmail: "john.smith@email.com",
-      clientPhone: hasErrors ? "555-INVALID" : "+1-555-555-0101", // Error example
-      clientBirthdate: "1985-03-15",
-      clientSSN: hasErrors ? "123-45-678" : "123-45-6789", // Error example - missing digit
-      clientAddressLine1: "123 Main St",
-      clientAddressLine2: "Apt 4B",
-      clientCity: "New York",
-      clientState: "NY",
-      clientZip: "10001",
-      settledAmount: 15000,
-      lienAmount: 7500,
-      advanceAmount: 2500,
-      defendant: "XYZ Corporation",
-      firms: [
-        { name: "Top Dog", role: "Referral" },
-        { name: "VLV Law", role: "Co-Counsel" }
-      ],
-    };
     setRecordData(mockData);
     validateRecord(mockData);
   }, [id]);
@@ -165,54 +212,35 @@ const RecordDetail = () => {
   };
 
   const handleSave = () => {
-    if (!recordData || !validateRecord(recordData)) {
-      toast({
-        title: "Validation Error",
-        description: "Please fix all errors before saving.",
-        variant: "destructive",
-      });
-      return;
-    }
-
+    if (!recordData) return;
+    
+    const isValid = validateRecord(recordData);
+    
+    // Always save the changes regardless of validation
+    const newApproval = isValid ? "Ready to Sync" : "Needs Review";
+    
+    // Update the record's approval status
+    const updatedRecord = { ...recordData, approval: newApproval };
+    setRecordData(updatedRecord);
+    
     toast({
-      title: "Record Updated",
-      description: "The record has been successfully updated.",
+      title: "Record Saved",
+      description: isValid 
+        ? "All errors fixed. Record is ready to sync."
+        : "Record saved with validation errors. Status remains 'Needs Review'.",
+      variant: isValid ? "default" : "destructive",
     });
     
     navigate("/firm/firm-001#pending&updated=" + id);
   };
 
-  const handleApprove = () => {
-    if (!recordData || !validateRecord(recordData)) {
-      toast({
-        title: "Validation Error",
-        description: "Please fix all errors before approving.",
-        variant: "destructive",
-      });
-      return;
+  const handleCancel = () => {
+    if (hasChanges) {
+      const confirmLeave = window.confirm(
+        "You have unsaved changes. Are you sure you want to cancel?"
+      );
+      if (!confirmLeave) return;
     }
-
-    toast({
-      title: "Record Approved",
-      description: "The record has been approved for migration.",
-    });
-    navigate("/firm/firm-001#pending");
-  };
-
-  const handleMigrate = () => {
-    if (!recordData || !validateRecord(recordData)) {
-      toast({
-        title: "Validation Error",
-        description: "Please fix all errors before migrating.",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    toast({
-      title: "Migration Started",
-      description: "The record migration has been initiated.",
-    });
     navigate("/firm/firm-001#pending");
   };
 
@@ -273,25 +301,18 @@ const RecordDetail = () => {
         <div className="flex space-x-2">
           <Button
             onClick={handleSave}
-            disabled={!hasChanges}
             className="bg-primary hover:bg-primary/90 text-primary-foreground"
           >
             <Save className="h-4 w-4 mr-2" />
             Save
           </Button>
           <Button
-            onClick={handleApprove}
-            disabled={hasErrors}
-            variant="approve"
+            onClick={handleCancel}
+            variant="outline"
+            className="border-border text-foreground hover:bg-muted"
           >
-            Approve
-          </Button>
-          <Button
-            onClick={handleMigrate}
-            disabled={hasErrors}
-            variant="migrate"
-          >
-            Migrate
+            <X className="h-4 w-4 mr-2" />
+            Cancel
           </Button>
         </div>
       </div>
