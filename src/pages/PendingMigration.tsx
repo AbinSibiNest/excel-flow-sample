@@ -37,11 +37,28 @@ const PendingMigration = () => {
   useEffect(() => {
     const hash = window.location.hash;
     const updatedMatch = hash.match(/updated=(\d+)/);
+    const selectMatch = hash.match(/select=(\d+)/);
+    
     if (updatedMatch) {
       const id = parseInt(updatedMatch[1]);
+      // Update the record status if it was updated
+      setParsedData(prev => prev.map(record => {
+        if (record.id === id) {
+          // This will be updated based on validation in RecordDetail
+          return record;
+        }
+        return record;
+      }));
+    }
+    
+    if (selectMatch) {
+      const id = parseInt(selectMatch[1]);
       setSelectedRows(prev => prev.includes(id) ? prev : [...prev, id]);
+    }
+    
+    if (updatedMatch || selectMatch) {
       // Clean up URL hash
-      const cleanHash = hash.replace(/&updated=\d+/, '');
+      let cleanHash = hash.replace(/&updated=\d+/, '').replace(/&select=\d+/, '');
       window.history.replaceState({}, '', window.location.pathname + cleanHash);
     }
   }, []);

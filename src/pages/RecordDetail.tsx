@@ -71,15 +71,14 @@ const RecordDetail = () => {
         settledAmount: 15000,
         status: "New",
         approval: "Needs Review",
-        // Additional form fields
         firmName: "Anderson & Associates",
         trustAccountNumber: "TA-001234567",
         grossSettlementAmount: 25000,
         clientFullName: "John Smith",
         clientEmail: "john.smith@email.com",
-        clientPhone: "555-INVALID", // Error example
+        clientPhone: "555-INVALID",
         clientBirthdate: "1985-03-15",
-        clientSSN: "123-45-678", // Error example - missing digit
+        clientSSN: "123-45-678",
         clientAddressLine1: "123 Main St",
         clientAddressLine2: "Apt 4B",
         clientCity: "New York",
@@ -123,7 +122,93 @@ const RecordDetail = () => {
           { name: "Medical Experts LLC", role: "Expert Witness" }
         ],
       },
-      // Add more records as needed...
+      {
+        id: 3,
+        referenceId: "REF-003",
+        plaintiff: "Michael Brown",
+        caseType: "Auto Accident",
+        createDate: "2024-01-20",
+        settledAmount: 18750,
+        status: "New",
+        approval: "Ready to Sync",
+        firmName: "Brown & Associates",
+        trustAccountNumber: "TA-003456789",
+        grossSettlementAmount: 30000,
+        clientFullName: "Michael Brown",
+        clientEmail: "michael.brown@email.com",
+        clientPhone: "+1-555-555-0103",
+        clientBirthdate: "1988-11-10",
+        clientSSN: "111-22-3333",
+        clientAddressLine1: "789 Pine St",
+        clientAddressLine2: "",
+        clientCity: "Chicago",
+        clientState: "IL",
+        clientZip: "60601",
+        lienAmount: 9000,
+        advanceAmount: 2250,
+        defendant: "DEF Insurance Co",
+        firms: [
+          { name: "Auto Law Firm", role: "Lead Counsel" }
+        ],
+      },
+      {
+        id: 4,
+        referenceId: "REF-004",
+        plaintiff: "Emily Davis",
+        caseType: "Slip and Fall",
+        createDate: "2024-01-22",
+        settledAmount: 0,
+        status: "No Updates",
+        approval: "Synced",
+        firmName: "Davis Legal",
+        trustAccountNumber: "TA-004567890",
+        grossSettlementAmount: 0,
+        clientFullName: "Emily Davis",
+        clientEmail: "emily.davis@email.com",
+        clientPhone: "+1-555-555-0104",
+        clientBirthdate: "1992-05-08",
+        clientSSN: "444-55-6666",
+        clientAddressLine1: "321 Elm Ave",
+        clientAddressLine2: "Unit 12",
+        clientCity: "Houston",
+        clientState: "TX",
+        clientZip: "77001",
+        lienAmount: 0,
+        advanceAmount: 0,
+        defendant: "GHI Property Management",
+        firms: [
+          { name: "Slip & Fall Experts", role: "Lead Counsel" }
+        ],
+      },
+      {
+        id: 5,
+        referenceId: "REF-005",
+        plaintiff: "David Wilson",
+        caseType: "Workers' Compensation",
+        createDate: "2024-01-25",
+        settledAmount: 27800,
+        status: "Updates",
+        approval: "Needs Review",
+        firmName: "Wilson Workers Law",
+        trustAccountNumber: "TA-005678901",
+        grossSettlementAmount: 40000,
+        clientFullName: "David Wilson",
+        clientEmail: "david.wilson@email.com",
+        clientPhone: "+1-555-555-0105",
+        clientBirthdate: "1980-09-15",
+        clientSSN: "777-88-9999",
+        clientAddressLine1: "654 Maple Dr",
+        clientAddressLine2: "",
+        clientCity: "Phoenix",
+        clientState: "AZ",
+        clientZip: "85001",
+        lienAmount: 10000,
+        advanceAmount: 2200,
+        defendant: "JKL Manufacturing",
+        firms: [
+          { name: "Workers Comp Specialists", role: "Lead Counsel" }
+        ],
+      }
     ];
 
     const recordId = parseInt(id || "1");
@@ -215,13 +300,10 @@ const RecordDetail = () => {
     if (!recordData) return;
     
     const isValid = validateRecord(recordData);
+    setHasChanges(false);
     
     // Always save the changes regardless of validation
     const newApproval = isValid ? "Ready to Sync" : "Needs Review";
-    
-    // Update the record's approval status
-    const updatedRecord = { ...recordData, approval: newApproval };
-    setRecordData(updatedRecord);
     
     toast({
       title: "Record Saved",
@@ -231,7 +313,9 @@ const RecordDetail = () => {
       variant: isValid ? "default" : "destructive",
     });
     
-    navigate("/firm/firm-001#pending&updated=" + id);
+    // Navigate back with updated record info and select checkbox if ready to sync
+    const hash = isValid ? `#pending&updated=${id}&select=${id}` : `#pending&updated=${id}`;
+    navigate(`/firm/firm-001${hash}`);
   };
 
   const handleCancel = () => {
