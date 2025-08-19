@@ -308,23 +308,17 @@ const RecordDetail = () => {
               <Input
                 id="referenceId"
                 value={recordData.referenceId}
-                onChange={(e) => handleInputChange('referenceId', e.target.value)}
-                className={cn(
-                  "bg-input border-border text-foreground",
-                  errors.referenceId && "border-destructive bg-destructive/10"
-                )}
+                readOnly
+                className="border-border text-foreground bg-background"
               />
-              {errors.referenceId && (
-                <p className="text-destructive text-sm mt-1">{errors.referenceId}</p>
-              )}
             </div>
             <div>
               <Label htmlFor="firmName" className="text-muted-foreground">Firm Name</Label>
               <Input
                 id="firmName"
                 value={recordData.firmName}
-                onChange={(e) => handleInputChange('firmName', e.target.value)}
-                className="bg-input border-border text-foreground"
+                readOnly
+                className="border-border text-foreground bg-background"
               />
             </div>
             <div>
@@ -332,8 +326,8 @@ const RecordDetail = () => {
               <Input
                 id="trustAccountNumber"
                 value={recordData.trustAccountNumber}
-                onChange={(e) => handleInputChange('trustAccountNumber', e.target.value)}
-                className="bg-input border-border text-foreground"
+                readOnly
+                className="border-border text-foreground bg-background"
               />
             </div>
             <div>
@@ -341,15 +335,9 @@ const RecordDetail = () => {
               <Input
                 id="defendant"
                 value={recordData.defendant}
-                onChange={(e) => handleInputChange('defendant', e.target.value)}
-                className={cn(
-                  "bg-input border-border text-foreground",
-                  errors.defendant && "border-destructive bg-destructive/10"
-                )}
+                readOnly
+                className="border-border text-foreground bg-background"
               />
-              {errors.defendant && (
-                <p className="text-destructive text-sm mt-1">{errors.defendant}</p>
-              )}
             </div>
           </CardContent>
         </Card>
@@ -556,15 +544,9 @@ const RecordDetail = () => {
                 id="grossSettlementAmount"
                 type="number"
                 value={recordData.grossSettlementAmount}
-                onChange={(e) => handleInputChange('grossSettlementAmount', parseFloat(e.target.value) || 0)}
-                className={cn(
-                  "bg-input border-border text-foreground",
-                  errors.grossSettlementAmount && "border-destructive bg-destructive/10"
-                )}
+                readOnly
+                className="border-border text-foreground bg-background"
               />
-              {errors.grossSettlementAmount && (
-                <p className="text-destructive text-sm mt-1">{errors.grossSettlementAmount}</p>
-              )}
             </div>
             <div>
               <Label htmlFor="settledAmount" className="text-muted-foreground">Settled Amount *</Label>
@@ -572,15 +554,9 @@ const RecordDetail = () => {
                 id="settledAmount"
                 type="number"
                 value={recordData.settledAmount}
-                onChange={(e) => handleInputChange('settledAmount', parseFloat(e.target.value) || 0)}
-                className={cn(
-                  "bg-input border-border text-foreground",
-                  errors.settledAmount && "border-destructive bg-destructive/10"
-                )}
+                readOnly
+                className="border-border text-foreground bg-background"
               />
-              {errors.settledAmount && (
-                <p className="text-destructive text-sm mt-1">{errors.settledAmount}</p>
-              )}
             </div>
             <div>
               <Label htmlFor="lien" className="text-muted-foreground">Lien</Label>
@@ -588,8 +564,8 @@ const RecordDetail = () => {
                 id="lienAmount"
                 type="number"
                 value={recordData.lienAmount}
-                onChange={(e) => handleInputChange('lienAmount', parseFloat(e.target.value) || 0)}
-                className="bg-input border-border text-foreground"
+                readOnly
+                className="border-border text-foreground bg-background"
               />
             </div>
             <div>
@@ -598,8 +574,8 @@ const RecordDetail = () => {
                 id="advanceAmount"
                 type="number"
                 value={recordData.advanceAmount}
-                onChange={(e) => handleInputChange('advanceAmount', parseFloat(e.target.value) || 0)}
-                className="bg-input border-border text-foreground"
+                readOnly
+                className="border-border text-foreground bg-background"
               />
             </div>
           </CardContent>
