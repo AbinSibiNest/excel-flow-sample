@@ -279,11 +279,15 @@ const PendingMigration = () => {
     }
   })();
 
-  // Count records for all statuses
-  const recordsWithErrors = parsedData.filter(item => item.approval === "Needs Review").length;
-  const recordsReadyToImport = parsedData.filter(item => item.approval === "Ready to Sync").length;
-  const recordsSynced = parsedData.filter(item => item.approval === "Synced").length;
-  const recordsSyncFailed = parsedData.filter(item => item.approval === "Sync Failed").length;
+  // Count records based on toggle state
+  const baseData = showNewOnly 
+    ? parsedData.filter(item => item.status === "New" || item.status === "Updates")
+    : parsedData;
+    
+  const recordsWithErrors = baseData.filter(item => item.approval === "Needs Review").length;
+  const recordsReadyToImport = baseData.filter(item => item.approval === "Ready to Sync").length;
+  const recordsSynced = baseData.filter(item => item.approval === "Synced").length;
+  const recordsSyncFailed = baseData.filter(item => item.approval === "Sync Failed").length;
 
   // Format date to MM-DD-YY
   const formatDate = (dateString: string) => {
