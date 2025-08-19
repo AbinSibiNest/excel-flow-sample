@@ -27,8 +27,7 @@ import { useToast } from "@/hooks/use-toast";
 const PendingMigration = () => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [showNewOnly, setShowNewOnly] = useState(true);
-  const [filterType, setFilterType] = useState<'all' | 'errors' | 'ready' | 'synced' | 'failed'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'errors' | 'ready' | 'syncing'>('all');
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -96,16 +95,6 @@ const PendingMigration = () => {
       approval: "Ready to Sync",
     },
     {
-      id: 4,
-      referenceId: "REF-004",
-      plaintiff: "Emily Davis",
-      caseType: "Slip and Fall",
-      createDate: "2024-01-22",
-      settledAmount: null,
-      status: "No Updates",
-      approval: "Synced",
-    },
-    {
       id: 5,
       referenceId: "REF-005",
       plaintiff: "David Wilson",
@@ -156,16 +145,6 @@ const PendingMigration = () => {
       approval: "Ready to Sync",
     },
     {
-      id: 10,
-      referenceId: "REF-010",
-      plaintiff: "Maria Rodriguez",
-      caseType: "Premises Liability",
-      createDate: "2024-02-08",
-      settledAmount: 31500,
-      status: "No Updates",
-      approval: "Synced",
-    },
-    {
       id: 11,
       referenceId: "REF-011",
       plaintiff: "James Thompson",
@@ -194,16 +173,6 @@ const PendingMigration = () => {
       settledAmount: 33750,
       status: "New",
       approval: "Needs Review",
-    },
-    {
-      id: 14,
-      referenceId: "REF-014",
-      plaintiff: "Nicole Lewis",
-      caseType: "Medical Malpractice",
-      createDate: "2024-02-18",
-      settledAmount: 47200,
-      status: "No Updates",
-      approval: "Synced",
     },
     {
       id: 15,
@@ -246,16 +215,6 @@ const PendingMigration = () => {
       approval: "Needs Review",
     },
     {
-      id: 19,
-      referenceId: "REF-019",
-      plaintiff: "Brandon Scott",
-      caseType: "Personal Injury",
-      createDate: "2024-03-02",
-      settledAmount: 29300,
-      status: "No Updates",
-      approval: "Synced",
-    },
-    {
       id: 20,
       referenceId: "REF-020",
       plaintiff: "Ashley Turner",
@@ -278,33 +237,21 @@ const PendingMigration = () => {
       );
     }
     
-    if (showNewOnly) {
-      data = data.filter(item => item.status === "New" || item.status === "Updates");
-    }
-    
     switch (filterType) {
       case 'errors':
         return data.filter(item => item.approval === "Needs Review");
       case 'ready':
         return data.filter(item => item.approval === "Ready to Sync");
-      case 'synced':
-        return data.filter(item => item.approval === "Synced");
-      case 'failed':
-        return data.filter(item => item.approval === "Sync Failed");
+      case 'syncing':
+        return data.filter(item => item.approval === "Syncing");
       default:
         return data;
     }
   })();
 
-  // Count records based on toggle state
-  const baseData = showNewOnly 
-    ? parsedData.filter(item => item.status === "New" || item.status === "Updates")
-    : parsedData;
-    
-  const recordsWithErrors = baseData.filter(item => item.approval === "Needs Review").length;
-  const recordsReadyToImport = baseData.filter(item => item.approval === "Ready to Sync").length;
-  const recordsSynced = baseData.filter(item => item.approval === "Synced").length;
-  const recordsSyncFailed = baseData.filter(item => item.approval === "Sync Failed").length;
+  const recordsWithErrors = parsedData.filter(item => item.approval === "Needs Review").length;
+  const recordsReadyToImport = parsedData.filter(item => item.approval === "Ready to Sync").length;
+  const recordsSyncing = parsedData.filter(item => item.approval === "Syncing").length;
 
   // Format date to MM-DD-YY
   const formatDate = (dateString: string) => {
@@ -349,18 +296,18 @@ const PendingMigration = () => {
       return;
     }
 
-    // Update approval status for migrated records
+    // Update approval status for migrated records to "Syncing"
     setParsedData(prevData => 
       prevData.map(item => 
         selectedRows.includes(item.id) 
-          ? { ...item, approval: Math.random() > 0.8 ? "Sync Failed" : "Synced" }
+          ? { ...item, approval: "Syncing" }
           : item
       )
     );
 
     toast({
-      title: "Migration Started",
-      description: `${selectedRows.length} records have been queued for migration.`,
+      title: "Sync Started",
+      description: `${selectedRows.length} records are now syncing.`,
     });
 
     setSelectedRows([]);
@@ -374,7 +321,7 @@ const PendingMigration = () => {
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card 
           className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'errors' ? 'ring-2 ring-red-500' : 'hover:border-red-600'}`}
           onClick={() => setFilterType(filterType === 'errors' ? 'all' : 'errors')}
@@ -410,35 +357,18 @@ const PendingMigration = () => {
         </Card>
 
         <Card 
-          className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'synced' ? 'ring-2 ring-blue-500' : 'hover:border-blue-600'}`}
-          onClick={() => setFilterType(filterType === 'synced' ? 'all' : 'synced')}
+          className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'syncing' ? 'ring-2 ring-blue-500' : 'hover:border-blue-600'}`}
+          onClick={() => setFilterType(filterType === 'syncing' ? 'all' : 'syncing')}
         >
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Synced</p>
+                <p className="text-sm text-gray-400">Syncing</p>
                 <p className="text-2xl font-bold text-blue-400">
-                  {recordsSynced}
+                  {recordsSyncing}
                 </p>
               </div>
-              <Archive className="h-8 w-8 text-blue-400" />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card 
-          className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'failed' ? 'ring-2 ring-orange-500' : 'hover:border-orange-600'}`}
-          onClick={() => setFilterType(filterType === 'failed' ? 'all' : 'failed')}
-        >
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Sync Failed</p>
-                <p className="text-2xl font-bold text-orange-400">
-                  {recordsSyncFailed}
-                </p>
-              </div>
-              <ArchiveX className="h-8 w-8 text-orange-400" />
+              <Database className="h-8 w-8 text-blue-400" />
             </div>
           </CardContent>
         </Card>
@@ -462,16 +392,6 @@ const PendingMigration = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 bg-gray-800 border-gray-700 text-gray-100"
-                />
-              </div>
-              <div className="flex items-center space-x-2">
-                <label htmlFor="show-new-only" className="text-sm text-gray-300 flex items-center space-x-2">
-                  <span>Show New and Updates Only</span>
-                </label>
-                <Switch
-                  id="show-new-only"
-                  checked={showNewOnly}
-                  onCheckedChange={setShowNewOnly}
                 />
               </div>
               <Button
@@ -534,16 +454,11 @@ const PendingMigration = () => {
                           {row.status}
                         </Badge>
                       )}
-                      {row.status === "Updates" && (
-                        <Badge className="bg-yellow-900/50 text-yellow-400 border-yellow-600">
-                          {row.status}
-                        </Badge>
-                      )}
-                      {row.status === "No Updates" && (
-                        <Badge className="bg-gray-900/50 text-gray-400 border-gray-600">
-                          {row.status}
-                        </Badge>
-                      )}
+                       {row.status === "Updates" && (
+                         <Badge className="bg-yellow-900/50 text-yellow-400 border-yellow-600">
+                           {row.status}
+                         </Badge>
+                       )}
                     </TableCell>
                     <TableCell className={`${row.approval === "Needs Review" ? 'text-red-300' : 'text-gray-300'}`}>
                       {row.plaintiff}
@@ -558,26 +473,21 @@ const PendingMigration = () => {
                       {row.settledAmount ? `$${row.settledAmount.toLocaleString()}` : '$--'}
                     </TableCell>
                     <TableCell>
-                      {row.approval === "Ready to Sync" && (
-                        <Badge className="bg-green-900/50 text-green-400 border-green-600">
-                          Ready to Sync
-                        </Badge>
-                      )}
-                      {row.approval === "Needs Review" && (
-                        <Badge className="bg-red-900/50 text-red-400 border-red-600">
-                          Needs Review
-                        </Badge>
-                      )}
-                      {row.approval === "Synced" && (
-                        <Badge className="bg-blue-900/50 text-blue-400 border-blue-600">
-                          Synced
-                        </Badge>
-                      )}
-                      {row.approval === "Sync Failed" && (
-                        <Badge className="bg-orange-900/50 text-orange-400 border-orange-600">
-                          Sync Failed
-                        </Badge>
-                      )}
+                       {row.approval === "Ready to Sync" && (
+                         <Badge className="bg-green-900/50 text-green-400 border-green-600">
+                           Ready to Sync
+                         </Badge>
+                       )}
+                       {row.approval === "Needs Review" && (
+                         <Badge className="bg-red-900/50 text-red-400 border-red-600">
+                           Needs Review
+                         </Badge>
+                       )}
+                       {row.approval === "Syncing" && (
+                         <Badge className="bg-blue-900/50 text-blue-400 border-blue-600">
+                           Syncing
+                         </Badge>
+                       )}
                     </TableCell>
                   </TableRow>
                 ))}

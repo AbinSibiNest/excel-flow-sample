@@ -357,6 +357,13 @@ const RecordDetail = () => {
   }
 
   const hasErrors = Object.keys(errors).length > 0;
+  const isNewCase = recordData.status === "New";
+  const isUpdatedCase = recordData.status === "Updates";
+  
+  // For New cases: Settlement and Client Info editable
+  // For Updated cases: Only Client Info editable
+  const isSettlementEditable = isNewCase;
+  const isClientInfoEditable = isNewCase || isUpdatedCase;
 
   return (
     <div className="space-y-6">
@@ -458,9 +465,10 @@ const RecordDetail = () => {
               <Input
                 id="fullName"
                 value={recordData.clientFullName}
-                onChange={(e) => handleInputChange('clientFullName', e.target.value)}
+                onChange={isClientInfoEditable ? (e) => handleInputChange('clientFullName', e.target.value) : undefined}
+                readOnly={!isClientInfoEditable}
                 className={cn(
-                  "border-border text-foreground bg-background",
+                  isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.clientFullName && "border-destructive bg-destructive/10"
                 )}
               />
@@ -473,9 +481,10 @@ const RecordDetail = () => {
               <Input
                 id="addressLine1"
                 value={recordData.clientAddressLine1}
-                onChange={(e) => handleInputChange('clientAddressLine1', e.target.value)}
+                onChange={isClientInfoEditable ? (e) => handleInputChange('clientAddressLine1', e.target.value) : undefined}
+                readOnly={!isClientInfoEditable}
                 className={cn(
-                  "border-border text-foreground bg-background",
+                  isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.clientAddressLine1 && "border-destructive bg-destructive/10"
                 )}
               />
@@ -489,9 +498,10 @@ const RecordDetail = () => {
                 id="email"
                 type="email"
                 value={recordData.clientEmail}
-                onChange={(e) => handleInputChange('clientEmail', e.target.value)}
+                onChange={isClientInfoEditable ? (e) => handleInputChange('clientEmail', e.target.value) : undefined}
+                readOnly={!isClientInfoEditable}
                 className={cn(
-                  "border-border text-foreground bg-background",
+                  isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.clientEmail && "border-destructive bg-destructive/10"
                 )}
               />
@@ -504,8 +514,9 @@ const RecordDetail = () => {
               <Input
                 id="addressLine2"
                 value={recordData.clientAddressLine2}
-                onChange={(e) => handleInputChange('clientAddressLine2', e.target.value)}
-                className="border-border text-foreground bg-background"
+                onChange={isClientInfoEditable ? (e) => handleInputChange('clientAddressLine2', e.target.value) : undefined}
+                readOnly={!isClientInfoEditable}
+                className={isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium"}
               />
             </div>
             <div>
@@ -513,9 +524,10 @@ const RecordDetail = () => {
               <Input
                 id="phone"
                 value={recordData.clientPhone}
-                onChange={(e) => handleInputChange('clientPhone', e.target.value)}
+                onChange={isClientInfoEditable ? (e) => handleInputChange('clientPhone', e.target.value) : undefined}
+                readOnly={!isClientInfoEditable}
                 className={cn(
-                  "border-border text-foreground bg-background",
+                  isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.clientPhone && "border-destructive bg-destructive/10"
                 )}
               />
@@ -528,9 +540,10 @@ const RecordDetail = () => {
               <Input
                 id="city"
                 value={recordData.clientCity}
-                onChange={(e) => handleInputChange('clientCity', e.target.value)}
+                onChange={isClientInfoEditable ? (e) => handleInputChange('clientCity', e.target.value) : undefined}
+                readOnly={!isClientInfoEditable}
                 className={cn(
-                  "border-border text-foreground bg-background",
+                  isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.clientCity && "border-destructive bg-destructive/10"
                 )}
               />
@@ -555,9 +568,9 @@ const RecordDetail = () => {
                 id="birthdate"
                 type={showDOB ? "date" : "text"}
                 value={showDOB ? recordData.clientBirthdate : maskDOB(recordData.clientBirthdate)}
-                onChange={(e) => handleInputChange('clientBirthdate', e.target.value)}
-                className="border-border text-foreground bg-background"
-                readOnly={!showDOB}
+                onChange={isClientInfoEditable ? (e) => handleInputChange('clientBirthdate', e.target.value) : undefined}
+                className={isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium"}
+                readOnly={!showDOB || !isClientInfoEditable}
               />
             </div>
             <div>
@@ -565,9 +578,10 @@ const RecordDetail = () => {
               <Input
                 id="state"
                 value={recordData.clientState}
-                onChange={(e) => handleInputChange('clientState', e.target.value)}
+                onChange={isClientInfoEditable ? (e) => handleInputChange('clientState', e.target.value) : undefined}
+                readOnly={!isClientInfoEditable}
                 className={cn(
-                  "border-border text-foreground bg-background",
+                  isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.clientState && "border-destructive bg-destructive/10"
                 )}
               />
@@ -591,12 +605,12 @@ const RecordDetail = () => {
               <Input
                 id="ssn"
                 value={showSSN ? recordData.clientSSN : maskSSN(recordData.clientSSN)}
-                onChange={(e) => handleInputChange('clientSSN', e.target.value)}
+                onChange={isClientInfoEditable ? (e) => handleInputChange('clientSSN', e.target.value) : undefined}
                 className={cn(
-                  "border-border text-foreground bg-background",
+                  isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.clientSSN && "border-destructive bg-destructive/10"
                 )}
-                readOnly={!showSSN}
+                readOnly={!showSSN || !isClientInfoEditable}
                 placeholder="XXX-XX-XXXX"
               />
               {errors.clientSSN && (
@@ -608,9 +622,10 @@ const RecordDetail = () => {
               <Input
                 id="zip"
                 value={recordData.clientZip}
-                onChange={(e) => handleInputChange('clientZip', e.target.value)}
+                onChange={isClientInfoEditable ? (e) => handleInputChange('clientZip', e.target.value) : undefined}
+                readOnly={!isClientInfoEditable}
                 className={cn(
-                  "border-border text-foreground bg-background",
+                  isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.clientZip && "border-destructive bg-destructive/10"
                 )}
               />
@@ -654,9 +669,16 @@ const RecordDetail = () => {
                 id="grossSettlementAmount"
                 type="number"
                 value={recordData.grossSettlementAmount}
-                readOnly
-                className="p-3 bg-card rounded-lg text-foreground font-medium"
+                onChange={isSettlementEditable ? (e) => handleInputChange('grossSettlementAmount', parseFloat(e.target.value) || 0) : undefined}
+                readOnly={!isSettlementEditable}
+                className={cn(
+                  isSettlementEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  errors.grossSettlementAmount && "border-destructive bg-destructive/10"
+                )}
               />
+              {errors.grossSettlementAmount && (
+                <p className="text-destructive text-sm mt-1">{errors.grossSettlementAmount}</p>
+              )}
             </div>
             <div>
               <Label htmlFor="settledAmount" className="text-muted-foreground">Settled Amount *</Label>
@@ -664,9 +686,16 @@ const RecordDetail = () => {
                 id="settledAmount"
                 type="number"
                 value={recordData.settledAmount}
-                readOnly
-                className="p-3 bg-card rounded-lg text-foreground font-medium"
+                onChange={isSettlementEditable ? (e) => handleInputChange('settledAmount', parseFloat(e.target.value) || 0) : undefined}
+                readOnly={!isSettlementEditable}
+                className={cn(
+                  isSettlementEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  errors.settledAmount && "border-destructive bg-destructive/10"
+                )}
               />
+              {errors.settledAmount && (
+                <p className="text-destructive text-sm mt-1">{errors.settledAmount}</p>
+              )}
             </div>
             <div>
               <Label htmlFor="lien" className="text-muted-foreground">Lien</Label>
