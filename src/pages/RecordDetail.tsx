@@ -702,10 +702,13 @@ const RecordDetail = () => {
               <Input
                 id="lienAmount"
                 type="number"
+                onChange={isSettlementEditable ? (e) => handleInputChange('settledAmount', parseFloat(e.target.value) || 0) : undefined}
                 value={recordData.lienAmount}
-                readOnly
-                className="p-3 bg-card rounded-lg text-foreground font-medium"
-              />
+               readOnly={!isSettlementEditable}
+                className={cn(
+                  isSettlementEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  errors.lienAmount && "border-destructive bg-destructive/10"
+                )}/>
             </div>
             <div>
               <Label htmlFor="advance" className="text-muted-foreground">Advance</Label>
@@ -713,8 +716,11 @@ const RecordDetail = () => {
                 id="advanceAmount"
                 type="number"
                 value={recordData.advanceAmount}
-                readOnly
-                className="p-3 bg-card rounded-lg text-foreground font-medium"
+                readOnly={!isSettlementEditable}
+                className={cn(
+                  isSettlementEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  errors.advanceAmount && "border-destructive bg-destructive/10"
+                )}
               />
             </div>
           </CardContent>
