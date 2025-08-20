@@ -92,7 +92,7 @@ const PendingMigration = () => {
       createDate: "2024-01-20",
       settledAmount: 18750,
       status: "New",
-      approval: "Synced",
+      approval: "Ready to Sync",
     },
     {
       id: 5,
@@ -102,7 +102,7 @@ const PendingMigration = () => {
       createDate: "2024-01-25",
       settledAmount: 27800,
       status: "Updates",
-      approval: "Sync Failed",
+      approval: "Needs Review",
     },
     {
       id: 6,
@@ -152,7 +152,7 @@ const PendingMigration = () => {
       createDate: "2024-02-10",
       settledAmount: 24800,
       status: "New",
-      approval: "Synced",
+      approval: "Ready to Sync",
     },
     {
       id: 12,
@@ -202,7 +202,7 @@ const PendingMigration = () => {
       createDate: "2024-02-25",
       settledAmount: 39400,
       status: "Updates",
-      approval: "Sync Failed",
+      approval: "Needs Review",
     },
     {
       id: 18,
@@ -466,9 +466,7 @@ const PendingMigration = () => {
                   <TableHead className="text-gray-300">Plaintiff</TableHead>
                   <TableHead className="text-gray-300">Case Type</TableHead>
                   <TableHead className="text-gray-300">Create Date</TableHead>
-                  <TableHead className="text-gray-300">
-                    Settled Amount
-                  </TableHead>
+                  <TableHead className="text-gray-300">Settled Amount</TableHead>
                   <TableHead className="text-gray-300">Sync Status</TableHead>
                 </TableRow>
               </TableHeader>
