@@ -18,7 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CheckCircle, Database, FileText, Users, Filter, Search,ArchiveX,Archive } from "lucide-react";
+import { CheckCircle, Database, FileText, Users, Filter, Search, ArchiveX, Archive, Loader2, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -27,7 +27,7 @@ import { useToast } from "@/hooks/use-toast";
 const PendingMigration = () => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
-  const [filterType, setFilterType] = useState<'all' | 'errors' | 'ready' | 'syncing'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'errors' | 'ready' | 'synced' | 'failed'>('all');
   const [searchTerm, setSearchTerm] = useState("");
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -92,7 +92,7 @@ const PendingMigration = () => {
       createDate: "2024-01-20",
       settledAmount: 18750,
       status: "New",
-      approval: "Ready to Sync",
+      approval: "Synced",
     },
     {
       id: 5,
@@ -102,7 +102,7 @@ const PendingMigration = () => {
       createDate: "2024-01-25",
       settledAmount: 27800,
       status: "Updates",
-      approval: "Needs Review",
+      approval: "Sync Failed",
     },
     {
       id: 6,
@@ -152,7 +152,7 @@ const PendingMigration = () => {
       createDate: "2024-02-10",
       settledAmount: 24800,
       status: "New",
-      approval: "Ready to Sync",
+      approval: "Synced",
     },
     {
       id: 12,
@@ -202,7 +202,7 @@ const PendingMigration = () => {
       createDate: "2024-02-25",
       settledAmount: 39400,
       status: "Updates",
-      approval: "Needs Review",
+      approval: "Sync Failed",
     },
     {
       id: 18,
@@ -242,8 +242,10 @@ const PendingMigration = () => {
         return data.filter(item => item.approval === "Needs Review");
       case 'ready':
         return data.filter(item => item.approval === "Ready to Sync");
-      case 'syncing':
-        return data.filter(item => item.approval === "Syncing");
+      case 'synced':
+        return data.filter(item => item.approval === "Synced");
+      case 'failed':
+        return data.filter(item => item.approval === "Sync Failed");
       default:
         return data;
     }
@@ -251,7 +253,8 @@ const PendingMigration = () => {
 
   const recordsWithErrors = parsedData.filter(item => item.approval === "Needs Review").length;
   const recordsReadyToImport = parsedData.filter(item => item.approval === "Ready to Sync").length;
-  const recordsSyncing = parsedData.filter(item => item.approval === "Syncing").length;
+  const recordsSynced = parsedData.filter(item => item.approval === "Synced").length;
+  const recordsSyncFailed = parsedData.filter(item => item.approval === "Sync Failed").length;
 
   // Format date to MM-DD-YY
   const formatDate = (dateString: string) => {
@@ -296,7 +299,7 @@ const PendingMigration = () => {
       return;
     }
 
-    // Update approval status for migrated records to "Syncing"
+    // First, update approval status for migrated records to "Syncing"
     setParsedData(prevData => 
       prevData.map(item => 
         selectedRows.includes(item.id) 
@@ -310,6 +313,28 @@ const PendingMigration = () => {
       description: `${selectedRows.length} records are now syncing.`,
     });
 
+    // After 5 seconds, randomly resolve to either "Synced" or "Sync Failed"
+    setTimeout(() => {
+      setParsedData(prevData => 
+        prevData.map(item => {
+          if (selectedRows.includes(item.id) && item.approval === "Syncing") {
+            // 70% chance of success, 30% chance of failure
+            const isSuccess = Math.random() > 0.3;
+            return { 
+              ...item, 
+              approval: isSuccess ? "Synced" : "Sync Failed" 
+            };
+          }
+          return item;
+        })
+      );
+
+      toast({
+        title: "Sync Complete",
+        description: `${selectedRows.length} records have finished syncing.`,
+      });
+    }, 5000);
+
     setSelectedRows([]);
     setSelectAll(false);
   };
@@ -321,7 +346,7 @@ const PendingMigration = () => {
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card 
           className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'errors' ? 'ring-2 ring-red-500' : 'hover:border-red-600'}`}
           onClick={() => setFilterType(filterType === 'errors' ? 'all' : 'errors')}
@@ -357,18 +382,35 @@ const PendingMigration = () => {
         </Card>
 
         <Card 
-          className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'syncing' ? 'ring-2 ring-blue-500' : 'hover:border-blue-600'}`}
-          onClick={() => setFilterType(filterType === 'syncing' ? 'all' : 'syncing')}
+          className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'synced' ? 'ring-2 ring-blue-500' : 'hover:border-blue-600'}`}
+          onClick={() => setFilterType(filterType === 'synced' ? 'all' : 'synced')}
         >
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-400">Syncing</p>
+                <p className="text-sm text-gray-400">Synced</p>
                 <p className="text-2xl font-bold text-blue-400">
-                  {recordsSyncing}
+                  {recordsSynced}
                 </p>
               </div>
-              <Database className="h-8 w-8 text-blue-400" />
+              <Archive className="h-8 w-8 text-blue-400" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'failed' ? 'ring-2 ring-orange-500' : 'hover:border-orange-600'}`}
+          onClick={() => setFilterType(filterType === 'failed' ? 'all' : 'failed')}
+        >
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-400">Sync Failed</p>
+                <p className="text-2xl font-bold text-orange-400">
+                  {recordsSyncFailed}
+                </p>
+              </div>
+              <AlertCircle className="h-8 w-8 text-orange-400" />
             </div>
           </CardContent>
         </Card>
@@ -485,7 +527,18 @@ const PendingMigration = () => {
                        )}
                        {row.approval === "Syncing" && (
                          <Badge className="bg-blue-900/50 text-blue-400 border-blue-600">
+                           <Loader2 className="h-3 w-3 mr-1 animate-spin" />
                            Syncing
+                         </Badge>
+                       )}
+                       {row.approval === "Synced" && (
+                         <Badge className="bg-blue-900/50 text-blue-400 border-blue-600">
+                           Synced
+                         </Badge>
+                       )}
+                       {row.approval === "Sync Failed" && (
+                         <Badge className="bg-orange-900/50 text-orange-400 border-orange-600">
+                           Sync Failed
                          </Badge>
                        )}
                     </TableCell>
