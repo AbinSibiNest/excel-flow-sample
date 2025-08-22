@@ -360,8 +360,9 @@ const RecordDetail = () => {
   const isNewCase = recordData.status === "New";
   const isUpdatedCase = recordData.status === "Updates";
   
-  // For New cases: Settlement and Client Info editable
+  // For New cases: All fields editable
   // For Updated cases: Only Client Info editable
+  const isAllFieldsEditable = isNewCase;
   const isSettlementEditable = isNewCase;
   const isClientInfoEditable = isNewCase || isUpdatedCase;
 
@@ -447,9 +448,16 @@ const RecordDetail = () => {
               <Input
                 id="defendant"
                 value={recordData.defendant}
-                readOnly
-                className="p-3 bg-card rounded-lg text-foreground font-medium"
+                onChange={isAllFieldsEditable ? (e) => handleInputChange('defendant', e.target.value) : undefined}
+                readOnly={!isAllFieldsEditable}
+                className={cn(
+                  isAllFieldsEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  errors.defendant && "border-destructive bg-destructive/10"
+                )}
               />
+              {errors.defendant && (
+                <p className="text-destructive text-sm mt-1">{errors.defendant}</p>
+              )}
             </div>
           </CardContent>
         </Card>

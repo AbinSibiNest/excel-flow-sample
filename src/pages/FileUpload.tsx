@@ -133,14 +133,18 @@ const FileUpload = () => {
         setFiles(acceptedFiles);
         setUploadStatus("idle");
         
-        // Convert first data row to preview format
+        // Convert first two data rows to preview format
         if (data.length > 1) {
-          const firstRow = data[1];
-          const previewRow = headers.reduce((obj: any, header: string, index: number) => {
-            obj[header] = firstRow[index] || "";
-            return obj;
-          }, {});
-          setPreviewData([previewRow]);
+          const previewRows = [];
+          for (let i = 1; i <= Math.min(2, data.length - 1); i++) {
+            const row = data[i];
+            const previewRow = headers.reduce((obj: any, header: string, index: number) => {
+              obj[header] = row[index] || "";
+              return obj;
+            }, {});
+            previewRows.push(previewRow);
+          }
+          setPreviewData(previewRows);
         }
       } catch (error) {
         setValidationError("Error reading the Excel file. Please ensure it's a valid XLSX file.");
@@ -415,7 +419,7 @@ const FileUpload = () => {
             <div className="mt-6">
               <Card className="bg-gray-800/50 border-gray-700">
                 <CardHeader>
-                  <CardTitle className="text-gray-100">File Preview - First 5 Rows</CardTitle>
+                  <CardTitle className="text-gray-100">File Preview - First 2 Rows</CardTitle>
                   <CardDescription className="text-gray-400">
                     Please verify the data below before uploading
                   </CardDescription>
@@ -431,7 +435,7 @@ const FileUpload = () => {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {previewData.slice(0, 1).map((row, index) => (
+                        {previewData.slice(0, 2).map((row, index) => (
                           <TableRow key={index} className="border-gray-700">
                             {requiredColumns.map((column) => (
                               <TableCell key={column} className="text-gray-300">

@@ -18,10 +18,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { CheckCircle, Database, FileText, Users, Filter, Search, ArchiveX, Archive, Loader2, AlertCircle } from "lucide-react";
+import { CheckCircle, Database, FileText, Users, Filter, Search, ArchiveX, Archive, Loader2, AlertCircle, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 // Fixed Select import and null handling issues
 
 const PendingMigration = () => {
@@ -224,6 +225,28 @@ const PendingMigration = () => {
       status: "Updates",
       approval: "Ready to Sync",
     },
+    {
+      id: 21,
+      referenceId: "REF-021",
+      plaintiff: "Mark Johnson",
+      caseType: "Auto Accident",
+      createDate: "2024-03-08",
+      settledAmount: 19500,
+      status: "Updates",
+      approval: "Sync Failed",
+      syncError: "Database connection timeout - please retry",
+    },
+    {
+      id: 22,
+      referenceId: "REF-022",
+      plaintiff: "Linda Davis",
+      caseType: "Workers' Compensation",
+      createDate: "2024-03-10",
+      settledAmount: 31200,
+      status: "New",
+      approval: "Sync Failed",
+      syncError: "Invalid client SSN format - verification failed",
+    },
   ]);
 
   // Filter data based on filter type and search term
@@ -340,7 +363,8 @@ const PendingMigration = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <TooltipProvider>
+      <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold text-gray-100">Pending Migration</h1>
       </div>
@@ -535,10 +559,20 @@ const PendingMigration = () => {
                          </Badge>
                        )}
                        {row.approval === "Sync Failed" && (
-                         <Badge className="bg-orange-900/50 text-orange-400 border-orange-600">
-                           Sync Failed
-                         </Badge>
-                       )}
+                          <div className="flex items-center gap-2">
+                            <Badge className="bg-orange-900/50 text-orange-400 border-orange-600">
+                              Sync Failed
+                            </Badge>
+                            <Tooltip>
+                              <TooltipTrigger>
+                                <Info className="h-4 w-4 text-orange-400 cursor-help" />
+                              </TooltipTrigger>
+                              <TooltipContent>
+                                <p>{(row as any).syncError || "Sync failed due to unknown error"}</p>
+                              </TooltipContent>
+                            </Tooltip>
+                          </div>
+                        )}
                     </TableCell>
                   </TableRow>
                 ))}
@@ -547,7 +581,8 @@ const PendingMigration = () => {
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </TooltipProvider>
   );
 };
 
