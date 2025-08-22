@@ -179,7 +179,7 @@ const FileUpload = () => {
         <CardHeader>
           <CardTitle className="text-gray-100">Upload Files</CardTitle>
           <CardDescription className="text-gray-400">
-            Select a case type, then drag and drop your CSV files below.
+            Select a case type, then drag and drop your XLSX files below.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -244,14 +244,14 @@ const FileUpload = () => {
               isDragActive ? "text-cyan-400" : "text-gray-400"
             }`} />
             <p className="text-lg text-gray-300 mb-2">
-              Drop your CSV files here
+              Drop your XLSX files here
             </p>
             <p className="text-sm text-gray-500">or click to browse files</p>
             <input
               id="file-input"
               type="file"
               multiple
-              accept=".csv"
+              accept=".xlsx"
               onChange={handleFileSelect}
               className="hidden"
             />
@@ -411,9 +411,9 @@ const FileUpload = () => {
           <div className="space-y-3 text-gray-300">
             <div className="flex items-start space-x-2">
               <Badge className="bg-purple-900/50 text-purple-400 border-purple-600 mt-0.5">
-                CSV
+                XLSX
               </Badge>
-              <span>Only CSV files are supported for migration</span>
+              <span>Only XLSX files are supported for migration</span>
             </div>
             <div className="flex items-start space-x-2">
               <Badge className="bg-blue-900/50 text-blue-400 border-blue-600 mt-0.5">
@@ -425,7 +425,7 @@ const FileUpload = () => {
               <Badge className="bg-green-900/50 text-green-400 border-green-600 mt-0.5">
                 FORMAT
               </Badge>
-              <span>Ensure your CSV has proper headers and UTF-8 encoding</span>
+              <span>Ensure your XLSX has proper headers and data formatting</span>
             </div>
             <div className="flex items-start space-x-2">
               <Badge className="bg-orange-900/50 text-orange-400 border-orange-600 mt-0.5">
