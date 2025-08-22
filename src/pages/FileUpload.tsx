@@ -118,7 +118,6 @@ const FileUpload = () => {
 
         if (missing.length === requiredColumns.length) {
           setValidationError("The uploaded file does not contain any of the required columns.");
-          setMissingColumns(missing);
           setShowErrorDialog(true);
           return;
         }
