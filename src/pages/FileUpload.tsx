@@ -11,17 +11,28 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   Upload,
   FileText,
   CheckCircle,
   AlertCircle,
   X,
   Play,
+  Download,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import * as XLSX from 'xlsx';
 
 const FileUpload = () => {
   const [files, setFiles] = useState<File[]>([]);
@@ -31,43 +42,111 @@ const FileUpload = () => {
     "idle" | "uploading" | "success" | "error"
   >("idle");
   const [caseType, setCaseType] = useState<string>("");
-  const [caseTypeSearchValue, setCaseTypeSearchValue] = useState<string>(""); // Renamed for clarity
+  const [caseTypeSearchValue, setCaseTypeSearchValue] = useState<string>("");
   const [isDragActive, setIsDragActive] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [previewData, setPreviewData] = useState<any[]>([]);
+  const [validationError, setValidationError] = useState<string>("");
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [missingColumns, setMissingColumns] = useState<string[]>([]);
   const { toast } = useToast();
 
-  // Sample data for preview (in real app, this would come from parsing the CSV)
-  const samplePreviewData = [
-    {
-      projectId: "12302892",
-      date: "01-15-24",
-      phase: "In Treatment",
-      projectType: "Personal Injury",
-      grossSettlement: "458000",
-      defendant: "Cigna ltd",
-      fullName: "Maria Lopez Joynaas Noah Peter",
-      clientEmails: "kj.69@myshoo.com",
-      clientPhones: "+13873256967",
-      clientDetails: "505-12-1773",
-      socialSecurity: "9747",
-      clientAddress1: "Bird Ive Road",
-      clientDateOfBirth: "02-15-98",
-      referralSource: "VLX Law",
-      settlementAmount: "12000",
-      orgClients: "Layfly Law Firm",
-      firstPrimary: "Harry Max",
-      clientName: "John",
-      clientDateDeath: "03-20-23"
-    }
+  const requiredColumns = [
+    "Project ID",
+    "Date Filed", 
+    "Phase",
+    "Project Type",
+    "Gross Settlement",
+    "Defendant",
+    "Client Full Name",
+    "Client Emails",
+    "Client Phones",
+    "Client Details- Social Security Number",
+    "Client Address 1",
+    "Client Date of Birth", 
+    "Referral Source",
+    "Settlement Amount"
   ];
 
-  const onDrop = useCallback((acceptedFiles: File[]) => {
-    setFiles(acceptedFiles);
-    setUploadStatus("idle");
-    // In real app, parse CSV here and set preview data
+  const downloadSampleFile = () => {
+    const headers = requiredColumns;
+    const worksheet = XLSX.utils.aoa_to_sheet([headers]);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sample Data");
+    XLSX.writeFile(workbook, "sample_migration_template.xlsx");
+  };
+
+  const validateFileColumns = (fileHeaders: string[]) => {
+    const normalizedHeaders = fileHeaders.map(h => h.trim());
+    const missing = requiredColumns.filter(col => !normalizedHeaders.includes(col));
+    return missing;
+  };
+
+  const parseExcelFile = async (file: File): Promise<any[]> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = new Uint8Array(e.target?.result as ArrayBuffer);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+          resolve(jsonData as any[]);
+        } catch (error) {
+          reject(error);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    });
+  };
+
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
     if (acceptedFiles.length > 0) {
-      setPreviewData(samplePreviewData);
+      try {
+        const file = acceptedFiles[0];
+        const data = await parseExcelFile(file);
+        
+        if (data.length === 0) {
+          setValidationError("The uploaded file appears to be empty.");
+          setShowErrorDialog(true);
+          return;
+        }
+
+        const headers = data[0] as string[];
+        const missing = validateFileColumns(headers);
+
+        if (missing.length === requiredColumns.length) {
+          setValidationError("The uploaded file does not contain any of the required columns.");
+          setMissingColumns(missing);
+          setShowErrorDialog(true);
+          return;
+        }
+
+        if (missing.length > 0) {
+          setValidationError(`The uploaded file is missing some required columns.`);
+          setMissingColumns(missing);
+          setShowErrorDialog(true);
+          return;
+        }
+
+        // File is valid, process it
+        setFiles(acceptedFiles);
+        setUploadStatus("idle");
+        
+        // Convert first data row to preview format
+        if (data.length > 1) {
+          const firstRow = data[1];
+          const previewRow = headers.reduce((obj: any, header: string, index: number) => {
+            obj[header] = firstRow[index] || "";
+            return obj;
+          }, {});
+          setPreviewData([previewRow]);
+        }
+      } catch (error) {
+        setValidationError("Error reading the Excel file. Please ensure it's a valid XLSX file.");
+        setShowErrorDialog(true);
+      }
     }
   }, []);
 
@@ -181,6 +260,16 @@ const FileUpload = () => {
           <CardDescription className="text-gray-400">
             Select a case type, then drag and drop your XLSX files below.
           </CardDescription>
+          <div className="flex justify-end mt-2">
+            <Button
+              variant="outline"
+              onClick={downloadSampleFile}
+              className="bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Download Sample Template
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {/* MOVED: Case Type selector is now here */}
@@ -337,47 +426,19 @@ const FileUpload = () => {
                     <Table>
                       <TableHeader>
                         <TableRow className="border-gray-700">
-                          <TableHead className="text-gray-300">Project ID</TableHead>
-                          <TableHead className="text-gray-300">Date Filed</TableHead>
-                          <TableHead className="text-gray-300">Phase</TableHead>
-                          <TableHead className="text-gray-300">Project Type</TableHead>
-                          <TableHead className="text-gray-300">Gross Settlement</TableHead>
-                          <TableHead className="text-gray-300">Defendant</TableHead>
-                          <TableHead className="text-gray-300">Client Full Name</TableHead>
-                          <TableHead className="text-gray-300">Client Emails</TableHead>
-                          <TableHead className="text-gray-300">Client Phones</TableHead>
-                          <TableHead className="text-gray-300">Client Details- Social Security Number</TableHead>
-                          <TableHead className="text-gray-300">Client Address 1</TableHead>
-                          <TableHead className="text-gray-300">Client Date of Birth</TableHead>
-                          <TableHead className="text-gray-300">Referral Source</TableHead>
-                          <TableHead className="text-gray-300">Settlement Amount</TableHead>
-                          <TableHead className="text-gray-300">Org Clients</TableHead>
-                          <TableHead className="text-gray-300">First Primary</TableHead>
-                          <TableHead className="text-gray-300">Client Name</TableHead>
-                          <TableHead className="text-gray-300">Client Date of Death</TableHead>
+                          {requiredColumns.map((column) => (
+                            <TableHead key={column} className="text-gray-300">{column}</TableHead>
+                          ))}
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {previewData.slice(0, 5).map((row, index) => (
+                        {previewData.slice(0, 1).map((row, index) => (
                           <TableRow key={index} className="border-gray-700">
-                            <TableCell className="text-gray-300">{row.projectId}</TableCell>
-                            <TableCell className="text-gray-300">{formatDate(row.date)}</TableCell>
-                            <TableCell className="text-gray-300">{row.phase}</TableCell>
-                            <TableCell className="text-gray-300">{row.projectType}</TableCell>
-                            <TableCell className="text-gray-300">{row.grossSettlement}</TableCell>
-                            <TableCell className="text-gray-300">{row.defendant}</TableCell>
-                            <TableCell className="text-gray-300">{row.fullName}</TableCell>
-                            <TableCell className="text-gray-300">{row.clientEmails}</TableCell>
-                            <TableCell className="text-gray-300">{row.clientPhones}</TableCell>
-                            <TableCell className="text-gray-300">{row.clientDetails}</TableCell>
-                            <TableCell className="text-gray-300">{row.clientAddress1}</TableCell>
-                            <TableCell className="text-gray-300">{formatDate(row.clientDateOfBirth)}</TableCell>
-                            <TableCell className="text-gray-300">{row.referralSource}</TableCell>
-                            <TableCell className="text-gray-300">{row.settlementAmount}</TableCell>
-                            <TableCell className="text-gray-300">{row.orgClients}</TableCell>
-                            <TableCell className="text-gray-300">{row.firstPrimary}</TableCell>
-                            <TableCell className="text-gray-300">{row.clientName}</TableCell>
-                            <TableCell className="text-gray-300">{formatDate(row.clientDateDeath)}</TableCell>
+                            {requiredColumns.map((column) => (
+                              <TableCell key={column} className="text-gray-300">
+                                {row[column] || ""}
+                              </TableCell>
+                            ))}
                           </TableRow>
                         ))}
                       </TableBody>
@@ -401,6 +462,50 @@ const FileUpload = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Error Dialog */}
+      <AlertDialog open={showErrorDialog} onOpenChange={setShowErrorDialog}>
+        <AlertDialogContent className="bg-gray-900 border-gray-700">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-red-400">File Validation Error</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-300">
+              {validationError}
+              {missingColumns.length > 0 && (
+                <div className="mt-3">
+                  <p className="font-medium text-gray-200">Missing columns:</p>
+                  <ul className="list-disc list-inside mt-1 text-sm">
+                    {missingColumns.map((column) => (
+                      <li key={column} className="text-gray-400">{column}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="gap-2">
+            <Button
+              variant="outline"
+              onClick={downloadSampleFile}
+              className="bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700"
+            >
+              <Download className="h-4 w-4 mr-2" />
+              Download Template
+            </Button>
+            <AlertDialogAction
+              onClick={() => {
+                setShowErrorDialog(false);
+                setFiles([]);
+                setPreviewData([]);
+                setValidationError("");
+                setMissingColumns([]);
+              }}
+              className="bg-cyan-600 hover:bg-cyan-700"
+            >
+              Close
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {/* Upload Guidelines */}
       <Card className="bg-gray-900 border-gray-800">
