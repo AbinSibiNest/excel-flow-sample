@@ -421,27 +421,48 @@ const RecordDetail = () => {
               <Input
                 id="referenceId"
                 value={recordData.referenceId}
-                readOnly
-                className="p-3 bg-card rounded-lg text-foreground font-medium"
+                onChange={isAllFieldsEditable ? (e) => handleInputChange('defendant', e.target.value) : undefined}
+                readOnly={!isAllFieldsEditable}
+                className={cn(
+                  isAllFieldsEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  errors.referenceId && "border-destructive bg-destructive/10"
+                )}
               />
+              {errors.defendant && (
+                <p className="text-destructive text-sm mt-1">{errors.referenceId}</p>
+              )}
             </div>
             <div>
               <Label htmlFor="firmName" className="text-muted-foreground">Firm Name</Label>
               <Input
                 id="firmName"
                 value={recordData.firmName}
-                readOnly
-                className="p-3 bg-card rounded-lg text-foreground font-medium"
+                onChange={isAllFieldsEditable ? (e) => handleInputChange('defendant', e.target.value) : undefined}
+                readOnly={!isAllFieldsEditable}
+                className={cn(
+                  isAllFieldsEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  errors.firmName && "border-destructive bg-destructive/10"
+                )}
               />
+              {errors.defendant && (
+                <p className="text-destructive text-sm mt-1">{errors.firmName}</p>
+              )}
             </div>
             <div>
               <Label htmlFor="trustAccountNumber" className="text-muted-foreground">Trust Account Number</Label>
               <Input
                 id="trustAccountNumber"
                 value={recordData.trustAccountNumber}
-                readOnly
-                className="p-3 bg-card rounded-lg text-foreground font-medium"
+                onChange={isAllFieldsEditable ? (e) => handleInputChange('defendant', e.target.value) : undefined}
+                readOnly={!isAllFieldsEditable}
+                className={cn(
+                  isAllFieldsEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  errors.trustAccountNumber && "border-destructive bg-destructive/10"
+                )}
               />
+              {errors.defendant && (
+                <p className="text-destructive text-sm mt-1">{errors.trustAccountNumber}</p>
+              )}
             </div>
             <div>
               <Label htmlFor="defendant" className="text-muted-foreground">Defendant *</Label>
