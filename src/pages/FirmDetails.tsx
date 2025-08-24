@@ -1,4 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Card,
@@ -19,12 +19,33 @@ import Configuration from "./Configuration";
 const FirmDetails = () => {
   const { firmId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState("dashboard");
+
+  // Determine active tab from current route
+  useEffect(() => {
+    const path = location.pathname;
+    if (path.includes("/dashboard")) {
+      setActiveTab("dashboard");
+    } else if (path.includes("/upload")) {
+      setActiveTab("upload");
+    } else if (path.includes("/pending")) {
+      setActiveTab("pending");
+    } else if (path.includes("/history")) {
+      setActiveTab("history");
+    } else if (path.includes("/config")) {
+      setActiveTab("config");
+    } else {
+      // Default to dashboard if no specific tab in URL
+      setActiveTab("dashboard");
+    }
+  }, [location.pathname]);
 
   // Listen for tab change events from Dashboard quick actions
   useEffect(() => {
     const handleTabChange = (event: CustomEvent) => {
-      setActiveTab(event.detail.tabValue);
+      const tabValue = event.detail.tabValue;
+      navigate(`/firm/${firmId}/${tabValue}`);
     };
 
     window.addEventListener("tabChange", handleTabChange as EventListener);
@@ -32,18 +53,12 @@ const FirmDetails = () => {
     return () => {
       window.removeEventListener("tabChange", handleTabChange as EventListener);
     };
-  }, []);
+  }, [firmId, navigate]);
 
-  // Also check URL hash on mount
-  useEffect(() => {
-    const hash = window.location.hash.replace("#", "");
-    if (
-      hash &&
-      ["dashboard", "upload", "pending", "history", "config"].includes(hash)
-    ) {
-      setActiveTab(hash);
-    }
-  }, []);
+  // Handle tab change by navigating to new route
+  const handleTabChange = (tabValue: string) => {
+    navigate(`/firm/${firmId}/${tabValue}`);
+  };
 
   // Mock firm data - in real app would fetch based on firmId
   const firmData = {
@@ -92,7 +107,7 @@ const FirmDetails = () => {
       {/* Tabs Navigation */}
       <Tabs
         value={activeTab}
-        onValueChange={setActiveTab}
+        onValueChange={handleTabChange}
         className="h-full flex flex-col"
       >
         <div className="border-b border-gray-700 px-6">
