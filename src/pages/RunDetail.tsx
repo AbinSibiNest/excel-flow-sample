@@ -174,7 +174,7 @@ const RunDetail = () => {
         <div className="flex items-center space-x-4">
           <Button
             variant="ghost"
-            onClick={() => navigate('/firm/firm-001#history')}
+            onClick={() => navigate('/migration-sync-config')}
             className="text-gray-300 hover:text-gray-100"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />

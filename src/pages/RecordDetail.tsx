@@ -325,7 +325,7 @@ const RecordDetail = () => {
       );
       if (!confirmLeave) return;
     }
-    navigate("/firm/firm-001#pending");
+    navigate("/migration-sync-config");
   };
 
   const handleBack = () => {
@@ -335,7 +335,7 @@ const RecordDetail = () => {
       );
       if (!confirmLeave) return;
     }
-    navigate("/firm/firm-001#pending");
+    navigate("/migration-sync-config");
   };
 
   const maskSSN = (ssn: string) => {

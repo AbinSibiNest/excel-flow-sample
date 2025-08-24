@@ -10,8 +10,7 @@ const UploadSettlementDocument = () => {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
   const handleBack = () => {
-    const returnTab = location.state?.returnTab || "settlements";
-    navigate("/cases/details", { state: { activeTab: returnTab } });
+    navigate("/migration-sync-config");
   };
 
   const handleDrag = (e: React.DragEvent) => {
