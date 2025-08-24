@@ -83,12 +83,12 @@ const MigrationSyncConfig = () => {
   const renderStatus = (firm: any) => {
   const { id, status } = firm;
 
-  // Configuration for statuses that should be links and their URL hashes.
+  // Configuration for statuses that should be links and their routes.
   const linkConfig: { [key: string]: string } = {
-    "pending verification": "#pending",
-    "active": "", // The 'active' status links to the base URL with no hash.
-    "failed": "#history",
-    "not yet synced":"#config",
+    "pending verification": "/pending",
+    "active": "/dashboard", 
+    "failed": "/history",
+    "not yet synced": "/config",
   };
 
   // Create the badge component once to avoid repeating code.
