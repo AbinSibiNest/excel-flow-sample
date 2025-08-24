@@ -95,7 +95,7 @@ const CaseDetails = () => {
   };
 
   const handleBack = () => {
-    navigate("/migration-sync-config");
+    navigate(-1);
   };
 
   return (

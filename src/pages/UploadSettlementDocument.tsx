@@ -10,7 +10,7 @@ const UploadSettlementDocument = () => {
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
 
   const handleBack = () => {
-    navigate("/migration-sync-config");
+    navigate(-1);
   };
 
   const handleDrag = (e: React.DragEvent) => {

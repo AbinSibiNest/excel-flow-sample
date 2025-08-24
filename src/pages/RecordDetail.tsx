@@ -325,7 +325,7 @@ const RecordDetail = () => {
       );
       if (!confirmLeave) return;
     }
-    navigate("/migration-sync-config");
+    navigate(-1);
   };
 
   const handleBack = () => {
@@ -335,7 +335,7 @@ const RecordDetail = () => {
       );
       if (!confirmLeave) return;
     }
-    navigate("/migration-sync-config");
+    navigate(-1);
   };
 
   const maskSSN = (ssn: string) => {
