@@ -102,9 +102,20 @@ const FileUpload = () => {
   };
 
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    if (acceptedFiles.length > 0) {
+    // Filter to only accept .xlsx files
+    const xlsxFiles = acceptedFiles.filter(file => 
+      file.name.toLowerCase().endsWith('.xlsx') || file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    
+    if (xlsxFiles.length === 0) {
+      setValidationError("Only XLSX files are allowed. Please upload a valid Excel file.");
+      setShowErrorDialog(true);
+      return;
+    }
+    
+    if (xlsxFiles.length > 0) {
       try {
-        const file = acceptedFiles[0];
+        const file = xlsxFiles[0];
         const data = await parseExcelFile(file);
         
         if (data.length === 0) {
