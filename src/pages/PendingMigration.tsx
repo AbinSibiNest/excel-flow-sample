@@ -372,9 +372,9 @@ const PendingMigration = () => {
       return;
     }
     
-    // For "No Updates" tab, open case details with all fields disabled
+    // For "No Updates" tab, open Record Details with all fields disabled
     if (activeTab === "no-update") {
-      navigate(`/case/${id}?disabled=true`);
+      navigate(`/record/${id}?disabled=true`);
       return;
     }
     
