@@ -9,6 +9,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Save, AlertCircle, Eye, EyeOff, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -65,6 +66,7 @@ const RecordDetail = () => {
   // Check if this is from "No Update" tab (all fields disabled)
   const searchParams = new URLSearchParams(window.location.search);
   const isDisabled = searchParams.get('disabled') === 'true';
+  const urlCaseStatus = searchParams.get('caseStatus');
 
   useEffect(() => {
     // Use same mock data as PendingMigration screen
@@ -231,9 +233,14 @@ const RecordDetail = () => {
     const recordId = parseInt(id || "1");
     const mockData = mockRecords.find(record => record.id === recordId) || mockRecords[0];
     
+    // Override case status with URL parameter if provided
+    if (urlCaseStatus) {
+      mockData.caseStatus = urlCaseStatus;
+    }
+    
     setRecordData(mockData);
     validateRecord(mockData);
-  }, [id]);
+  }, [id, urlCaseStatus]);
 
   const validateRecord = (data: RecordData) => {
     const newErrors: ValidationErrors = {};
@@ -413,7 +420,15 @@ const RecordDetail = () => {
           </Button>
           <div>
             <h1 className="text-3xl font-bold text-foreground">Case Details</h1>
-            <p className="text-muted-foreground mt-1">Reference ID: {recordData.referenceId}</p>
+            <div className="flex items-center gap-4 mt-1">
+              <p className="text-muted-foreground">Reference ID: {recordData.referenceId}</p>
+              <Badge 
+                variant={recordData.caseStatus === "Active" ? "default" : "secondary"}
+                className="text-xs"
+              >
+                Case Status: {recordData.caseStatus}
+              </Badge>
+            </div>
             {hasErrors && (
               <div className="flex items-center mt-2 text-destructive">
                 <AlertCircle className="h-4 w-4 mr-2" />
