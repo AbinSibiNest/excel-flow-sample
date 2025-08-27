@@ -22,6 +22,9 @@ interface RecordData {
   settledAmount: number;
   status: string;
   approval: string;
+  caseStatus: string;
+  syncStatus: string;
+  syncError?: string;
   // Additional fields for form
   firmName: string;
   trustAccountNumber: string;
@@ -58,6 +61,10 @@ const RecordDetail = () => {
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [showDOB, setShowDOB] = useState(false);
   const [showSSN, setShowSSN] = useState(false);
+  
+  // Check if this is from "No Update" tab (all fields disabled)
+  const searchParams = new URLSearchParams(window.location.search);
+  const isDisabled = searchParams.get('disabled') === 'true';
 
   useEffect(() => {
     // Use same mock data as PendingMigration screen
@@ -71,6 +78,8 @@ const RecordDetail = () => {
         settledAmount: 15000,
         status: "New",
         approval: "Needs Review",
+        caseStatus: "Draft",
+        syncStatus: "Needs Review",
         firmName: "Anderson & Associates",
         trustAccountNumber: "TA-001234567",
         grossSettlementAmount: 25000,
@@ -101,6 +110,8 @@ const RecordDetail = () => {
         settledAmount: 22500,
         status: "Updates",
         approval: "Ready to Sync",
+        caseStatus: "Active",
+        syncStatus: "Ready to Sync",
         firmName: "Johnson Legal Group",
         trustAccountNumber: "TA-002345678",
         grossSettlementAmount: 35000,
@@ -131,6 +142,8 @@ const RecordDetail = () => {
         settledAmount: 18750,
         status: "New",
         approval: "Ready to Sync",
+        caseStatus: "Draft",
+        syncStatus: "Ready to Sync",
         firmName: "Brown & Associates",
         trustAccountNumber: "TA-003456789",
         grossSettlementAmount: 30000,
@@ -160,6 +173,8 @@ const RecordDetail = () => {
         settledAmount: 0,
         status: "No Updates",
         approval: "Synced",
+        caseStatus: "Active",
+        syncStatus: "Synced",
         firmName: "Davis Legal",
         trustAccountNumber: "TA-004567890",
         grossSettlementAmount: 0,
@@ -189,6 +204,8 @@ const RecordDetail = () => {
         settledAmount: 27800,
         status: "Updates",
         approval: "Needs Review",
+        caseStatus: "Draft",
+        syncStatus: "Needs Review",
         firmName: "Wilson Workers Law",
         trustAccountNumber: "TA-005678901",
         grossSettlementAmount: 40000,
@@ -359,12 +376,27 @@ const RecordDetail = () => {
   const hasErrors = Object.keys(errors).length > 0;
   const isNewCase = recordData.status === "New";
   const isUpdatedCase = recordData.status === "Updates";
+  const isActiveCase = recordData.caseStatus === "Active";
   
-  // For New cases: All fields editable
-  // For Updated cases: Only Client Info editable
-  const isAllFieldsEditable = isNewCase;
-  const isSettlementEditable = isNewCase;
-  const isClientInfoEditable = isNewCase || isUpdatedCase;
+  // For disabled records (from "No Update" tab), nothing is editable
+  if (isDisabled) {
+    var isAllFieldsEditable = false;
+    var isSettlementEditable = false;
+    var isClientInfoEditable = false;
+  } else {
+    // For Active case status: only Name and Address in client information are editable
+    // For Draft case status: follows normal rules (New = all editable, Updates = client info editable)
+    if (isActiveCase) {
+      var isAllFieldsEditable = false;
+      var isSettlementEditable = false;
+      var isClientInfoEditable = true; // But only name and address fields
+    } else {
+      // Draft case status follows normal rules
+      var isAllFieldsEditable = isNewCase;
+      var isSettlementEditable = isNewCase;
+      var isClientInfoEditable = isNewCase || isUpdatedCase;
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -380,7 +412,7 @@ const RecordDetail = () => {
             Back to Pending Migration
           </Button>
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Record Details</h1>
+            <h1 className="text-3xl font-bold text-foreground">Case Details</h1>
             <p className="text-muted-foreground mt-1">Reference ID: {recordData.referenceId}</p>
             {hasErrors && (
               <div className="flex items-center mt-2 text-destructive">
@@ -421,14 +453,14 @@ const RecordDetail = () => {
               <Input
                 id="referenceId"
                 value={recordData.referenceId}
-                onChange={isAllFieldsEditable ? (e) => handleInputChange('defendant', e.target.value) : undefined}
+                onChange={isAllFieldsEditable ? (e) => handleInputChange('referenceId', e.target.value) : undefined}
                 readOnly={!isAllFieldsEditable}
                 className={cn(
                   isAllFieldsEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.referenceId && "border-destructive bg-destructive/10"
                 )}
               />
-              {errors.defendant && (
+              {errors.referenceId && (
                 <p className="text-destructive text-sm mt-1">{errors.referenceId}</p>
               )}
             </div>
@@ -437,14 +469,14 @@ const RecordDetail = () => {
               <Input
                 id="firmName"
                 value={recordData.firmName}
-                onChange={isAllFieldsEditable ? (e) => handleInputChange('defendant', e.target.value) : undefined}
+                onChange={isAllFieldsEditable ? (e) => handleInputChange('firmName', e.target.value) : undefined}
                 readOnly={!isAllFieldsEditable}
                 className={cn(
                   isAllFieldsEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.firmName && "border-destructive bg-destructive/10"
                 )}
               />
-              {errors.defendant && (
+              {errors.firmName && (
                 <p className="text-destructive text-sm mt-1">{errors.firmName}</p>
               )}
             </div>
@@ -453,14 +485,14 @@ const RecordDetail = () => {
               <Input
                 id="trustAccountNumber"
                 value={recordData.trustAccountNumber}
-                onChange={isAllFieldsEditable ? (e) => handleInputChange('defendant', e.target.value) : undefined}
+                onChange={isAllFieldsEditable ? (e) => handleInputChange('trustAccountNumber', e.target.value) : undefined}
                 readOnly={!isAllFieldsEditable}
                 className={cn(
                   isAllFieldsEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.trustAccountNumber && "border-destructive bg-destructive/10"
                 )}
               />
-              {errors.defendant && (
+              {errors.trustAccountNumber && (
                 <p className="text-destructive text-sm mt-1">{errors.trustAccountNumber}</p>
               )}
             </div>
@@ -527,10 +559,10 @@ const RecordDetail = () => {
                 id="email"
                 type="email"
                 value={recordData.clientEmail}
-                onChange={isClientInfoEditable ? (e) => handleInputChange('clientEmail', e.target.value) : undefined}
-                readOnly={!isClientInfoEditable}
+                onChange={isClientInfoEditable && !isActiveCase ? (e) => handleInputChange('clientEmail', e.target.value) : undefined}
+                readOnly={!isClientInfoEditable || isActiveCase}
                 className={cn(
-                  isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  (isClientInfoEditable && !isActiveCase) ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.clientEmail && "border-destructive bg-destructive/10"
                 )}
               />
@@ -553,10 +585,10 @@ const RecordDetail = () => {
               <Input
                 id="phone"
                 value={recordData.clientPhone}
-                onChange={isClientInfoEditable ? (e) => handleInputChange('clientPhone', e.target.value) : undefined}
-                readOnly={!isClientInfoEditable}
+                onChange={isClientInfoEditable && !isActiveCase ? (e) => handleInputChange('clientPhone', e.target.value) : undefined}
+                readOnly={!isClientInfoEditable || isActiveCase}
                 className={cn(
-                  isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  (isClientInfoEditable && !isActiveCase) ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.clientPhone && "border-destructive bg-destructive/10"
                 )}
               />
@@ -597,9 +629,9 @@ const RecordDetail = () => {
                 id="birthdate"
                 type={showDOB ? "date" : "text"}
                 value={showDOB ? recordData.clientBirthdate : maskDOB(recordData.clientBirthdate)}
-                onChange={isClientInfoEditable ? (e) => handleInputChange('clientBirthdate', e.target.value) : undefined}
-                className={isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium"}
-                readOnly={!showDOB || !isClientInfoEditable}
+                onChange={isClientInfoEditable && !isActiveCase ? (e) => handleInputChange('clientBirthdate', e.target.value) : undefined}
+                className={(isClientInfoEditable && !isActiveCase) ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium"}
+                readOnly={!showDOB || !isClientInfoEditable || isActiveCase}
               />
             </div>
             <div>
@@ -634,12 +666,12 @@ const RecordDetail = () => {
               <Input
                 id="ssn"
                 value={showSSN ? recordData.clientSSN : maskSSN(recordData.clientSSN)}
-                onChange={isClientInfoEditable ? (e) => handleInputChange('clientSSN', e.target.value) : undefined}
+                onChange={isClientInfoEditable && !isActiveCase ? (e) => handleInputChange('clientSSN', e.target.value) : undefined}
                 className={cn(
-                  isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  (isClientInfoEditable && !isActiveCase) ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.clientSSN && "border-destructive bg-destructive/10"
                 )}
-                readOnly={!showSSN || !isClientInfoEditable}
+                readOnly={!showSSN || !isClientInfoEditable || isActiveCase}
                 placeholder="XXX-XX-XXXX"
               />
               {errors.clientSSN && (
@@ -731,7 +763,7 @@ const RecordDetail = () => {
               <Input
                 id="lienAmount"
                 type="number"
-                onChange={isSettlementEditable ? (e) => handleInputChange('settledAmount', parseFloat(e.target.value) || 0) : undefined}
+                onChange={isSettlementEditable ? (e) => handleInputChange('lienAmount', parseFloat(e.target.value) || 0) : undefined}
                 value={recordData.lienAmount}
                readOnly={!isSettlementEditable}
                 className={cn(
@@ -745,6 +777,7 @@ const RecordDetail = () => {
                 id="advanceAmount"
                 type="number"
                 value={recordData.advanceAmount}
+                onChange={isSettlementEditable ? (e) => handleInputChange('advanceAmount', parseFloat(e.target.value) || 0) : undefined}
                 readOnly={!isSettlementEditable}
                 className={cn(
                   isSettlementEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",

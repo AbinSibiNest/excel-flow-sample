@@ -18,6 +18,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CheckCircle, Database, FileText, Users, Filter, Search, ArchiveX, Archive, Loader2, AlertCircle, Info } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Input } from "@/components/ui/input";
@@ -30,6 +31,7 @@ const PendingMigration = () => {
   const [selectAll, setSelectAll] = useState(false);
   const [filterType, setFilterType] = useState<'all' | 'errors' | 'ready' | 'synced' | 'failed'>('all');
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeTab, setActiveTab] = useState("migration-data");
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -74,6 +76,8 @@ const PendingMigration = () => {
       settledAmount: 15000,
       status: "New",
       approval: "Needs Review",
+      caseStatus: "Draft",
+      syncStatus: "Not Synced",
     },
     {
       id: 2,
@@ -84,6 +88,8 @@ const PendingMigration = () => {
       settledAmount: 22500,
       status: "Updates",
       approval: "Ready to Sync",
+      caseStatus: "Active",
+      syncStatus: "Ready to Sync",
     },
     {
       id: 3,
@@ -94,6 +100,8 @@ const PendingMigration = () => {
       settledAmount: 18750,
       status: "New",
       approval: "Ready to Sync",
+      caseStatus: "Draft",
+      syncStatus: "Ready to Sync",
     },
     {
       id: 5,
@@ -104,6 +112,8 @@ const PendingMigration = () => {
       settledAmount: 27800,
       status: "Updates",
       approval: "Needs Review",
+      caseStatus: "Draft",
+      syncStatus: "Needs Review",
     },
     {
       id: 6,
@@ -114,6 +124,8 @@ const PendingMigration = () => {
       settledAmount: 35000,
       status: "New",
       approval: "Ready to Sync",
+      caseStatus: "Draft",
+      syncStatus: "Ready to Sync",
     },
     {
       id: 7,
@@ -124,6 +136,8 @@ const PendingMigration = () => {
       settledAmount: 42000,
       status: "Updates",
       approval: "Ready to Sync",
+      caseStatus: "Active",
+      syncStatus: "Ready to Sync",
     },
     {
       id: 8,
@@ -134,6 +148,8 @@ const PendingMigration = () => {
       settledAmount: 28500,
       status: "New",
       approval: "Needs Review",
+      caseStatus: "Draft",
+      syncStatus: "Needs Review",
     },
     {
       id: 9,
@@ -144,6 +160,8 @@ const PendingMigration = () => {
       settledAmount: 19200,
       status: "Updates",
       approval: "Ready to Sync",
+      caseStatus: "Active",
+      syncStatus: "Ready to Sync",
     },
     {
       id: 11,
@@ -154,6 +172,8 @@ const PendingMigration = () => {
       settledAmount: 24800,
       status: "New",
       approval: "Ready to Sync",
+      caseStatus: "Draft",
+      syncStatus: "Ready to Sync",
     },
     {
       id: 12,
@@ -164,6 +184,8 @@ const PendingMigration = () => {
       settledAmount: 85000,
       status: "Updates",
       approval: "Needs Review",
+      caseStatus: "Draft",
+      syncStatus: "Needs Review",
     },
     {
       id: 13,
@@ -174,6 +196,8 @@ const PendingMigration = () => {
       settledAmount: 33750,
       status: "New",
       approval: "Needs Review",
+      caseStatus: "Draft",
+      syncStatus: "Needs Review",
     },
     {
       id: 15,
@@ -184,6 +208,8 @@ const PendingMigration = () => {
       settledAmount: 21600,
       status: "Updates",
       approval: "Ready to Sync",
+      caseStatus: "Active",
+      syncStatus: "Ready to Sync",
     },
     {
       id: 16,
@@ -194,6 +220,8 @@ const PendingMigration = () => {
       settledAmount: 16800,
       status: "New",
       approval: "Ready to Sync",
+      caseStatus: "Draft",
+      syncStatus: "Ready to Sync",
     },
     {
       id: 17,
@@ -204,6 +232,8 @@ const PendingMigration = () => {
       settledAmount: 39400,
       status: "Updates",
       approval: "Needs Review",
+      caseStatus: "Draft",
+      syncStatus: "Needs Review",
     },
     {
       id: 18,
@@ -214,6 +244,8 @@ const PendingMigration = () => {
       settledAmount: 52100,
       status: "New",
       approval: "Needs Review",
+      caseStatus: "Draft",
+      syncStatus: "Needs Review",
     },
     {
       id: 20,
@@ -224,6 +256,8 @@ const PendingMigration = () => {
       settledAmount: 41700,
       status: "Updates",
       approval: "Ready to Sync",
+      caseStatus: "Active",
+      syncStatus: "Ready to Sync",
     },
     {
       id: 21,
@@ -235,6 +269,8 @@ const PendingMigration = () => {
       status: "Updates",
       approval: "Sync Failed",
       syncError: "Database connection timeout - please retry",
+      caseStatus: "Draft",
+      syncStatus: "Sync Failed",
     },
     {
       id: 22,
@@ -246,12 +282,42 @@ const PendingMigration = () => {
       status: "New",
       approval: "Sync Failed",
       syncError: "Invalid client SSN format - verification failed",
+      caseStatus: "Draft",
+      syncStatus: "Sync Failed",
+    },
+  ]);
+
+  // Mock data for "No Update" tab
+  const [noUpdateData] = useState([
+    {
+      id: 101,
+      referenceId: "REF-101",
+      plaintiff: "No Update Client 1",
+      caseType: "Personal Injury",
+      createDate: "2024-01-10",
+      settledAmount: 12000,
+      status: "No Updates",
+      approval: "Synced",
+      caseStatus: "Active",
+      syncStatus: "Synced",
+    },
+    {
+      id: 102,
+      referenceId: "REF-102", 
+      plaintiff: "No Update Client 2",
+      caseType: "Auto Accident",
+      createDate: "2024-01-12",
+      settledAmount: 15000,
+      status: "No Updates",
+      approval: "Synced",
+      caseStatus: "Active",
+      syncStatus: "Synced",
     },
   ]);
 
   // Filter data based on filter type and search term
   const filteredData = (() => {
-    let data = parsedData;
+    let data = activeTab === "migration-data" ? parsedData : noUpdateData;
     
     // Filter by search term
     if (searchTerm) {
@@ -289,7 +355,29 @@ const PendingMigration = () => {
     });
   };
 
-  const handleRowClick = (id: number) => {
+  const handleRowClick = (id: number, record: any) => {
+    // Handle different sync statuses
+    if (record.syncStatus === "Synced") {
+      const confirmGoToCase = window.confirm(
+        "This record is already synced. Would you like to go to the case screen to make changes?"
+      );
+      if (confirmGoToCase) {
+        navigate(`/case/${id}`);
+      }
+      return;
+    }
+    
+    if (record.syncStatus === "Syncing") {
+      // Disabled for syncing records
+      return;
+    }
+    
+    // For "No Updates" tab, open with all fields disabled
+    if (activeTab === "no-update") {
+      navigate(`/record/${id}?disabled=true`);
+      return;
+    }
+    
     navigate(`/record/${id}`);
   };
 
@@ -326,7 +414,7 @@ const PendingMigration = () => {
     setParsedData(prevData => 
       prevData.map(item => 
         selectedRows.includes(item.id) 
-          ? { ...item, approval: "Syncing" }
+          ? { ...item, approval: "Syncing", syncStatus: "Syncing" }
           : item
       )
     );
@@ -345,7 +433,8 @@ const PendingMigration = () => {
             const isSuccess = Math.random() > 0.3;
             return { 
               ...item, 
-              approval: isSuccess ? "Synced" : "Sync Failed" 
+              approval: isSuccess ? "Synced" : "Sync Failed",
+              syncStatus: isSuccess ? "Synced" : "Sync Failed"
             };
           }
           return item;
@@ -440,15 +529,12 @@ const PendingMigration = () => {
         </Card>
       </div>
 
-      {/* Data Table */}
+      {/* Data Table with Tabs */}
       <Card className="bg-gray-900 border-gray-800">
         <CardHeader>
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle className="text-gray-100">Parsed CSV Data</CardTitle>
-              {/* <CardDescription className="text-gray-400">
-                Select records to migrate to the main database
-              </CardDescription> */}
+              <CardTitle className="text-gray-100">Migration Records</CardTitle>
             </div>
             <div className="flex items-center space-x-4">
               <div className="relative w-64">
@@ -460,128 +546,218 @@ const PendingMigration = () => {
                   className="pl-10 bg-gray-800 border-gray-700 text-gray-100"
                 />
               </div>
-              <Button
-                onClick={handleMigrate}
-                disabled={selectedRows.length === 0}
-                className="bg-cyan-600 hover:bg-cyan-700 text-white"
-              >
-                <Database className="h-4 w-4 mr-2" />
-                Sync Selected ({selectedRows.length})
-              </Button>
+              {activeTab === "migration-data" && (
+                <Button
+                  onClick={handleMigrate}
+                  disabled={selectedRows.length === 0}
+                  className="bg-cyan-600 hover:bg-cyan-700 text-white"
+                >
+                  <Database className="h-4 w-4 mr-2" />
+                  Sync Selected ({selectedRows.length})
+                </Button>
+              )}
             </div>
           </div>
         </CardHeader>
         <CardContent>
-          <div className="overflow-x-auto">
-            <Table>
-               <TableHeader>
-                 <TableRow className="border-gray-800">
-                  <TableHead className="text-gray-300">
-                    <div className="flex items-center space-x-2">
-                      <Checkbox
-                        id="select-all-header"
-                        checked={selectAll}
-                        onCheckedChange={handleSelectAll}
-                      />
-                      <span>Select All</span>
-                    </div>
-                  </TableHead>
-                  <TableHead className="text-gray-300">Case Status</TableHead>
-                  <TableHead className="text-gray-300">Plaintiff</TableHead>
-                  <TableHead className="text-gray-300">Case Type</TableHead>
-                  <TableHead className="text-gray-300">Create Date</TableHead>
-                  <TableHead className="text-gray-300">Settled Amount</TableHead>
-                  <TableHead className="text-gray-300">Sync Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredData.map((row) => (
-                  <TableRow 
-                    key={row.id} 
-                    className={`border-gray-800 hover:bg-gray-800/50 cursor-pointer ${
-                      row.approval === "Needs Review" ? 'bg-red-900/20 border-red-800/30' : ''
-                    }`}
-                    onClick={() => handleRowClick(row.id)}
-                  >
-                    <TableCell onClick={(e) => e.stopPropagation()}>
-                      <Checkbox
-                        checked={selectedRows.includes(row.id)}
-                        disabled={row.approval !== "Ready to Sync"}
-                        onCheckedChange={(checked) =>
-                          handleRowSelect(row.id, checked as boolean)
-                        }
-                      />
-                    </TableCell>
-                    <TableCell>
-                      {row.status === "New" && (
-                        <Badge className="bg-blue-900/50 text-blue-400 border-blue-600">
-                          {row.status}
-                        </Badge>
-                      )}
-                       {row.status === "Updates" && (
-                         <Badge className="bg-yellow-900/50 text-yellow-400 border-yellow-600">
-                           {row.status}
-                         </Badge>
-                       )}
-                    </TableCell>
-                    <TableCell className={`${row.approval === "Needs Review" ? 'text-red-300' : 'text-gray-300'}`}>
-                      {row.plaintiff}
-                    </TableCell>
-                    <TableCell className={`font-mono text-sm ${row.approval === "Needs Review" ? 'text-red-300' : 'text-gray-300'}`}>
-                      {row.caseType}
-                    </TableCell>
-                    <TableCell className={`font-mono text-sm ${row.approval === "Needs Review" ? 'text-red-300' : 'text-gray-300'}`}>
-                      {formatDate(row.createDate)}
-                    </TableCell>
-                    <TableCell className="text-green-400 font-medium">
-                      {row.settledAmount ? `$${row.settledAmount.toLocaleString()}` : '$--'}
-                    </TableCell>
-                    <TableCell>
-                       {row.approval === "Ready to Sync" && (
-                         <Badge className="bg-green-900/50 text-green-400 border-green-600">
-                           Ready to Sync
-                         </Badge>
-                       )}
-                       {row.approval === "Needs Review" && (
-                         <Badge className="bg-red-900/50 text-red-400 border-red-600">
-                           Needs Review
-                         </Badge>
-                       )}
-                       {row.approval === "Syncing" && (
-                         <Badge className="bg-blue-900/50 text-blue-400 border-blue-600">
-                           <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                           Syncing
-                         </Badge>
-                       )}
-                       {row.approval === "Synced" && (
-                         <Badge className="bg-blue-900/50 text-blue-400 border-blue-600">
-                           Synced
-                         </Badge>
-                       )}
-                       {row.approval === "Sync Failed" && (
-                          <div className="flex items-center gap-2">
-                            <Badge className="bg-orange-900/50 text-orange-400 border-orange-600">
-                              Sync Failed
-                            </Badge>
-                            <Tooltip>
-                              <TooltipTrigger>
-                                <Info className="h-4 w-4 text-orange-400 cursor-help" />
-                              </TooltipTrigger>
-                              <TooltipContent>
-                                <p>{(row as any).syncError || "Sync failed due to unknown error"}</p>
-                              </TooltipContent>
-                            </Tooltip>
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-2 bg-gray-800">
+              <TabsTrigger value="migration-data" className="text-gray-300 data-[state=active]:bg-gray-700 data-[state=active]:text-white">
+                Migration Data
+              </TabsTrigger>
+              <TabsTrigger value="no-update" className="text-gray-300 data-[state=active]:bg-gray-700 data-[state=active]:text-white">
+                No Update
+              </TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="migration-data" className="mt-4">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-gray-800">
+                      <TableHead className="text-gray-300">
+                        <div className="flex items-center space-x-2">
+                          <Checkbox
+                            id="select-all-header"
+                            checked={selectAll}
+                            onCheckedChange={handleSelectAll}
+                          />
+                          <span>Select All</span>
+                        </div>
+                      </TableHead>
+                      <TableHead className="text-gray-300">Record Status</TableHead>
+                      <TableHead className="text-gray-300">Case Status</TableHead>
+                      <TableHead className="text-gray-300">Plaintiff</TableHead>
+                      <TableHead className="text-gray-300">Case Type</TableHead>
+                      <TableHead className="text-gray-300">Create Date</TableHead>
+                      <TableHead className="text-gray-300">Settled Amount</TableHead>
+                      <TableHead className="text-gray-300">Sync Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredData.map((row) => (
+                      <TableRow 
+                        key={row.id}
+                        className={`border-gray-800 ${
+                          row.syncStatus === "Syncing" 
+                            ? "opacity-50 cursor-not-allowed" 
+                            : "hover:bg-gray-800/50 cursor-pointer"
+                        }`}
+                        onClick={() => handleRowClick(row.id, row)}
+                      >
+                        <TableCell>
+                          <Checkbox
+                            checked={selectedRows.includes(row.id)}
+                            onCheckedChange={(checked) => handleRowSelect(row.id, checked as boolean)}
+                            disabled={row.approval !== "Ready to Sync"}
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        </TableCell>
+                        <TableCell className="text-gray-300">
+                          <Badge
+                            className={
+                              row.status === "New"
+                                ? "bg-blue-900/50 text-blue-400 border-blue-600"
+                                : "bg-orange-900/50 text-orange-400 border-orange-600"
+                            }
+                          >
+                            {row.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-gray-300">
+                          <Badge
+                            className={
+                              row.caseStatus === "Active"
+                                ? "bg-green-900/50 text-green-400 border-green-600"
+                                : "bg-gray-900/50 text-gray-400 border-gray-600"
+                            }
+                          >
+                            {row.caseStatus}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-cyan-400 font-medium">
+                          {row.plaintiff}
+                        </TableCell>
+                        <TableCell className="text-gray-300">{row.caseType}</TableCell>
+                        <TableCell className="text-gray-300">{formatDate(row.createDate)}</TableCell>
+                        <TableCell className="text-gray-300">
+                          ${row.settledAmount.toLocaleString()}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex items-center space-x-2">
+                            <TooltipProvider>
+                              <Tooltip>
+                                <TooltipTrigger asChild>
+                                  <Badge
+                                    className={
+                                      row.syncStatus === "Needs Review"
+                                        ? "bg-red-900/50 text-red-400 border-red-600"
+                                        : row.syncStatus === "Ready to Sync"
+                                        ? "bg-green-900/50 text-green-400 border-green-600"
+                                        : row.syncStatus === "Synced"
+                                        ? "bg-blue-900/50 text-blue-400 border-blue-600"
+                                        : row.syncStatus === "Sync Failed"
+                                        ? "bg-orange-900/50 text-orange-400 border-orange-600"
+                                        : row.syncStatus === "Syncing"
+                                        ? "bg-yellow-900/50 text-yellow-400 border-yellow-600"
+                                        : "bg-gray-900/50 text-gray-400 border-gray-600"
+                                    }
+                                  >
+                                    <div className="flex items-center">
+                                      {row.syncStatus === "Syncing" && (
+                                        <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                                      )}
+                                      {row.syncStatus === "Sync Failed" && (
+                                        <AlertCircle className="h-3 w-3 mr-1" />
+                                      )}
+                                      {row.syncStatus === "Synced" && (
+                                        <CheckCircle className="h-3 w-3 mr-1" />
+                                      )}
+                                      {row.syncStatus}
+                                    </div>
+                                  </Badge>
+                                </TooltipTrigger>
+                                 <TooltipContent>
+                                   {(row as any).syncError && (
+                                     <p className="text-sm">{(row as any).syncError}</p>
+                                   )}
+                                   {!(row as any).syncError && (
+                                    <p className="text-sm">
+                                      {row.syncStatus === "Syncing" && "Record is currently being synced"}
+                                      {row.syncStatus === "Synced" && "Record has been successfully synced"}
+                                      {row.syncStatus === "Ready to Sync" && "Record is ready to be synced"}
+                                      {row.syncStatus === "Needs Review" && "Record needs to be reviewed before syncing"}
+                                    </p>
+                                  )}
+                                </TooltipContent>
+                              </Tooltip>
+                            </TooltipProvider>
                           </div>
-                        )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="no-update" className="mt-4">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-gray-800">
+                      <TableHead className="text-gray-300">Record Status</TableHead>
+                      <TableHead className="text-gray-300">Case Status</TableHead>
+                      <TableHead className="text-gray-300">Plaintiff</TableHead>
+                      <TableHead className="text-gray-300">Case Type</TableHead>
+                      <TableHead className="text-gray-300">Create Date</TableHead>
+                      <TableHead className="text-gray-300">Settled Amount</TableHead>
+                      <TableHead className="text-gray-300">Sync Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredData.map((row) => (
+                      <TableRow 
+                        key={row.id}
+                        className="border-gray-800 hover:bg-gray-800/50 cursor-pointer"
+                        onClick={() => handleRowClick(row.id, row)}
+                      >
+                        <TableCell className="text-gray-300">
+                          <Badge className="bg-purple-900/50 text-purple-400 border-purple-600">
+                            {row.status}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-gray-300">
+                          <Badge className="bg-green-900/50 text-green-400 border-green-600">
+                            {row.caseStatus}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-cyan-400 font-medium">
+                          {row.plaintiff}
+                        </TableCell>
+                        <TableCell className="text-gray-300">{row.caseType}</TableCell>
+                        <TableCell className="text-gray-300">{formatDate(row.createDate)}</TableCell>
+                        <TableCell className="text-gray-300">
+                          ${row.settledAmount.toLocaleString()}
+                        </TableCell>
+                        <TableCell>
+                          <Badge className="bg-blue-900/50 text-blue-400 border-blue-600">
+                            <div className="flex items-center">
+                              <CheckCircle className="h-3 w-3 mr-1" />
+                              {row.syncStatus}
+                            </div>
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </TabsContent>
+          </Tabs>
         </CardContent>
       </Card>
-      </div>
+    </div>
     </TooltipProvider>
   );
 };
