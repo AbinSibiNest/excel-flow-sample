@@ -458,76 +458,78 @@ const PendingMigration = () => {
         <h1 className="text-3xl font-bold text-gray-100">Pending Migration</h1>
       </div>
 
-      {/* Summary Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <Card 
-          className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'errors' ? 'ring-2 ring-red-500' : 'hover:border-red-600'}`}
-          onClick={() => setFilterType(filterType === 'errors' ? 'all' : 'errors')}
-        >
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Needs Review</p>
-                <p className="text-2xl font-bold text-red-400">
-                  {recordsWithErrors}
-                </p>
+      {/* Summary Stats - Only show when not on No Update tab */}
+      {activeTab === "migration-data" && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <Card 
+            className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'errors' ? 'ring-2 ring-red-500' : 'hover:border-red-600'}`}
+            onClick={() => setFilterType(filterType === 'errors' ? 'all' : 'errors')}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-400">Needs Review</p>
+                  <p className="text-2xl font-bold text-red-400">
+                    {recordsWithErrors}
+                  </p>
+                </div>
+                <FileText className="h-8 w-8 text-red-400" />
               </div>
-              <FileText className="h-8 w-8 text-red-400" />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card 
-          className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'ready' ? 'ring-2 ring-green-500' : 'hover:border-green-600'}`}
-          onClick={() => setFilterType(filterType === 'ready' ? 'all' : 'ready')}
-        >
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Ready to Sync</p>
-                <p className="text-2xl font-bold text-green-400">
-                  {recordsReadyToImport}
-                </p>
+          <Card 
+            className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'ready' ? 'ring-2 ring-green-500' : 'hover:border-green-600'}`}
+            onClick={() => setFilterType(filterType === 'ready' ? 'all' : 'ready')}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-400">Ready to Sync</p>
+                  <p className="text-2xl font-bold text-green-400">
+                    {recordsReadyToImport}
+                  </p>
+                </div>
+                <CheckCircle className="h-8 w-8 text-green-400" />
               </div>
-              <CheckCircle className="h-8 w-8 text-green-400" />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card 
-          className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'synced' ? 'ring-2 ring-blue-500' : 'hover:border-blue-600'}`}
-          onClick={() => setFilterType(filterType === 'synced' ? 'all' : 'synced')}
-        >
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Synced</p>
-                <p className="text-2xl font-bold text-blue-400">
-                  {recordsSynced}
-                </p>
+          <Card 
+            className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'synced' ? 'ring-2 ring-blue-500' : 'hover:border-blue-600'}`}
+            onClick={() => setFilterType(filterType === 'synced' ? 'all' : 'synced')}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-400">Synced</p>
+                  <p className="text-2xl font-bold text-blue-400">
+                    {recordsSynced}
+                  </p>
+                </div>
+                <Archive className="h-8 w-8 text-blue-400" />
               </div>
-              <Archive className="h-8 w-8 text-blue-400" />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
 
-        <Card 
-          className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'failed' ? 'ring-2 ring-orange-500' : 'hover:border-orange-600'}`}
-          onClick={() => setFilterType(filterType === 'failed' ? 'all' : 'failed')}
-        >
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Sync Failed</p>
-                <p className="text-2xl font-bold text-orange-400">
-                  {recordsSyncFailed}
-                </p>
+          <Card 
+            className={`bg-gray-900 border-gray-800 cursor-pointer transition-all ${filterType === 'failed' ? 'ring-2 ring-orange-500' : 'hover:border-orange-600'}`}
+            onClick={() => setFilterType(filterType === 'failed' ? 'all' : 'failed')}
+          >
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-400">Sync Failed</p>
+                  <p className="text-2xl font-bold text-orange-400">
+                    {recordsSyncFailed}
+                  </p>
+                </div>
+                <AlertCircle className="h-8 w-8 text-orange-400" />
               </div>
-              <AlertCircle className="h-8 w-8 text-orange-400" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
       {/* Data Table with Tabs */}
       <Card className="bg-gray-900 border-gray-800">
@@ -707,12 +709,10 @@ const PendingMigration = () => {
                   <TableHeader>
                     <TableRow className="border-gray-800">
                       <TableHead className="text-gray-300">Record Status</TableHead>
-                      <TableHead className="text-gray-300">Case Status</TableHead>
                       <TableHead className="text-gray-300">Plaintiff</TableHead>
                       <TableHead className="text-gray-300">Case Type</TableHead>
                       <TableHead className="text-gray-300">Create Date</TableHead>
                       <TableHead className="text-gray-300">Settled Amount</TableHead>
-                      <TableHead className="text-gray-300">Sync Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -727,11 +727,6 @@ const PendingMigration = () => {
                             {row.status}
                           </Badge>
                         </TableCell>
-                        <TableCell className="text-gray-300">
-                          <Badge className="bg-green-900/50 text-green-400 border-green-600">
-                            {row.caseStatus}
-                          </Badge>
-                        </TableCell>
                         <TableCell className="text-cyan-400 font-medium">
                           {row.plaintiff}
                         </TableCell>
@@ -739,14 +734,6 @@ const PendingMigration = () => {
                         <TableCell className="text-gray-300">{formatDate(row.createDate)}</TableCell>
                         <TableCell className="text-gray-300">
                           ${row.settledAmount.toLocaleString()}
-                        </TableCell>
-                        <TableCell>
-                          <Badge className="bg-blue-900/50 text-blue-400 border-blue-600">
-                            <div className="flex items-center">
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                              {row.syncStatus}
-                            </div>
-                          </Badge>
                         </TableCell>
                       </TableRow>
                     ))}
