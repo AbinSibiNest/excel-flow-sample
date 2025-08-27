@@ -378,7 +378,8 @@ const PendingMigration = () => {
       return;
     }
     
-    navigate(`/record/${id}`);
+    // For migration tab, open Record Details with case status
+    navigate(`/record/${id}?caseStatus=${encodeURIComponent(record.caseStatus)}`);
   };
 
   const handleSelectAll = (checked: boolean) => {
