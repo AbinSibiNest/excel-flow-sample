@@ -422,12 +422,14 @@ const RecordDetail = () => {
             <h1 className="text-3xl font-bold text-foreground">Case Details</h1>
             <div className="flex items-center gap-4 mt-1">
               <p className="text-muted-foreground">Reference ID: {recordData.referenceId}</p>
-              <Badge 
-                variant={recordData.caseStatus === "Active" ? "default" : "secondary"}
-                className="text-xs"
-              >
-                Case Status: {recordData.caseStatus}
-              </Badge>
+              {!isDisabled && (
+                <Badge 
+                  variant={recordData.caseStatus === "Active" ? "default" : "secondary"}
+                  className="text-xs"
+                >
+                  Case Status: {recordData.caseStatus}
+                </Badge>
+              )}
             </div>
             {hasErrors && (
               <div className="flex items-center mt-2 text-destructive">
