@@ -76,7 +76,7 @@ const PendingMigration = () => {
       settledAmount: 15000,
       status: "New",
       approval: "Needs Review",
-      caseStatus: "Draft",
+      caseStatus: "New",
       syncStatus: "Needs Review",
     },
     {
@@ -100,7 +100,7 @@ const PendingMigration = () => {
       settledAmount: 18750,
       status: "New",
       approval: "Ready to Sync",
-      caseStatus: "Draft",
+      caseStatus: "New",
       syncStatus: "Ready to Sync",
     },
     {
@@ -124,7 +124,7 @@ const PendingMigration = () => {
       settledAmount: 35000,
       status: "New",
       approval: "Ready to Sync",
-      caseStatus: "Draft",
+      caseStatus: "New",
       syncStatus: "Ready to Sync",
     },
     {
@@ -148,7 +148,7 @@ const PendingMigration = () => {
       settledAmount: 28500,
       status: "New",
       approval: "Needs Review",
-      caseStatus: "Draft",
+      caseStatus: "New",
       syncStatus: "Needs Review",
     },
     {
@@ -172,7 +172,7 @@ const PendingMigration = () => {
       settledAmount: 24800,
       status: "New",
       approval: "Ready to Sync",
-      caseStatus: "Draft",
+      caseStatus: "New",
       syncStatus: "Ready to Sync",
     },
     {
@@ -196,7 +196,7 @@ const PendingMigration = () => {
       settledAmount: 33750,
       status: "New",
       approval: "Needs Review",
-      caseStatus: "Draft",
+      caseStatus: "New",
       syncStatus: "Needs Review",
     },
     {
@@ -220,7 +220,7 @@ const PendingMigration = () => {
       settledAmount: 16800,
       status: "New",
       approval: "Ready to Sync",
-      caseStatus: "Draft",
+      caseStatus: "New",
       syncStatus: "Ready to Sync",
     },
     {
@@ -244,7 +244,7 @@ const PendingMigration = () => {
       settledAmount: 52100,
       status: "New",
       approval: "Needs Review",
-      caseStatus: "Draft",
+      caseStatus: "New",
       syncStatus: "Needs Review",
     },
     {
@@ -282,7 +282,7 @@ const PendingMigration = () => {
       status: "New",
       approval: "Ready to Sync",
       syncError: "Invalid client SSN format - verification failed",
-      caseStatus: "Draft",
+      caseStatus: "New",
       syncStatus: "Ready to Sync",
     },
   ]);
@@ -629,11 +629,15 @@ const PendingMigration = () => {
                         </TableCell>
                         <TableCell className="text-gray-300">
                           <Badge
-                            className={
-                              row.caseStatus === "Active"
-                                ? "bg-green-900/50 text-green-400 border-green-600"
-                                : "bg-gray-900/50 text-gray-400 border-gray-600"
-                            }
+                           className={
+    row.caseStatus === "Active"
+        ? "bg-green-900/50 text-green-400 border-green-600"
+        : row.caseStatus === "Draft"
+            ? "bg-orange-900/50 text-orange-400 border-orange-600"
+            : row.caseStatus === "New"
+                ? "bg-blue-900/50 text-blue-400 border-blue-600"
+                : "bg-gray-900/50 text-gray-400 border-gray-600"
+}
                           >
                             {row.caseStatus}
                           </Badge>
