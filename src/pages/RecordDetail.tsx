@@ -623,7 +623,7 @@ const RecordDetail = () => {
                   <SelectValue placeholder="Select suffix" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">None</SelectItem>
+                  <SelectItem value="none">None</SelectItem>
                   <SelectItem value="Jr.">Jr.</SelectItem>
                   <SelectItem value="Sr.">Sr.</SelectItem>
                   <SelectItem value="II">II</SelectItem>
