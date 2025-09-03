@@ -15,14 +15,74 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ChevronLeft, Plus, MoreHorizontal, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 
 export default function Banking() {
   const navigate = useNavigate();
+  const [isUnrestrictedDialogOpen, setIsUnrestrictedDialogOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    accountType: "",
+    accountNumber: "",
+    routingNumber: "",
+    vendorType: "",
+    preferredPaymentMethod: "",
+    mailingAddress: ""
+  });
 
   const handleGoBack = () => {
     navigate(-1);
+  };
+
+  const handleFormChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const isFormValid = () => {
+    const { name, accountType, accountNumber, routingNumber, vendorType, preferredPaymentMethod, mailingAddress } = formData;
+    
+    // Basic required fields
+    if (!name || !accountType) return false;
+    
+    // ACH validation
+    if (preferredPaymentMethod === "ach" && (!accountNumber || !routingNumber)) return false;
+    
+    // Check validation
+    if (preferredPaymentMethod === "check" && !mailingAddress) return false;
+    
+    // Vendor type required if account type is vendor
+    if (accountType === "vendor" && !vendorType) return false;
+    
+    return true;
+  };
+
+  const handleSubmit = () => {
+    if (isFormValid()) {
+      console.log("Form submitted:", formData);
+      setIsUnrestrictedDialogOpen(false);
+      setFormData({
+        name: "",
+        accountType: "",
+        accountNumber: "",
+        routingNumber: "",
+        vendorType: "",
+        preferredPaymentMethod: "",
+        mailingAddress: ""
+      });
+    }
   };
 
   return (
@@ -166,12 +226,8 @@ export default function Banking() {
 
       {/* Unrestricted Accounts */}
       <Card className="mt-6 bg-card">
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader>
           <CardTitle className="text-foreground">Unrestricted Accounts</CardTitle>
-          <Button variant="outline" size="sm" className="text-primary border-primary hover:bg-primary hover:text-primary-foreground">
-            <Plus className="h-4 w-4 mr-2" />
-            ADD UNRESTRICTED ACCOUNT
-          </Button>
         </CardHeader>
         <CardContent>
           <Table>
@@ -211,6 +267,119 @@ export default function Banking() {
             </TableBody>
           </Table>
           <div className="flex items-center justify-between mt-4">
+            <Dialog open={isUnrestrictedDialogOpen} onOpenChange={setIsUnrestrictedDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm" className="text-primary border-primary hover:bg-primary hover:text-primary-foreground">
+                  <Plus className="h-4 w-4 mr-2" />
+                  ADD UNRESTRICTED ACCOUNT
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl bg-card">
+                <DialogHeader>
+                  <DialogTitle className="text-foreground">Add Unrestricted Account</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-4 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="name" className="text-foreground">Name</Label>
+                      <Input
+                        id="name"
+                        value={formData.name}
+                        onChange={(e) => handleFormChange("name", e.target.value)}
+                        className="bg-background border-border"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="accountType" className="text-foreground">Account Type</Label>
+                      <Select value={formData.accountType} onValueChange={(value) => handleFormChange("accountType", value)}>
+                        <SelectTrigger className="bg-background border-border">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-card border-border">
+                          <SelectItem value="vendor">Vendor</SelectItem>
+                          <SelectItem value="firm">Firm</SelectItem>
+                          <SelectItem value="other">Other External Account</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="accountNumber" className="text-foreground">Account Number</Label>
+                      <Input
+                        id="accountNumber"
+                        value={formData.accountNumber}
+                        onChange={(e) => handleFormChange("accountNumber", e.target.value)}
+                        className="bg-background border-border"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="routingNumber" className="text-foreground">Routing Number</Label>
+                      <Input
+                        id="routingNumber"
+                        value={formData.routingNumber}
+                        onChange={(e) => handleFormChange("routingNumber", e.target.value)}
+                        className="bg-background border-border"
+                      />
+                    </div>
+                  </div>
+
+                  {formData.accountType === "vendor" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="vendorType" className="text-foreground">Vendor Type</Label>
+                      <Select value={formData.vendorType} onValueChange={(value) => handleFormChange("vendorType", value)}>
+                        <SelectTrigger className="bg-background border-border">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-card border-border">
+                          <SelectItem value="expense-reimbursement">Expense Reimbursement</SelectItem>
+                          <SelectItem value="lien-resolution">Lien Resolution</SelectItem>
+                          <SelectItem value="service-provider">Service Provider</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <Label className="text-foreground">Preferred Payment Method</Label>
+                    <RadioGroup value={formData.preferredPaymentMethod} onValueChange={(value) => handleFormChange("preferredPaymentMethod", value)}>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="ach" id="ach" />
+                        <Label htmlFor="ach" className="text-foreground">ACH</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="check" id="check" />
+                        <Label htmlFor="check" className="text-foreground">Check</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+
+                  {formData.preferredPaymentMethod === "check" && (
+                    <div className="space-y-2">
+                      <Label htmlFor="mailingAddress" className="text-foreground">Mailing Address</Label>
+                      <Textarea
+                        id="mailingAddress"
+                        value={formData.mailingAddress}
+                        onChange={(e) => handleFormChange("mailingAddress", e.target.value)}
+                        className="bg-background border-border"
+                        rows={3}
+                      />
+                    </div>
+                  )}
+
+                  <div className="flex justify-end gap-2 pt-4">
+                    <Button variant="ghost" onClick={() => setIsUnrestrictedDialogOpen(false)}>
+                      CANCEL
+                    </Button>
+                    <Button
+                      onClick={handleSubmit}
+                      disabled={!isFormValid()}
+                      className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                    >
+                      SUBMIT
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Rows per page:</span>
               <Select defaultValue="20">
@@ -238,12 +407,8 @@ export default function Banking() {
 
       {/* Trust Accounts */}
       <Card className="mt-6 bg-card">
-        <CardHeader className="flex flex-row items-center justify-between">
+        <CardHeader>
           <CardTitle className="text-foreground">Trust Accounts</CardTitle>
-          <Button variant="outline" size="sm" className="text-primary border-primary hover:bg-primary hover:text-primary-foreground">
-            <Plus className="h-4 w-4 mr-2" />
-            ADD TRUST ACCOUNT
-          </Button>
         </CardHeader>
         <CardContent>
           <Table>
@@ -283,6 +448,10 @@ export default function Banking() {
             </TableBody>
           </Table>
           <div className="flex items-center justify-between mt-4">
+            <Button variant="outline" size="sm" className="text-primary border-primary hover:bg-primary hover:text-primary-foreground">
+              <Plus className="h-4 w-4 mr-2" />
+              ADD TRUST ACCOUNT
+            </Button>
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Rows per page:</span>
               <Select defaultValue="20">
