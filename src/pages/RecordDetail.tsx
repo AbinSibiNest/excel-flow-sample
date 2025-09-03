@@ -1,16 +1,17 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Save, AlertCircle, Eye, EyeOff, X } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -67,11 +68,11 @@ const RecordDetail = () => {
   const [errors, setErrors] = useState<ValidationErrors>({});
   const [showDOB, setShowDOB] = useState(false);
   const [showSSN, setShowSSN] = useState(false);
-  
+
   // Check if this is from "No Update" tab (all fields disabled)
   const searchParams = new URLSearchParams(window.location.search);
-  const isDisabled = searchParams.get('disabled') === 'true';
-  const urlCaseStatus = searchParams.get('caseStatus');
+  const isDisabled = searchParams.get("disabled") === "true";
+  const urlCaseStatus = searchParams.get("caseStatus");
 
   useEffect(() => {
     // Use same mock data as PendingMigration screen
@@ -109,7 +110,7 @@ const RecordDetail = () => {
         defendant: "XYZ Corporation",
         firms: [
           { name: "Top Dog", role: "Referral" },
-          { name: "VLV Law", role: "Co-Counsel" }
+          { name: "VLV Law", role: "Co-Counsel" },
         ],
       },
       {
@@ -145,7 +146,7 @@ const RecordDetail = () => {
         defendant: "ABC Medical Center",
         firms: [
           { name: "Elite Law", role: "Lead Counsel" },
-          { name: "Medical Experts LLC", role: "Expert Witness" }
+          { name: "Medical Experts LLC", role: "Expert Witness" },
         ],
       },
       {
@@ -179,9 +180,7 @@ const RecordDetail = () => {
         lienAmount: 9000,
         advanceAmount: 2250,
         defendant: "DEF Insurance Co",
-        firms: [
-          { name: "Auto Law Firm", role: "Lead Counsel" }
-        ],
+        firms: [{ name: "Auto Law Firm", role: "Lead Counsel" }],
       },
       {
         id: 4,
@@ -214,9 +213,7 @@ const RecordDetail = () => {
         lienAmount: 0,
         advanceAmount: 0,
         defendant: "GHI Property Management",
-        firms: [
-          { name: "Slip & Fall Experts", role: "Lead Counsel" }
-        ],
+        firms: [{ name: "Slip & Fall Experts", role: "Lead Counsel" }],
       },
       {
         id: 5,
@@ -249,20 +246,19 @@ const RecordDetail = () => {
         lienAmount: 10000,
         advanceAmount: 2200,
         defendant: "JKL Manufacturing",
-        firms: [
-          { name: "Workers Comp Specialists", role: "Lead Counsel" }
-        ],
-      }
+        firms: [{ name: "Workers Comp Specialists", role: "Lead Counsel" }],
+      },
     ];
 
     const recordId = parseInt(id || "1");
-    const mockData = mockRecords.find(record => record.id === recordId) || mockRecords[0];
-    
+    const mockData =
+      mockRecords.find((record) => record.id === recordId) || mockRecords[0];
+
     // Override case status with URL parameter if provided
     if (urlCaseStatus) {
       mockData.caseStatus = urlCaseStatus;
     }
-    
+
     setRecordData(mockData);
     validateRecord(mockData);
   }, [id, urlCaseStatus]);
@@ -277,9 +273,11 @@ const RecordDetail = () => {
     }
 
     // Phone validation (proper format)
-    const phoneRegex = /^\+?1?[-.\s]?\(?[0-9]{3}\)?[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}$/;
+    const phoneRegex =
+      /^\+?1?[-.\s]?\(?[0-9]{3}\)?[-.\s]?[0-9]{3}[-.\s]?[0-9]{4}$/;
     if (!phoneRegex.test(data.clientPhone)) {
-      newErrors.clientPhone = "Please enter a valid phone number (e.g., +1-555-555-0101)";
+      newErrors.clientPhone =
+        "Please enter a valid phone number (e.g., +1-555-555-0101)";
     }
 
     // SSN validation (must be 9 digits)
@@ -292,7 +290,7 @@ const RecordDetail = () => {
     if (!data.clientFirstName.trim()) {
       newErrors.clientFirstName = "First name is required";
     }
-    
+
     if (!data.clientLastName.trim()) {
       newErrors.clientLastName = "Last name is required";
     }
@@ -307,7 +305,8 @@ const RecordDetail = () => {
 
     // Amount validations
     if (data.grossSettlementAmount <= 0) {
-      newErrors.grossSettlementAmount = "Gross settlement amount must be greater than 0";
+      newErrors.grossSettlementAmount =
+        "Gross settlement amount must be greater than 0";
     }
 
     if (data.settledAmount <= 0) {
@@ -315,7 +314,8 @@ const RecordDetail = () => {
     }
 
     if (data.settledAmount > data.grossSettlementAmount) {
-      newErrors.settledAmount = "Settled amount cannot exceed gross settlement amount";
+      newErrors.settledAmount =
+        "Settled amount cannot exceed gross settlement amount";
     }
 
     // Address validations
@@ -342,7 +342,7 @@ const RecordDetail = () => {
 
   const handleInputChange = (field: keyof RecordData, value: any) => {
     if (!recordData) return;
-    
+
     const updatedData = { ...recordData, [field]: value };
     setRecordData(updatedData);
     setHasChanges(true);
@@ -351,23 +351,25 @@ const RecordDetail = () => {
 
   const handleSave = () => {
     if (!recordData) return;
-    
+
     const isValid = validateRecord(recordData);
     setHasChanges(false);
-    
+
     // Always save the changes regardless of validation
     const newApproval = isValid ? "Ready to Sync" : "Needs Review";
-    
+
     toast({
       title: "Record Saved",
-      description: isValid 
+      description: isValid
         ? "All errors fixed. Record is ready to sync."
         : "Record saved with validation errors. Status remains 'Needs Review'.",
       variant: isValid ? "default" : "destructive",
     });
-    
+
     // Navigate back with updated record info and select checkbox if ready to sync
-    const hash = isValid ? `#pending&updated=${id}&select=${id}` : `#pending&updated=${id}`;
+    const hash = isValid
+      ? `#pending&updated=${id}&select=${id}`
+      : `#pending&updated=${id}`;
     navigate(`/firm/firm-001${hash}`);
   };
 
@@ -413,7 +415,7 @@ const RecordDetail = () => {
   const isNewCase = recordData.status === "New";
   const isUpdatedCase = recordData.status === "Updates";
   const isActiveCase = recordData.caseStatus === "Active";
-  
+
   // For disabled records (from "No Update" tab), nothing is editable
   if (isDisabled) {
     var isAllFieldsEditable = false;
@@ -450,10 +452,14 @@ const RecordDetail = () => {
           <div>
             <h1 className="text-3xl font-bold text-foreground">Case Details</h1>
             <div className="flex items-center gap-4 mt-1">
-              <p className="text-muted-foreground">Reference ID: {recordData.referenceId}</p>
+              <p className="text-muted-foreground">
+                Reference ID: {recordData.referenceId}
+              </p>
               {!isDisabled && (
-                <Badge 
-                  variant={recordData.caseStatus === "Active" ? "default" : "secondary"}
+                <Badge
+                  variant={
+                    recordData.caseStatus === "Active" ? "default" : "secondary"
+                  }
                   className="text-xs"
                 >
                   Case Status: {recordData.caseStatus}
@@ -491,71 +497,118 @@ const RecordDetail = () => {
         {/* Basic Details - First */}
         <Card className="bg-card border-border">
           <CardHeader>
-            <CardTitle className="text-card-foreground">Basic Details</CardTitle>
+            <CardTitle className="text-card-foreground">
+              Basic Details
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <Label htmlFor="referenceId" className="text-muted-foreground">Reference ID *</Label>
+              <Label htmlFor="referenceId" className="text-muted-foreground">
+                Reference ID *
+              </Label>
               <Input
                 id="referenceId"
                 value={recordData.referenceId}
-                onChange={isAllFieldsEditable ? (e) => handleInputChange('referenceId', e.target.value) : undefined}
+                onChange={
+                  isAllFieldsEditable
+                    ? (e) => handleInputChange("referenceId", e.target.value)
+                    : undefined
+                }
                 readOnly={!isAllFieldsEditable}
                 className={cn(
-                  isAllFieldsEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  isAllFieldsEditable
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.referenceId && "border-destructive bg-destructive/10"
                 )}
               />
               {errors.referenceId && (
-                <p className="text-destructive text-sm mt-1">{errors.referenceId}</p>
+                <p className="text-destructive text-sm mt-1">
+                  {errors.referenceId}
+                </p>
               )}
             </div>
             <div>
-              <Label htmlFor="firmName" className="text-muted-foreground">Firm Name</Label>
+              <Label htmlFor="firmName" className="text-muted-foreground">
+                Firm Name
+              </Label>
               <Input
                 id="firmName"
                 value={recordData.firmName}
-                onChange={isAllFieldsEditable ? (e) => handleInputChange('firmName', e.target.value) : undefined}
+                onChange={
+                  isAllFieldsEditable
+                    ? (e) => handleInputChange("firmName", e.target.value)
+                    : undefined
+                }
                 readOnly={!isAllFieldsEditable}
                 className={cn(
-                  isAllFieldsEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  isAllFieldsEditable
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.firmName && "border-destructive bg-destructive/10"
                 )}
               />
               {errors.firmName && (
-                <p className="text-destructive text-sm mt-1">{errors.firmName}</p>
+                <p className="text-destructive text-sm mt-1">
+                  {errors.firmName}
+                </p>
               )}
             </div>
             <div>
-              <Label htmlFor="trustAccountNumber" className="text-muted-foreground">Trust Account Number</Label>
+              <Label
+                htmlFor="trustAccountNumber"
+                className="text-muted-foreground"
+              >
+                Trust Account Number
+              </Label>
               <Input
                 id="trustAccountNumber"
                 value={recordData.trustAccountNumber}
-                onChange={isAllFieldsEditable ? (e) => handleInputChange('trustAccountNumber', e.target.value) : undefined}
+                onChange={
+                  isAllFieldsEditable
+                    ? (e) =>
+                        handleInputChange("trustAccountNumber", e.target.value)
+                    : undefined
+                }
                 readOnly={!isAllFieldsEditable}
                 className={cn(
-                  isAllFieldsEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
-                  errors.trustAccountNumber && "border-destructive bg-destructive/10"
+                  isAllFieldsEditable
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  errors.trustAccountNumber &&
+                    "border-destructive bg-destructive/10"
                 )}
               />
               {errors.trustAccountNumber && (
-                <p className="text-destructive text-sm mt-1">{errors.trustAccountNumber}</p>
+                <p className="text-destructive text-sm mt-1">
+                  {errors.trustAccountNumber}
+                </p>
               )}
             </div>
             <div>
-              <Label htmlFor="defendant" className="text-muted-foreground">Defendant *</Label>
+              <Label htmlFor="defendant" className="text-muted-foreground">
+                Defendant *
+              </Label>
               <Input
                 id="defendant"
                 value={recordData.defendant}
-                onChange={isAllFieldsEditable ? (e) => handleInputChange('defendant', e.target.value) : undefined}
+                onChange={
+                  isAllFieldsEditable
+                    ? (e) => handleInputChange("defendant", e.target.value)
+                    : undefined
+                }
                 readOnly={!isAllFieldsEditable}
                 className={cn(
-                  isAllFieldsEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  isAllFieldsEditable
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.defendant && "border-destructive bg-destructive/10"
                 )}
               />
               {errors.defendant && (
-                <p className="text-destructive text-sm mt-1">{errors.defendant}</p>
+                <p className="text-destructive text-sm mt-1">
+                  {errors.defendant}
+                </p>
               )}
             </div>
           </CardContent>
@@ -564,252 +617,353 @@ const RecordDetail = () => {
         {/* Client Information - Second */}
         <Card className="bg-card border-border lg:col-span-2">
           <CardHeader>
-            <CardTitle className="text-card-foreground">Client Information</CardTitle>
+            <CardTitle className="text-card-foreground">
+              Client Information
+            </CardTitle>
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="grid grid-cols-2 gap-8">
-              {/* Left Column */}
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="firstName" className="text-muted-foreground">First Name *</Label>
-                  <Input
-                    id="firstName"
-                    value={recordData.clientFirstName}
-                    onChange={isClientInfoEditable ? (e) => handleInputChange('clientFirstName', e.target.value) : undefined}
-                    readOnly={!isClientInfoEditable}
-                    className={cn(
-                      isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
-                      errors.clientFirstName && "border-destructive bg-destructive/10"
-                    )}
-                  />
-                  {errors.clientFirstName && (
-                    <p className="text-destructive text-sm mt-1">{errors.clientFirstName}</p>
-                  )}
-                </div>
-                
-                <div>
-                  <Label htmlFor="middleName" className="text-muted-foreground">Middle Name</Label>
-                  <Input
-                    id="middleName"
-                    value={recordData.clientMiddleName}
-                    onChange={isClientInfoEditable ? (e) => handleInputChange('clientMiddleName', e.target.value) : undefined}
-                    readOnly={!isClientInfoEditable}
-                    className={isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium"}
-                  />
-                </div>
-                
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="col-span-2">
-                    <Label htmlFor="lastName" className="text-muted-foreground">Last Name *</Label>
-                    <Input
-                      id="lastName"
-                      value={recordData.clientLastName}
-                      onChange={isClientInfoEditable ? (e) => handleInputChange('clientLastName', e.target.value) : undefined}
-                      readOnly={!isClientInfoEditable}
-                      className={cn(
-                        isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
-                        errors.clientLastName && "border-destructive bg-destructive/10"
-                      )}
-                    />
-                    {errors.clientLastName && (
-                      <p className="text-destructive text-sm mt-1">{errors.clientLastName}</p>
-                    )}
-                  </div>
-                  <div>
-                    <Label htmlFor="suffix" className="text-muted-foreground">Suffix</Label>
-                    <Select
-                      value={recordData.clientSuffix}
-                      onValueChange={isClientInfoEditable ? (value) => handleInputChange('clientSuffix', value) : undefined}
-                      disabled={!isClientInfoEditable}
-                    >
-                      <SelectTrigger className={cn(
-                        isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium cursor-default",
-                        "h-10"
-                      )}>
-                        <SelectValue placeholder="Select" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">None</SelectItem>
-                        <SelectItem value="Jr.">Jr.</SelectItem>
-                        <SelectItem value="Sr.">Sr.</SelectItem>
-                        <SelectItem value="II">II</SelectItem>
-                        <SelectItem value="III">III</SelectItem>
-                        <SelectItem value="IV">IV</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
+            <div>
+              <Label htmlFor="firstName" className="text-muted-foreground">
+                First Name *
+              </Label>
+              <Input
+                id="firstName"
+                value={recordData.clientFirstName}
+                onChange={
+                  isClientInfoEditable
+                    ? (e) =>
+                        handleInputChange("clientFirstName", e.target.value)
+                    : undefined
+                }
+                readOnly={!isClientInfoEditable}
+                className={cn(
+                  isClientInfoEditable
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  errors.clientFirstName &&
+                    "border-destructive bg-destructive/10"
+                )}
+              />
+              {errors.clientFirstName && (
+                <p className="text-destructive text-sm mt-1">
+                  {errors.clientFirstName}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="addressLine1" className="text-muted-foreground">
+                Address Line 1
+              </Label>
+              <Input
+                id="addressLine1"
+                value={recordData.clientAddressLine1}
+                onChange={
+                  isClientInfoEditable
+                    ? (e) =>
+                        handleInputChange("clientAddressLine1", e.target.value)
+                    : undefined
+                }
+                readOnly={!isClientInfoEditable}
+                className={cn(
+                  isClientInfoEditable
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  errors.clientAddressLine1 &&
+                    "border-destructive bg-destructive/10"
+                )}
+              />
+              {errors.clientAddressLine1 && (
+                <p className="text-destructive text-sm mt-1">
+                  {errors.clientAddressLine1}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="middleName" className="text-muted-foreground">
+                Middle Name
+              </Label>
+              <Input
+                id="middleName"
+                value={recordData.clientMiddleName}
+                onChange={
+                  isClientInfoEditable
+                    ? (e) =>
+                        handleInputChange("clientMiddleName", e.target.value)
+                    : undefined
+                }
+                readOnly={!isClientInfoEditable}
+                className={
+                  isClientInfoEditable
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium"
+                }
+              />
+            </div>
+            <div>
+              <Label htmlFor="addressLine2" className="text-muted-foreground">
+                Address Line 2
+              </Label>
+              <Input
+                id="addressLine2"
+                value={recordData.clientAddressLine2}
+                onChange={
+                  isClientInfoEditable
+                    ? (e) =>
+                        handleInputChange("clientAddressLine2", e.target.value)
+                    : undefined
+                }
+                readOnly={!isClientInfoEditable}
+                className={
+                  isClientInfoEditable
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium"
+                }
+              />
+            </div>
+            <div>
+              <Label htmlFor="lastName" className="text-muted-foreground">
+                Last Name *
+              </Label>
+              <Input
+                id="lastName"
+                value={recordData.clientLastName}
+                onChange={
+                  isClientInfoEditable
+                    ? (e) => handleInputChange("clientLastName", e.target.value)
+                    : undefined
+                }
+                readOnly={!isClientInfoEditable}
+                className={cn(
+                  isClientInfoEditable
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  errors.clientLastName &&
+                    "border-destructive bg-destructive/10"
+                )}
+              />
+              {errors.clientLastName && (
+                <p className="text-destructive text-sm mt-1">
+                  {errors.clientLastName}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="city" className="text-muted-foreground">
+                City
+              </Label>
+              <Input
+                id="city"
+                value={recordData.clientCity}
+                onChange={
+                  isClientInfoEditable
+                    ? (e) => handleInputChange("clientCity", e.target.value)
+                    : undefined
+                }
+                readOnly={!isClientInfoEditable}
+                className={cn(
+                  isClientInfoEditable
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  errors.clientCity && "border-destructive bg-destructive/10"
+                )}
+              />
+              {errors.clientCity && (
+                <p className="text-destructive text-sm mt-1">
+                  {errors.clientCity}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="email" className="text-muted-foreground">
+                Email
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                value={recordData.clientEmail}
+                onChange={
+                  isClientInfoEditable && !isActiveCase
+                    ? (e) => handleInputChange("clientEmail", e.target.value)
+                    : undefined
+                }
+                readOnly={!isClientInfoEditable || isActiveCase}
+                className={cn(
+                  isClientInfoEditable && !isActiveCase
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  errors.clientEmail && "border-destructive bg-destructive/10"
+                )}
+              />
+              {errors.clientEmail && (
+                <p className="text-destructive text-sm mt-1">
+                  {errors.clientEmail}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="state" className="text-muted-foreground">
+                State
+              </Label>
+              <Input
+                id="state"
+                value={recordData.clientState}
+                onChange={
+                  isClientInfoEditable
+                    ? (e) => handleInputChange("clientState", e.target.value)
+                    : undefined
+                }
+                readOnly={!isClientInfoEditable}
+                className={cn(
+                  isClientInfoEditable
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  errors.clientState && "border-destructive bg-destructive/10"
+                )}
+              />
+              {errors.clientState && (
+                <p className="text-destructive text-sm mt-1">
+                  {errors.clientState}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="phone" className="text-muted-foreground">
+                Phone *
+              </Label>
+              <Input
+                id="phone"
+                value={recordData.clientPhone}
+                onChange={
+                  isClientInfoEditable && !isActiveCase
+                    ? (e) => handleInputChange("clientPhone", e.target.value)
+                    : undefined
+                }
+                readOnly={!isClientInfoEditable || isActiveCase}
+                className={cn(
+                  isClientInfoEditable && !isActiveCase
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  errors.clientPhone && "border-destructive bg-destructive/10"
+                )}
+              />
+              {errors.clientPhone && (
+                <p className="text-destructive text-sm mt-1">
+                  {errors.clientPhone}
+                </p>
+              )}
+            </div>
+            <div>
+              <Label htmlFor="zip" className="text-muted-foreground">
+                ZIP Code
+              </Label>
+              <Input
+                id="zip"
+                value={recordData.clientZip}
+                onChange={
+                  isClientInfoEditable
+                    ? (e) => handleInputChange("clientZip", e.target.value)
+                    : undefined
+                }
+                readOnly={!isClientInfoEditable}
+                className={cn(
+                  isClientInfoEditable
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  errors.clientZip && "border-destructive bg-destructive/10"
+                )}
+              />
+              {errors.clientZip && (
+                <p className="text-destructive text-sm mt-1">
+                  {errors.clientZip}
+                </p>
+              )}
+            </div>
 
-                <div>
-                  <Label htmlFor="email" className="text-muted-foreground">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={recordData.clientEmail}
-                    onChange={isClientInfoEditable && !isActiveCase ? (e) => handleInputChange('clientEmail', e.target.value) : undefined}
-                    readOnly={!isClientInfoEditable || isActiveCase}
-                    className={cn(
-                      (isClientInfoEditable && !isActiveCase) ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
-                      errors.clientEmail && "border-destructive bg-destructive/10"
-                    )}
-                  />
-                  {errors.clientEmail && (
-                    <p className="text-destructive text-sm mt-1">{errors.clientEmail}</p>
+            <div>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="birthdate" className="text-muted-foreground">
+                  Birth Date
+                </Label>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowDOB(!showDOB)}
+                  className="h-6 w-6 p-0"
+                >
+                  {showDOB ? (
+                    <EyeOff className="h-3 w-3" />
+                  ) : (
+                    <Eye className="h-3 w-3" />
                   )}
-                </div>
-
-                <div>
-                  <Label htmlFor="phone" className="text-muted-foreground">Phone *</Label>
-                  <Input
-                    id="phone"
-                    value={recordData.clientPhone}
-                    onChange={isClientInfoEditable && !isActiveCase ? (e) => handleInputChange('clientPhone', e.target.value) : undefined}
-                    readOnly={!isClientInfoEditable || isActiveCase}
-                    className={cn(
-                      (isClientInfoEditable && !isActiveCase) ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
-                      errors.clientPhone && "border-destructive bg-destructive/10"
-                    )}
-                  />
-                  {errors.clientPhone && (
-                    <p className="text-destructive text-sm mt-1">{errors.clientPhone}</p>
-                  )}
-                </div>
+                </Button>
               </div>
+              <Input
+                id="birthdate"
+                type={showDOB ? "date" : "text"}
+                value={
+                  showDOB
+                    ? recordData.clientBirthdate
+                    : maskDOB(recordData.clientBirthdate)
+                }
+                onChange={
+                  isClientInfoEditable && !isActiveCase
+                    ? (e) =>
+                        handleInputChange("clientBirthdate", e.target.value)
+                    : undefined
+                }
+                className={
+                  isClientInfoEditable && !isActiveCase
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium"
+                }
+                readOnly={!showDOB || !isClientInfoEditable || isActiveCase}
+              />
+            </div>
 
-              {/* Right Column */}
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="addressLine1" className="text-muted-foreground">Address Line 1</Label>
-                  <Input
-                    id="addressLine1"
-                    value={recordData.clientAddressLine1}
-                    onChange={isClientInfoEditable ? (e) => handleInputChange('clientAddressLine1', e.target.value) : undefined}
-                    readOnly={!isClientInfoEditable}
-                    className={cn(
-                      isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
-                      errors.clientAddressLine1 && "border-destructive bg-destructive/10"
-                    )}
-                  />
-                  {errors.clientAddressLine1 && (
-                    <p className="text-destructive text-sm mt-1">{errors.clientAddressLine1}</p>
+            <div>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="ssn" className="text-muted-foreground">
+                  Social Security Number
+                </Label>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowSSN(!showSSN)}
+                  className="h-6 w-6 p-0"
+                >
+                  {showSSN ? (
+                    <EyeOff className="h-3 w-3" />
+                  ) : (
+                    <Eye className="h-3 w-3" />
                   )}
-                </div>
-
-                <div>
-                  <Label htmlFor="addressLine2" className="text-muted-foreground">Address Line 2</Label>
-                  <Input
-                    id="addressLine2"
-                    value={recordData.clientAddressLine2}
-                    onChange={isClientInfoEditable ? (e) => handleInputChange('clientAddressLine2', e.target.value) : undefined}
-                    readOnly={!isClientInfoEditable}
-                    className={isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium"}
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="city" className="text-muted-foreground">City</Label>
-                  <Input
-                    id="city"
-                    value={recordData.clientCity}
-                    onChange={isClientInfoEditable ? (e) => handleInputChange('clientCity', e.target.value) : undefined}
-                    readOnly={!isClientInfoEditable}
-                    className={cn(
-                      isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
-                      errors.clientCity && "border-destructive bg-destructive/10"
-                    )}
-                  />
-                  {errors.clientCity && (
-                    <p className="text-destructive text-sm mt-1">{errors.clientCity}</p>
-                  )}
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="state" className="text-muted-foreground">State</Label>
-                    <Input
-                      id="state"
-                      value={recordData.clientState}
-                      onChange={isClientInfoEditable ? (e) => handleInputChange('clientState', e.target.value) : undefined}
-                      readOnly={!isClientInfoEditable}
-                      className={cn(
-                        isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
-                        errors.clientState && "border-destructive bg-destructive/10"
-                      )}
-                    />
-                    {errors.clientState && (
-                      <p className="text-destructive text-sm mt-1">{errors.clientState}</p>
-                    )}
-                  </div>
-                  <div>
-                    <Label htmlFor="zip" className="text-muted-foreground">ZIP Code</Label>
-                    <Input
-                      id="zip"
-                      value={recordData.clientZip}
-                      onChange={isClientInfoEditable ? (e) => handleInputChange('clientZip', e.target.value) : undefined}
-                      readOnly={!isClientInfoEditable}
-                      className={cn(
-                        isClientInfoEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
-                        errors.clientZip && "border-destructive bg-destructive/10"
-                      )}
-                    />
-                    {errors.clientZip && (
-                      <p className="text-destructive text-sm mt-1">{errors.clientZip}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="birthdate" className="text-muted-foreground">Birth Date</Label>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowDOB(!showDOB)}
-                      className="h-6 w-6 p-0"
-                    >
-                      {showDOB ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                    </Button>
-                  </div>
-                  <Input
-                    id="birthdate"
-                    type={showDOB ? "date" : "text"}
-                    value={showDOB ? recordData.clientBirthdate : maskDOB(recordData.clientBirthdate)}
-                    onChange={isClientInfoEditable && !isActiveCase ? (e) => handleInputChange('clientBirthdate', e.target.value) : undefined}
-                    className={(isClientInfoEditable && !isActiveCase) ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium"}
-                    readOnly={!showDOB || !isClientInfoEditable || isActiveCase}
-                  />
-                </div>
-
-                <div>
-                  <div className="flex items-center justify-between">
-                    <Label htmlFor="ssn" className="text-muted-foreground">Social Security Number</Label>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => setShowSSN(!showSSN)}
-                      className="h-6 w-6 p-0"
-                    >
-                      {showSSN ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                    </Button>
-                  </div>
-                  <Input
-                    id="ssn"
-                    value={showSSN ? recordData.clientSSN : maskSSN(recordData.clientSSN)}
-                    onChange={isClientInfoEditable && !isActiveCase ? (e) => handleInputChange('clientSSN', e.target.value) : undefined}
-                    className={cn(
-                      (isClientInfoEditable && !isActiveCase) ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
-                      errors.clientSSN && "border-destructive bg-destructive/10"
-                    )}
-                    readOnly={!showSSN || !isClientInfoEditable || isActiveCase}
-                    placeholder="XXX-XX-XXXX"
-                  />
-                  {errors.clientSSN && (
-                    <p className="text-destructive text-sm mt-1">{errors.clientSSN}</p>
-                  )}
-                </div>
+                </Button>
               </div>
+              <Input
+                id="ssn"
+                value={
+                  showSSN ? recordData.clientSSN : maskSSN(recordData.clientSSN)
+                }
+                onChange={
+                  isClientInfoEditable && !isActiveCase
+                    ? (e) => handleInputChange("clientSSN", e.target.value)
+                    : undefined
+                }
+                className={cn(
+                  isClientInfoEditable && !isActiveCase
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  errors.clientSSN && "border-destructive bg-destructive/10"
+                )}
+                readOnly={!showSSN || !isClientInfoEditable || isActiveCase}
+                placeholder="XXX-XX-XXXX"
+              />
+              {errors.clientSSN && (
+                <p className="text-destructive text-sm mt-1">
+                  {errors.clientSSN}
+                </p>
+              )}
             </div>
           </CardContent>
         </Card>
@@ -817,19 +971,23 @@ const RecordDetail = () => {
         {/* Associated Firms - Third */}
         <Card className="bg-card border-border">
           <CardHeader>
-            <CardTitle className="text-card-foreground">Associated Firms</CardTitle>
+            <CardTitle className="text-card-foreground">
+              Associated Firms
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <Label htmlFor="associatedFirms" className="text-muted-foreground">Firm - Role</Label>
+            <Label htmlFor="associatedFirms" className="text-muted-foreground">
+              Firm - Role
+            </Label>
             {recordData.firms.map((firm, index) => (
               <div>
                 <Input
-                id={"Associated Firm"+{index}}
-                type="text"
-                value= {firm.name+' - '+firm.role}
-                readOnly
-                className="p-3 bg-card rounded-lg text-foreground font-medium"
-              />
+                  id={"Associated Firm" + { index }}
+                  type="text"
+                  value={firm.name + " - " + firm.role}
+                  readOnly
+                  className="p-3 bg-card rounded-lg text-foreground font-medium"
+                />
               </div>
             ))}
           </CardContent>
@@ -842,62 +1000,119 @@ const RecordDetail = () => {
           </CardHeader>
           <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="grossSettlementAmount" className="text-muted-foreground">Gross Settlement Amount *</Label>
+              <Label
+                htmlFor="grossSettlementAmount"
+                className="text-muted-foreground"
+              >
+                Gross Settlement Amount *
+              </Label>
               <Input
                 id="grossSettlementAmount"
                 type="number"
                 value={recordData.grossSettlementAmount}
-                onChange={isSettlementEditable ? (e) => handleInputChange('grossSettlementAmount', parseFloat(e.target.value) || 0) : undefined}
+                onChange={
+                  isSettlementEditable
+                    ? (e) =>
+                        handleInputChange(
+                          "grossSettlementAmount",
+                          parseFloat(e.target.value) || 0
+                        )
+                    : undefined
+                }
                 readOnly={!isSettlementEditable}
                 className={cn(
-                  isSettlementEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
-                  errors.grossSettlementAmount && "border-destructive bg-destructive/10"
+                  isSettlementEditable
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  errors.grossSettlementAmount &&
+                    "border-destructive bg-destructive/10"
                 )}
               />
               {errors.grossSettlementAmount && (
-                <p className="text-destructive text-sm mt-1">{errors.grossSettlementAmount}</p>
+                <p className="text-destructive text-sm mt-1">
+                  {errors.grossSettlementAmount}
+                </p>
               )}
             </div>
             <div>
-              <Label htmlFor="settledAmount" className="text-muted-foreground">Settled Amount *</Label>
+              <Label htmlFor="settledAmount" className="text-muted-foreground">
+                Settled Amount *
+              </Label>
               <Input
                 id="settledAmount"
                 type="number"
                 value={recordData.settledAmount}
-                onChange={isSettlementEditable ? (e) => handleInputChange('settledAmount', parseFloat(e.target.value) || 0) : undefined}
+                onChange={
+                  isSettlementEditable
+                    ? (e) =>
+                        handleInputChange(
+                          "settledAmount",
+                          parseFloat(e.target.value) || 0
+                        )
+                    : undefined
+                }
                 readOnly={!isSettlementEditable}
                 className={cn(
-                  isSettlementEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  isSettlementEditable
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.settledAmount && "border-destructive bg-destructive/10"
                 )}
               />
               {errors.settledAmount && (
-                <p className="text-destructive text-sm mt-1">{errors.settledAmount}</p>
+                <p className="text-destructive text-sm mt-1">
+                  {errors.settledAmount}
+                </p>
               )}
             </div>
             <div>
-              <Label htmlFor="lien" className="text-muted-foreground">Lien</Label>
+              <Label htmlFor="lien" className="text-muted-foreground">
+                Lien
+              </Label>
               <Input
                 id="lienAmount"
                 type="number"
-                onChange={isSettlementEditable ? (e) => handleInputChange('lienAmount', parseFloat(e.target.value) || 0) : undefined}
+                onChange={
+                  isSettlementEditable
+                    ? (e) =>
+                        handleInputChange(
+                          "lienAmount",
+                          parseFloat(e.target.value) || 0
+                        )
+                    : undefined
+                }
                 value={recordData.lienAmount}
-               readOnly={!isSettlementEditable}
+                readOnly={!isSettlementEditable}
                 className={cn(
-                  isSettlementEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  isSettlementEditable
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.lienAmount && "border-destructive bg-destructive/10"
-                )}/>
+                )}
+              />
             </div>
             <div>
-              <Label htmlFor="advance" className="text-muted-foreground">Advance</Label>
+              <Label htmlFor="advance" className="text-muted-foreground">
+                Advance
+              </Label>
               <Input
                 id="advanceAmount"
                 type="number"
                 value={recordData.advanceAmount}
-                onChange={isSettlementEditable ? (e) => handleInputChange('advanceAmount', parseFloat(e.target.value) || 0) : undefined}
+                onChange={
+                  isSettlementEditable
+                    ? (e) =>
+                        handleInputChange(
+                          "advanceAmount",
+                          parseFloat(e.target.value) || 0
+                        )
+                    : undefined
+                }
                 readOnly={!isSettlementEditable}
                 className={cn(
-                  isSettlementEditable ? "border-border text-foreground bg-background" : "p-3 bg-card rounded-lg text-foreground font-medium",
+                  isSettlementEditable
+                    ? "border-border text-foreground bg-background"
+                    : "p-3 bg-card rounded-lg text-foreground font-medium",
                   errors.advanceAmount && "border-destructive bg-destructive/10"
                 )}
               />

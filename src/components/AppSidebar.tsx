@@ -31,7 +31,7 @@ const menuItems = [
   { title: "Requests", icon: FileText },
   { title: "Payments", icon: CreditCard },
   { type: "separator" },
-  { title: "Firms", icon: Building },
+  { title: "Firms", icon: Building , url: "/banking" },
   { title: "Customers", icon: PersonStanding },
   { title: "Defendants", icon: Scale },
   { type: "separator" },
@@ -42,7 +42,6 @@ const menuItems = [
   { title: "File Manager", icon: FolderOpen },
   { title: "Communications", icon: MessageSquare },
   { type: "separator" },
-  { title: "Banking", icon: CreditCard, url: "/banking" },
   { title: "Users", icon: Users },
   {
     title: "Migration Sync Config",
