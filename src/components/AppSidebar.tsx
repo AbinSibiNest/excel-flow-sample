@@ -42,6 +42,7 @@ const menuItems = [
   { title: "File Manager", icon: FolderOpen },
   { title: "Communications", icon: MessageSquare },
   { type: "separator" },
+  { title: "Banking", icon: CreditCard, url: "/banking" },
   { title: "Users", icon: Users },
   {
     title: "Migration Sync Config",
@@ -71,6 +72,9 @@ export function AppSidebar() {
     }
     if (item.url === "/cases") {
       return location.pathname.startsWith("/cases");
+    }
+    if (item.url === "/banking") {
+      return location.pathname === "/banking";
     }
     return false;
   };
