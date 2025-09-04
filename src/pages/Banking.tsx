@@ -45,19 +45,20 @@ export default function Banking() {
       id: 1,
       created: "3/12/2025",
       name: "Operating",
-      accountType: "Checking",
+      type: "vendor",
+      achAccountType: "checking",
       accountNumber: "8771615402",
       routingNumber: "021000021",
       accountStatus: "Active",
       verificationStatus: "Verified",
-      vendorType: "",
-      preferredPaymentMethod: ""
+      vendorType: "expense-reimbursement",
+      preferredPaymentMethod: "ach"
     }
   ]);
 
   const [formData, setFormData] = useState({
     name: "",
-    accountType: "",
+    type: "",
     achAccountType: "",
     accountNumber: "",
     routingNumber: "",
@@ -105,7 +106,7 @@ export default function Banking() {
     if (isUnrestrictedDialogOpen) {
       setFormData({
         name: "",
-        accountType: "",
+        type: "",
         achAccountType: "",
         accountNumber: "",
         routingNumber: "",
@@ -151,8 +152,8 @@ export default function Banking() {
     });
   };
 
-  const getAccountTypeLabel = (accountType: string) => {
-    switch (accountType) {
+  const getAccountTypeLabel = (type: string) => {
+    switch (type) {
       case "vendor": return "Vendor";
       case "firm": return "Firm";
       case "other": return "Other External";
@@ -171,10 +172,10 @@ export default function Banking() {
   };
 
   const isFormValid = () => {
-    const { name, accountType, achAccountType, accountNumber, routingNumber, vendorType, preferredPaymentMethod, addressLine1, city, state, zipCode } = formData;
+    const { name, type, achAccountType, accountNumber, routingNumber, vendorType, preferredPaymentMethod, addressLine1, city, state, zipCode } = formData;
     
     // Basic required fields
-    if (!name || !accountType) return false;
+    if (!name || !type) return false;
     
     // ACH validation
     if (preferredPaymentMethod === "ach" && (!achAccountType || !accountNumber || !routingNumber)) return false;
@@ -183,7 +184,7 @@ export default function Banking() {
     if (preferredPaymentMethod === "check" && (!addressLine1 || !city || !state || !zipCode)) return false;
     
     // Vendor type required if account type is vendor
-    if (accountType === "vendor" && !vendorType) return false;
+    if (type === "vendor" && !vendorType) return false;
     
     return true;
   };
@@ -194,7 +195,8 @@ export default function Banking() {
         id: unrestrictedAccounts.length + 1,
         created: new Date().toLocaleDateString(),
         name: formData.name,
-        accountType: formData.accountType,
+        type: formData.type,
+        achAccountType: formData.achAccountType,
         accountNumber: formData.accountNumber,
         routingNumber: formData.routingNumber,
         accountStatus: "Pending",
@@ -207,7 +209,7 @@ export default function Banking() {
       setIsUnrestrictedDialogOpen(false);
       setFormData({
         name: "",
-        accountType: "",
+        type: "",
         achAccountType: "",
         accountNumber: "",
         routingNumber: "",
@@ -332,17 +334,17 @@ export default function Banking() {
                                 </SelectTrigger>
                                 <SelectContent className="bg-popover border-border">
                                   {unrestrictedAccounts.map((account) => (
-                                    <SelectItem key={account.id} value={account.id.toString()}>
-                                      {getAccountTypeLabel(account.accountType)} – {account.name} ({getPaymentMethodDisplay(account)})
-                                    </SelectItem>
+                                     <SelectItem key={account.id} value={account.id.toString()}>
+                                       {getAccountTypeLabel(account.type)} – {account.name} ({getPaymentMethodDisplay(account)})
+                                     </SelectItem>
                                   ))}
                                 </SelectContent>
                               </Select>
                               {withdrawData.to && getSelectedAccount() && (
                                 <div className="flex items-center gap-2">
-                                  <Badge variant="secondary" className="text-xs">
-                                    {getAccountTypeLabel(getSelectedAccount()!.accountType)}
-                                  </Badge>
+                                   <Badge variant="secondary" className="text-xs">
+                                     {getAccountTypeLabel(getSelectedAccount()!.type)}
+                                   </Badge>
                                   <span className="text-xs text-muted-foreground">
                                     Payment Method: {getPaymentMethodDisplay(getSelectedAccount()!)}
                                   </span>
@@ -408,7 +410,7 @@ export default function Banking() {
                             <h4 className="font-medium text-foreground">Transaction Preview</h4>
                             <div className="text-sm space-y-1">
                               <div><span className="text-muted-foreground">From:</span> <span className="text-foreground">{withdrawData.from.replace("-", " ").replace(/\b\w/g, l => l.toUpperCase())}</span></div>
-                              <div><span className="text-muted-foreground">To:</span> <span className="text-foreground">{getSelectedAccount() && `${getAccountTypeLabel(getSelectedAccount()!.accountType)} – ${getSelectedAccount()!.name} (${getPaymentMethodDisplay(getSelectedAccount()!)})`}</span></div>
+                              <div><span className="text-muted-foreground">To:</span> <span className="text-foreground">{getSelectedAccount() && `${getAccountTypeLabel(getSelectedAccount()!.type)} – ${getSelectedAccount()!.name} (${getPaymentMethodDisplay(getSelectedAccount()!)})`}</span></div>
                               <div><span className="text-muted-foreground">Amount:</span> <span className="text-foreground">${Number(withdrawData.amount).toLocaleString()}</span></div>
                               {withdrawData.settlement && (
                                 <div><span className="text-muted-foreground">Settlement:</span> <span className="text-foreground">{settlements.find(s => s.id === withdrawData.settlement)?.name}</span></div>
@@ -511,7 +513,8 @@ export default function Banking() {
               <TableRow className="border-border">
                 <TableHead className="text-muted-foreground">Created ↑</TableHead>
                 <TableHead className="text-muted-foreground">Name</TableHead>
-                <TableHead className="text-muted-foreground">Account Type</TableHead>
+                <TableHead className="text-muted-foreground">Type</TableHead>
+                <TableHead className="text-muted-foreground">ACH Account Type</TableHead>
                 <TableHead className="text-muted-foreground">Account Number</TableHead>
                 <TableHead className="text-muted-foreground">Routing Number</TableHead>
                 <TableHead className="text-muted-foreground">Vendor Type</TableHead>
@@ -526,7 +529,8 @@ export default function Banking() {
                 <TableRow key={account.id} className="border-border">
                   <TableCell className="text-foreground">{account.created}</TableCell>
                   <TableCell className="text-foreground">{account.name}</TableCell>
-                  <TableCell className="text-foreground">{account.accountType}</TableCell>
+                   <TableCell className="text-foreground">{getAccountTypeLabel(account.type)}</TableCell>
+                   <TableCell className="text-foreground">{account.achAccountType}</TableCell>
                   <TableCell className="text-foreground">{account.accountNumber}</TableCell>
                   <TableCell className="text-foreground">{account.routingNumber}</TableCell>
                   <TableCell className="text-foreground">{account.vendorType}</TableCell>
@@ -587,7 +591,7 @@ export default function Banking() {
                      <div className="grid grid-cols-2 gap-4 items-end">
                        <div className="space-y-2">
                          <Label htmlFor="accountType" className="text-foreground">Type <span className="text-destructive">*</span></Label>
-                         <Select value={formData.accountType} onValueChange={(value) => handleFormChange("accountType", value)}>
+                         <Select value={formData.type} onValueChange={(value) => handleFormChange("type", value)}>
                            <SelectTrigger className="bg-background border-border text-foreground">
                              <SelectValue placeholder="Select type" />
                            </SelectTrigger>
@@ -598,7 +602,7 @@ export default function Banking() {
                          </Select>
                        </div>
                        
-                       {formData.accountType === "vendor" && (
+                       {formData.type === "vendor" && (
                          <div className="space-y-2">
                            <Label htmlFor="vendorType" className="text-foreground">Vendor Type <span className="text-destructive">*</span></Label>
                            <Select value={formData.vendorType} onValueChange={(value) => handleFormChange("vendorType", value)}>
@@ -794,7 +798,7 @@ export default function Banking() {
                        <div className="grid grid-cols-2 gap-4 items-end">
                          <div className="space-y-2">
                            <Label htmlFor="editAccountType" className="text-foreground">Type <span className="text-destructive">*</span></Label>
-                           <Select value={selectedAccount?.accountType || ""} disabled>
+                           <Select value={selectedAccount?.type || ""} disabled>
                              <SelectTrigger className="bg-muted border-border text-muted-foreground">
                                <SelectValue placeholder="Select type" />
                              </SelectTrigger>
@@ -805,7 +809,7 @@ export default function Banking() {
                            </Select>
                          </div>
                          
-                         {selectedAccount?.accountType === "vendor" && (
+                         {selectedAccount?.type === "vendor" && (
                            <div className="space-y-2">
                              <Label htmlFor="editVendorType" className="text-foreground">Vendor Type <span className="text-destructive">*</span></Label>
                              <Select value={selectedAccount?.vendorType || ""} disabled>
