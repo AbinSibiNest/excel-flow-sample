@@ -28,6 +28,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ChevronLeft, Plus, MoreHorizontal, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -57,6 +58,7 @@ export default function Banking() {
   const [formData, setFormData] = useState({
     name: "",
     accountType: "",
+    achAccountType: "",
     accountNumber: "",
     routingNumber: "",
     vendorType: "",
@@ -104,6 +106,7 @@ export default function Banking() {
       setFormData({
         name: "",
         accountType: "",
+        achAccountType: "",
         accountNumber: "",
         routingNumber: "",
         vendorType: "",
@@ -168,13 +171,13 @@ export default function Banking() {
   };
 
   const isFormValid = () => {
-    const { name, accountType, accountNumber, routingNumber, vendorType, preferredPaymentMethod, addressLine1, city, state, zipCode } = formData;
+    const { name, accountType, achAccountType, accountNumber, routingNumber, vendorType, preferredPaymentMethod, addressLine1, city, state, zipCode } = formData;
     
     // Basic required fields
     if (!name || !accountType) return false;
     
     // ACH validation
-    if (preferredPaymentMethod === "ach" && (!accountNumber || !routingNumber)) return false;
+    if (preferredPaymentMethod === "ach" && (!achAccountType || !accountNumber || !routingNumber)) return false;
     
     // Check validation
     if (preferredPaymentMethod === "check" && (!addressLine1 || !city || !state || !zipCode)) return false;
@@ -205,6 +208,7 @@ export default function Banking() {
       setFormData({
         name: "",
         accountType: "",
+        achAccountType: "",
         accountNumber: "",
         routingNumber: "",
         vendorType: "",
@@ -578,139 +582,171 @@ export default function Banking() {
 
                   <Separator className="bg-border" />
 
-                  {/* Account Type and Vendor Type */}
-                  <div className="grid grid-cols-1 gap-4">
-                    <div className="grid grid-cols-2 gap-4 items-end">
-                      <div className="space-y-2">
-                        <Label htmlFor="accountType" className="text-foreground">Account Type <span className="text-destructive">*</span></Label>
-                        <Select value={formData.accountType} onValueChange={(value) => handleFormChange("accountType", value)}>
-                          <SelectTrigger className="bg-background border-border text-foreground">
-                            <SelectValue placeholder="Select account type" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-popover border-border">
-                            <SelectItem value="savings">Savings</SelectItem>
-                            <SelectItem value="checking">Checking</SelectItem>
-                            <SelectItem value="vendor">Vendor</SelectItem>
-                            <SelectItem value="other">Other</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      
-                      {formData.accountType === "vendor" && (
-                        <div className="space-y-2">
-                          <Label htmlFor="vendorType" className="text-foreground">Vendor Type <span className="text-destructive">*</span></Label>
-                          <Select value={formData.vendorType} onValueChange={(value) => handleFormChange("vendorType", value)}>
-                            <SelectTrigger className="bg-background border-border text-foreground">
-                              <SelectValue placeholder="Select vendor type" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-popover border-border">
-                              <SelectItem value="expense-reimbursement">Expense Reimbursement</SelectItem>
-                              <SelectItem value="lien-resolution">Lien Resolution</SelectItem>
-                              <SelectItem value="service-provider">Service Provider</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                   {/* Account Type and Vendor Type */}
+                   <div className="grid grid-cols-1 gap-4">
+                     <div className="grid grid-cols-2 gap-4 items-end">
+                       <div className="space-y-2">
+                         <Label htmlFor="accountType" className="text-foreground">Type <span className="text-destructive">*</span></Label>
+                         <Select value={formData.accountType} onValueChange={(value) => handleFormChange("accountType", value)}>
+                           <SelectTrigger className="bg-background border-border text-foreground">
+                             <SelectValue placeholder="Select type" />
+                           </SelectTrigger>
+                           <SelectContent className="bg-popover border-border">
+                             <SelectItem value="vendor">Vendor</SelectItem>
+                             <SelectItem value="other">Other</SelectItem>
+                           </SelectContent>
+                         </Select>
+                       </div>
+                       
+                       {formData.accountType === "vendor" && (
+                         <div className="space-y-2">
+                           <Label htmlFor="vendorType" className="text-foreground">Vendor Type <span className="text-destructive">*</span></Label>
+                           <Select value={formData.vendorType} onValueChange={(value) => handleFormChange("vendorType", value)}>
+                             <SelectTrigger className="bg-background border-border text-foreground">
+                               <SelectValue placeholder="Select vendor type" />
+                             </SelectTrigger>
+                             <SelectContent className="bg-popover border-border">
+                               <SelectItem value="expense-reimbursement">Expense Reimbursement</SelectItem>
+                               <SelectItem value="lien-resolution">Lien Resolution</SelectItem>
+                               <SelectItem value="service-provider">Service Provider</SelectItem>
+                             </SelectContent>
+                           </Select>
+                         </div>
+                       )}
+                     </div>
+                   </div>
 
                   <Separator className="bg-border" />
 
-                  {/* Preferred Payment Method and Related Fields */}
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label className="text-foreground">Preferred Payment Method <span className="text-destructive">*</span></Label>
-                      <RadioGroup value={formData.preferredPaymentMethod} onValueChange={(value) => handleFormChange("preferredPaymentMethod", value)}>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="ach" id="ach" />
-                          <Label htmlFor="ach" className="text-foreground">ACH</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="check" id="check" />
-                          <Label htmlFor="check" className="text-foreground">Check</Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
+                   {/* Preferred Payment Method and Related Fields */}
+                   <div className="space-y-4">
+                     <div className="space-y-2">
+                       <Label className="text-foreground">Preferred Payment Method <span className="text-destructive">*</span></Label>
+                       <RadioGroup value={formData.preferredPaymentMethod} onValueChange={(value) => handleFormChange("preferredPaymentMethod", value)}>
+                         <div className="flex items-center space-x-2">
+                           <RadioGroupItem value="ach" id="ach" />
+                           <Label htmlFor="ach" className="text-foreground">ACH</Label>
+                         </div>
+                         <div className="flex items-center space-x-2">
+                           <RadioGroupItem value="check" id="check" />
+                           <Label htmlFor="check" className="text-foreground">Check</Label>
+                         </div>
+                       </RadioGroup>
+                     </div>
 
-                    {/* Account Number and Routing Number - Always visible */}
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="accountNumber" className="text-foreground">
-                          Account Number {formData.preferredPaymentMethod === "ach" && <span className="text-destructive">*</span>}
-                        </Label>
-                        <Input
-                          id="accountNumber"
-                          value={formData.accountNumber}
-                          onChange={(e) => handleFormChange("accountNumber", e.target.value)}
-                          className="bg-background border-border text-foreground"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="routingNumber" className="text-foreground">
-                          Routing Number (ACH) {formData.preferredPaymentMethod === "ach" && <span className="text-destructive">*</span>}
-                        </Label>
-                        <Input
-                          id="routingNumber"
-                          value={formData.routingNumber}
-                          onChange={(e) => handleFormChange("routingNumber", e.target.value)}
-                          className="bg-background border-border text-foreground"
-                        />
-                      </div>
-                    </div>
+                     <Accordion type="multiple" className="w-full">
+                       {/* ACH Accordion */}
+                       <AccordionItem value="ach">
+                         <AccordionTrigger className="text-foreground">ACH</AccordionTrigger>
+                         <AccordionContent>
+                           <div className="space-y-4 pt-4">
+                             <div className="space-y-2">
+                               <Label htmlFor="achAccountType" className="text-foreground">
+                                 Account Type {formData.preferredPaymentMethod === "ach" && <span className="text-destructive">*</span>}
+                               </Label>
+                               <Select value={formData.achAccountType} onValueChange={(value) => handleFormChange("achAccountType", value)}>
+                                 <SelectTrigger className="bg-background border-border text-foreground">
+                                   <SelectValue placeholder="Select account type" />
+                                 </SelectTrigger>
+                                 <SelectContent className="bg-popover border-border">
+                                   <SelectItem value="savings">Savings</SelectItem>
+                                   <SelectItem value="checking">Checking</SelectItem>
+                                 </SelectContent>
+                               </Select>
+                             </div>
+                             <div className="grid grid-cols-2 gap-4">
+                               <div className="space-y-2">
+                                 <Label htmlFor="accountNumber" className="text-foreground">
+                                   Account Number {formData.preferredPaymentMethod === "ach" && <span className="text-destructive">*</span>}
+                                 </Label>
+                                 <Input
+                                   id="accountNumber"
+                                   value={formData.accountNumber}
+                                   onChange={(e) => handleFormChange("accountNumber", e.target.value)}
+                                   className="bg-background border-border text-foreground"
+                                 />
+                               </div>
+                               <div className="space-y-2">
+                                 <Label htmlFor="routingNumber" className="text-foreground">
+                                   Routing Number {formData.preferredPaymentMethod === "ach" && <span className="text-destructive">*</span>}
+                                 </Label>
+                                 <Input
+                                   id="routingNumber"
+                                   value={formData.routingNumber}
+                                   onChange={(e) => handleFormChange("routingNumber", e.target.value)}
+                                   className="bg-background border-border text-foreground"
+                                 />
+                               </div>
+                             </div>
+                           </div>
+                         </AccordionContent>
+                       </AccordionItem>
 
-                    {formData.preferredPaymentMethod === "check" && (
-                      <div className="space-y-4">
-                        <Label className="text-foreground font-medium">Mailing Address</Label>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="addressLine1" className="text-foreground">Address Line 1 <span className="text-destructive">*</span></Label>
-                            <Input
-                              id="addressLine1"
-                              value={formData.addressLine1}
-                              onChange={(e) => handleFormChange("addressLine1", e.target.value)}
-                              className="bg-background border-border text-foreground"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="addressLine2" className="text-foreground">Address Line 2</Label>
-                            <Input
-                              id="addressLine2"
-                              value={formData.addressLine2}
-                              onChange={(e) => handleFormChange("addressLine2", e.target.value)}
-                              className="bg-background border-border text-foreground"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="city" className="text-foreground">City <span className="text-destructive">*</span></Label>
-                            <Input
-                              id="city"
-                              value={formData.city}
-                              onChange={(e) => handleFormChange("city", e.target.value)}
-                              className="bg-background border-border text-foreground"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="state" className="text-foreground">State <span className="text-destructive">*</span></Label>
-                            <Input
-                              id="state"
-                              value={formData.state}
-                              onChange={(e) => handleFormChange("state", e.target.value)}
-                              className="bg-background border-border text-foreground"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="zipCode" className="text-foreground">ZIP Code <span className="text-destructive">*</span></Label>
-                            <Input
-                              id="zipCode"
-                              value={formData.zipCode}
-                              onChange={(e) => handleFormChange("zipCode", e.target.value)}
-                              className="bg-background border-border text-foreground"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                       {/* Check Mailing Address Accordion */}
+                       <AccordionItem value="check">
+                         <AccordionTrigger className="text-foreground">Check mailing address</AccordionTrigger>
+                         <AccordionContent>
+                           <div className="space-y-4 pt-4">
+                             <div className="grid grid-cols-2 gap-4">
+                               <div className="space-y-2">
+                                 <Label htmlFor="addressLine1" className="text-foreground">
+                                   Address Line 1 {formData.preferredPaymentMethod === "check" && <span className="text-destructive">*</span>}
+                                 </Label>
+                                 <Input
+                                   id="addressLine1"
+                                   value={formData.addressLine1}
+                                   onChange={(e) => handleFormChange("addressLine1", e.target.value)}
+                                   className="bg-background border-border text-foreground"
+                                 />
+                               </div>
+                               <div className="space-y-2">
+                                 <Label htmlFor="addressLine2" className="text-foreground">Address Line 2</Label>
+                                 <Input
+                                   id="addressLine2"
+                                   value={formData.addressLine2}
+                                   onChange={(e) => handleFormChange("addressLine2", e.target.value)}
+                                   className="bg-background border-border text-foreground"
+                                 />
+                               </div>
+                               <div className="space-y-2">
+                                 <Label htmlFor="city" className="text-foreground">
+                                   City {formData.preferredPaymentMethod === "check" && <span className="text-destructive">*</span>}
+                                 </Label>
+                                 <Input
+                                   id="city"
+                                   value={formData.city}
+                                   onChange={(e) => handleFormChange("city", e.target.value)}
+                                   className="bg-background border-border text-foreground"
+                                 />
+                               </div>
+                               <div className="space-y-2">
+                                 <Label htmlFor="state" className="text-foreground">
+                                   State {formData.preferredPaymentMethod === "check" && <span className="text-destructive">*</span>}
+                                 </Label>
+                                 <Input
+                                   id="state"
+                                   value={formData.state}
+                                   onChange={(e) => handleFormChange("state", e.target.value)}
+                                   className="bg-background border-border text-foreground"
+                                 />
+                               </div>
+                               <div className="space-y-2">
+                                 <Label htmlFor="zipCode" className="text-foreground">
+                                   ZIP Code {formData.preferredPaymentMethod === "check" && <span className="text-destructive">*</span>}
+                                 </Label>
+                                 <Input
+                                   id="zipCode"
+                                   value={formData.zipCode}
+                                   onChange={(e) => handleFormChange("zipCode", e.target.value)}
+                                   className="bg-background border-border text-foreground"
+                                 />
+                               </div>
+                             </div>
+                           </div>
+                         </AccordionContent>
+                       </AccordionItem>
+                     </Accordion>
+                   </div>
 
                   <div className="flex justify-end gap-2 pt-4">
                     <Button variant="ghost" onClick={() => setIsUnrestrictedDialogOpen(false)} className="text-foreground">
@@ -754,133 +790,155 @@ export default function Banking() {
 
                     <Separator className="bg-border" />
 
-                    <div className="grid grid-cols-1 gap-4">
-                      <div className="grid grid-cols-2 gap-4 items-end">
-                        <div className="space-y-2">
-                          <Label htmlFor="editAccountType" className="text-foreground">Account Type <span className="text-destructive">*</span></Label>
-                          <Select value={selectedAccount?.accountType || ""} disabled>
-                            <SelectTrigger className="bg-muted border-border text-muted-foreground">
-                              <SelectValue placeholder="Select account type" />
-                            </SelectTrigger>
-                            <SelectContent className="bg-popover border-border">
-                              <SelectItem value="savings">Savings</SelectItem>
-                              <SelectItem value="checking">Checking</SelectItem>
-                              <SelectItem value="vendor">Vendor</SelectItem>
-                              <SelectItem value="other">Other</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        
-                        {selectedAccount?.accountType === "vendor" && (
-                          <div className="space-y-2">
-                            <Label htmlFor="editVendorType" className="text-foreground">Vendor Type <span className="text-destructive">*</span></Label>
-                            <Select value={selectedAccount?.vendorType || ""} disabled>
-                              <SelectTrigger className="bg-muted border-border text-muted-foreground">
-                                <SelectValue placeholder="Select vendor type" />
-                              </SelectTrigger>
-                              <SelectContent className="bg-popover border-border">
-                                <SelectItem value="expense-reimbursement">Expense Reimbursement</SelectItem>
-                                <SelectItem value="lien-resolution">Lien Resolution</SelectItem>
-                                <SelectItem value="service-provider">Service Provider</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        )}
-                      </div>
-                    </div>
+                     <div className="grid grid-cols-1 gap-4">
+                       <div className="grid grid-cols-2 gap-4 items-end">
+                         <div className="space-y-2">
+                           <Label htmlFor="editAccountType" className="text-foreground">Type <span className="text-destructive">*</span></Label>
+                           <Select value={selectedAccount?.accountType || ""} disabled>
+                             <SelectTrigger className="bg-muted border-border text-muted-foreground">
+                               <SelectValue placeholder="Select type" />
+                             </SelectTrigger>
+                             <SelectContent className="bg-popover border-border">
+                               <SelectItem value="vendor">Vendor</SelectItem>
+                               <SelectItem value="other">Other</SelectItem>
+                             </SelectContent>
+                           </Select>
+                         </div>
+                         
+                         {selectedAccount?.accountType === "vendor" && (
+                           <div className="space-y-2">
+                             <Label htmlFor="editVendorType" className="text-foreground">Vendor Type <span className="text-destructive">*</span></Label>
+                             <Select value={selectedAccount?.vendorType || ""} disabled>
+                               <SelectTrigger className="bg-muted border-border text-muted-foreground">
+                                 <SelectValue placeholder="Select vendor type" />
+                               </SelectTrigger>
+                               <SelectContent className="bg-popover border-border">
+                                 <SelectItem value="expense-reimbursement">Expense Reimbursement</SelectItem>
+                                 <SelectItem value="lien-resolution">Lien Resolution</SelectItem>
+                                 <SelectItem value="service-provider">Service Provider</SelectItem>
+                               </SelectContent>
+                             </Select>
+                           </div>
+                         )}
+                       </div>
+                     </div>
 
                     <Separator className="bg-border" />
 
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label className="text-foreground">Preferred Payment Method <span className="text-destructive">*</span></Label>
-                        <RadioGroup value={selectedAccount?.preferredPaymentMethod || "ach"} disabled>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="ach" id="editAch" disabled />
-                            <Label htmlFor="editAch" className="text-muted-foreground">ACH</Label>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="check" id="editCheck" disabled />
-                            <Label htmlFor="editCheck" className="text-muted-foreground">Check</Label>
-                          </div>
-                        </RadioGroup>
-                      </div>
+                     <div className="space-y-4">
+                       <div className="space-y-2">
+                         <Label className="text-foreground">Preferred Payment Method <span className="text-destructive">*</span></Label>
+                         <RadioGroup value={selectedAccount?.preferredPaymentMethod || "ach"} disabled>
+                           <div className="flex items-center space-x-2">
+                             <RadioGroupItem value="ach" id="editAch" disabled />
+                             <Label htmlFor="editAch" className="text-muted-foreground">ACH</Label>
+                           </div>
+                           <div className="flex items-center space-x-2">
+                             <RadioGroupItem value="check" id="editCheck" disabled />
+                             <Label htmlFor="editCheck" className="text-muted-foreground">Check</Label>
+                           </div>
+                         </RadioGroup>
+                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="editAccountNumber" className="text-foreground">Account Number</Label>
-                          <Input
-                            id="editAccountNumber"
-                            value={selectedAccount?.accountNumber || ""}
-                            disabled
-                            className="bg-muted border-border text-muted-foreground"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="editRoutingNumber" className="text-foreground">Routing Number (ACH)</Label>
-                          <Input
-                            id="editRoutingNumber"
-                            value={selectedAccount?.routingNumber || ""}
-                            disabled
-                            className="bg-muted border-border text-muted-foreground"
-                          />
-                        </div>
-                      </div>
-                    </div>
+                       <Accordion type="multiple" className="w-full">
+                         {/* ACH Accordion */}
+                         <AccordionItem value="ach">
+                           <AccordionTrigger className="text-foreground">ACH</AccordionTrigger>
+                           <AccordionContent>
+                             <div className="space-y-4 pt-4">
+                               <div className="space-y-2">
+                                 <Label htmlFor="editAchAccountType" className="text-foreground">Account Type</Label>
+                                 <Select value={selectedAccount?.achAccountType || ""} disabled>
+                                   <SelectTrigger className="bg-muted border-border text-muted-foreground">
+                                     <SelectValue placeholder="Select account type" />
+                                   </SelectTrigger>
+                                   <SelectContent className="bg-popover border-border">
+                                     <SelectItem value="savings">Savings</SelectItem>
+                                     <SelectItem value="checking">Checking</SelectItem>
+                                   </SelectContent>
+                                 </Select>
+                               </div>
+                               <div className="grid grid-cols-2 gap-4">
+                                 <div className="space-y-2">
+                                   <Label htmlFor="editAccountNumber" className="text-foreground">Account Number</Label>
+                                   <Input
+                                     id="editAccountNumber"
+                                     value={selectedAccount?.accountNumber || ""}
+                                     disabled
+                                     className="bg-muted border-border text-muted-foreground"
+                                   />
+                                 </div>
+                                 <div className="space-y-2">
+                                   <Label htmlFor="editRoutingNumber" className="text-foreground">Routing Number</Label>
+                                   <Input
+                                     id="editRoutingNumber"
+                                     value={selectedAccount?.routingNumber || ""}
+                                     disabled
+                                     className="bg-muted border-border text-muted-foreground"
+                                   />
+                                 </div>
+                               </div>
+                             </div>
+                           </AccordionContent>
+                         </AccordionItem>
 
-                    {/* Mailing Address for Check Payment Method */}
-                    {selectedAccount?.preferredPaymentMethod === "check" && (
-                      <div className="space-y-4">
-                        <Label className="text-foreground font-medium">Mailing Address</Label>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="editAddressLine1" className="text-foreground">Address Line 1</Label>
-                            <Input
-                              id="editAddressLine1"
-                              disabled
-                              className="bg-muted border-border text-muted-foreground"
-                              placeholder="Address Line 1"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="editAddressLine2" className="text-foreground">Address Line 2</Label>
-                            <Input
-                              id="editAddressLine2"
-                              disabled
-                              className="bg-muted border-border text-muted-foreground"
-                              placeholder="Address Line 2"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="editCity" className="text-foreground">City</Label>
-                            <Input
-                              id="editCity"
-                              disabled
-                              className="bg-muted border-border text-muted-foreground"
-                              placeholder="City"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="editState" className="text-foreground">State</Label>
-                            <Input
-                              id="editState"
-                              disabled
-                              className="bg-muted border-border text-muted-foreground"
-                              placeholder="State"
-                            />
-                          </div>
-                          <div className="space-y-2">
-                            <Label htmlFor="editZipCode" className="text-foreground">ZIP Code</Label>
-                            <Input
-                              id="editZipCode"
-                              disabled
-                              className="bg-muted border-border text-muted-foreground"
-                              placeholder="ZIP Code"
-                            />
-                          </div>
-                        </div>
-                      </div>
-                    )}
+                         {/* Check Mailing Address Accordion */}
+                         <AccordionItem value="check">
+                           <AccordionTrigger className="text-foreground">Check mailing address</AccordionTrigger>
+                           <AccordionContent>
+                             <div className="space-y-4 pt-4">
+                               <div className="grid grid-cols-2 gap-4">
+                                 <div className="space-y-2">
+                                   <Label htmlFor="editAddressLine1" className="text-foreground">Address Line 1</Label>
+                                   <Input
+                                     id="editAddressLine1"
+                                     disabled
+                                     className="bg-muted border-border text-muted-foreground"
+                                     placeholder="Address Line 1"
+                                   />
+                                 </div>
+                                 <div className="space-y-2">
+                                   <Label htmlFor="editAddressLine2" className="text-foreground">Address Line 2</Label>
+                                   <Input
+                                     id="editAddressLine2"
+                                     disabled
+                                     className="bg-muted border-border text-muted-foreground"
+                                     placeholder="Address Line 2"
+                                   />
+                                 </div>
+                                 <div className="space-y-2">
+                                   <Label htmlFor="editCity" className="text-foreground">City</Label>
+                                   <Input
+                                     id="editCity"
+                                     disabled
+                                     className="bg-muted border-border text-muted-foreground"
+                                     placeholder="City"
+                                   />
+                                 </div>
+                                 <div className="space-y-2">
+                                   <Label htmlFor="editState" className="text-foreground">State</Label>
+                                   <Input
+                                     id="editState"
+                                     disabled
+                                     className="bg-muted border-border text-muted-foreground"
+                                     placeholder="State"
+                                   />
+                                 </div>
+                                 <div className="space-y-2">
+                                   <Label htmlFor="editZipCode" className="text-foreground">ZIP Code</Label>
+                                   <Input
+                                     id="editZipCode"
+                                     disabled
+                                     className="bg-muted border-border text-muted-foreground"
+                                     placeholder="ZIP Code"
+                                   />
+                                 </div>
+                               </div>
+                             </div>
+                           </AccordionContent>
+                         </AccordionItem>
+                       </Accordion>
+                     </div>
 
                     <div className="flex justify-end gap-2 pt-4">
                       <Button variant="ghost" onClick={() => setIsEditDialogOpen(false)} className="text-foreground">
