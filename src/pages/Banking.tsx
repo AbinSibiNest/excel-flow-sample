@@ -702,52 +702,86 @@ export default function Banking() {
                        </RadioGroup>
                      </div>
 
-                      <Accordion type="multiple" value={achAccordionOpen} onValueChange={setAchAccordionOpen} className="w-full">
-                        {/* ACH Accordion */}
-                        <AccordionItem value="ach">
-                          <AccordionTrigger className="text-foreground">ACH</AccordionTrigger>
-                         <AccordionContent>
-                           <div className="space-y-4 pt-4">
-                             <div className="space-y-2">
-                               <Label htmlFor="achAccountType" className="text-foreground">
-                                 Account Type {formData.preferredPaymentMethod === "ach" && <span className="text-destructive">*</span>}
-                               </Label>
-                               <Select value={formData.achAccountType} onValueChange={(value) => handleFormChange("achAccountType", value)}>
-                                 <SelectTrigger className="bg-background border-border text-foreground">
-                                   <SelectValue placeholder="Select account type" />
-                                 </SelectTrigger>
-                                 <SelectContent className="bg-popover border-border">
-                                   <SelectItem value="savings">Savings</SelectItem>
-                                   <SelectItem value="checking">Checking</SelectItem>
-                                 </SelectContent>
-                               </Select>
-                             </div>
-                             <div className="grid grid-cols-2 gap-4">
-                               <div className="space-y-2">
-                                 <Label htmlFor="accountNumber" className="text-foreground">
-                                   Account Number {formData.preferredPaymentMethod === "ach" && <span className="text-destructive">*</span>}
-                                 </Label>
-                                 <Input
-                                   id="accountNumber"
-                                   value={formData.accountNumber}
-                                   onChange={(e) => handleFormChange("accountNumber", e.target.value)}
-                                   className="bg-background border-border text-foreground"
-                                 />
-                               </div>
-                               <div className="space-y-2">
-                                 <Label htmlFor="routingNumber" className="text-foreground">
-                                   Routing Number {formData.preferredPaymentMethod === "ach" && <span className="text-destructive">*</span>}
-                                 </Label>
-                                 <Input
-                                   id="routingNumber"
-                                   value={formData.routingNumber}
-                                   onChange={(e) => handleFormChange("routingNumber", e.target.value)}
-                                   className="bg-background border-border text-foreground"
-                                 />
-                               </div>
-                             </div>
-                           </div>
-                         </AccordionContent>
+                       <Accordion type="multiple" value={achAccordionOpen} onValueChange={setAchAccordionOpen} className="w-full">
+                         {/* ACH Accordion */}
+                         <AccordionItem value="ach">
+                           <AccordionTrigger className="text-foreground">ACH</AccordionTrigger>
+                          <AccordionContent>
+                            <Tabs defaultValue="details" className="w-full">
+                              <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="details">Details</TabsTrigger>
+                                <TabsTrigger value="status">Status</TabsTrigger>
+                              </TabsList>
+                              <TabsContent value="details" className="mt-4 space-y-4">
+                                <div className="space-y-2">
+                                  <Label htmlFor="achAccountType" className="text-foreground">
+                                    Account Type {formData.preferredPaymentMethod === "ach" && <span className="text-destructive">*</span>}
+                                  </Label>
+                                  <Select value={formData.achAccountType} onValueChange={(value) => handleFormChange("achAccountType", value)}>
+                                    <SelectTrigger className="bg-background border-border text-foreground">
+                                      <SelectValue placeholder="Select account type" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-popover border-border">
+                                      <SelectItem value="savings">Savings</SelectItem>
+                                      <SelectItem value="checking">Checking</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                 <div className="grid grid-cols-2 gap-4">
+                                   <div className="space-y-2">
+                                     <Label htmlFor="accountNumber" className="text-foreground">
+                                       Account Number {formData.preferredPaymentMethod === "ach" && <span className="text-destructive">*</span>}
+                                     </Label>
+                                     <Input
+                                    id="accountNumber"
+                                    value={formData.accountNumber}
+                                    onChange={(e) => handleFormChange("accountNumber", e.target.value)}
+                                    className="bg-background border-border text-foreground"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="routingNumber" className="text-foreground">
+                                    Routing Number {formData.preferredPaymentMethod === "ach" && <span className="text-destructive">*</span>}
+                                  </Label>
+                                  <Input
+                                    id="routingNumber"
+                                    value={formData.routingNumber}
+                                    onChange={(e) => handleFormChange("routingNumber", e.target.value)}
+                                    className="bg-background border-border text-foreground"
+                                  />
+                                </div>
+                              </div>
+                              </TabsContent>
+                              <TabsContent value="status" className="mt-4 space-y-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  {/* Integration Details */}
+                                  <div className="space-y-3">
+                                    <h4 className="font-medium text-foreground">Integration Details</h4>
+                                    <div className="space-y-2">
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-foreground">Provisioning</span>
+                                        <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">COMPLETED</span>
+                                      </div>
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-foreground">OFAC</span>
+                                        <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">VERIFIED</span>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* External Account Details */}
+                                  <div className="space-y-3">
+                                    <h4 className="font-medium text-foreground">External Account Details</h4>
+                                    <div className="text-sm text-muted-foreground space-y-1">
+                                      <div>Balance verification: <span className="text-green-600">Verified</span></div>
+                                      <div>Connection status: <span className="text-green-600">Active</span></div>
+                                      <div>Last sync: 2 hours ago</div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </TabsContent>
+                            </Tabs>
+                          </AccordionContent>
                        </AccordionItem>
 
                         {/* Check Mailing Address Accordion */}
@@ -905,46 +939,80 @@ export default function Banking() {
                          </RadioGroup>
                        </div>
 
-                        <Accordion type="multiple" value={editAchAccordionOpen} onValueChange={setEditAchAccordionOpen} className="w-full">
-                          {/* ACH Accordion */}
-                          <AccordionItem value="ach">
-                            <AccordionTrigger className="text-foreground">ACH</AccordionTrigger>
-                           <AccordionContent>
-                             <div className="space-y-4 pt-4">
-                               <div className="space-y-2">
-                                 <Label htmlFor="editAchAccountType" className="text-foreground">Account Type</Label>
-                                 <Select value={selectedAccount?.achAccountType || ""} disabled>
-                                   <SelectTrigger className="bg-muted border-border text-muted-foreground">
-                                     <SelectValue placeholder="Select account type" />
-                                   </SelectTrigger>
-                                   <SelectContent className="bg-popover border-border">
-                                     <SelectItem value="savings">Savings</SelectItem>
-                                     <SelectItem value="checking">Checking</SelectItem>
-                                   </SelectContent>
-                                 </Select>
-                               </div>
-                               <div className="grid grid-cols-2 gap-4">
-                                 <div className="space-y-2">
-                                   <Label htmlFor="editAccountNumber" className="text-foreground">Account Number</Label>
-                                   <Input
-                                     id="editAccountNumber"
-                                     value={selectedAccount?.accountNumber || ""}
-                                     disabled
-                                     className="bg-muted border-border text-muted-foreground"
-                                   />
-                                 </div>
-                                 <div className="space-y-2">
-                                   <Label htmlFor="editRoutingNumber" className="text-foreground">Routing Number</Label>
-                                   <Input
-                                     id="editRoutingNumber"
-                                     value={selectedAccount?.routingNumber || ""}
-                                     disabled
-                                     className="bg-muted border-border text-muted-foreground"
-                                   />
-                                 </div>
-                               </div>
-                             </div>
-                           </AccordionContent>
+                         <Accordion type="multiple" value={editAchAccordionOpen} onValueChange={setEditAchAccordionOpen} className="w-full">
+                           {/* ACH Accordion */}
+                           <AccordionItem value="ach">
+                             <AccordionTrigger className="text-foreground">ACH</AccordionTrigger>
+                            <AccordionContent>
+                              <Tabs defaultValue="details" className="w-full">
+                                <TabsList className="grid w-full grid-cols-2">
+                                  <TabsTrigger value="details">Details</TabsTrigger>
+                                  <TabsTrigger value="status">Status</TabsTrigger>
+                                </TabsList>
+                                <TabsContent value="details" className="mt-4 space-y-4">
+                                  <div className="space-y-2">
+                                    <Label htmlFor="editAchAccountType" className="text-foreground">Account Type</Label>
+                                    <Select value={selectedAccount?.achAccountType || ""} disabled>
+                                      <SelectTrigger className="bg-muted border-border text-muted-foreground">
+                                        <SelectValue placeholder="Select account type" />
+                                      </SelectTrigger>
+                                      <SelectContent className="bg-popover border-border">
+                                        <SelectItem value="savings">Savings</SelectItem>
+                                        <SelectItem value="checking">Checking</SelectItem>
+                                      </SelectContent>
+                                    </Select>
+                                  </div>
+                                   <div className="grid grid-cols-2 gap-4">
+                                  <div className="space-y-2">
+                                    <Label htmlFor="editAccountNumber" className="text-foreground">Account Number</Label>
+                                    <Input
+                                      id="editAccountNumber"
+                                      value={selectedAccount?.accountNumber || ""}
+                                      disabled
+                                      className="bg-muted border-border text-muted-foreground"
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label htmlFor="editRoutingNumber" className="text-foreground">Routing Number</Label>
+                                    <Input
+                                      id="editRoutingNumber"
+                                      value={selectedAccount?.routingNumber || ""}
+                                      disabled
+                                      className="bg-muted border-border text-muted-foreground"
+                                    />
+                                  </div>
+                                </div>
+                                </TabsContent>
+                                <TabsContent value="status" className="mt-4 space-y-4">
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {/* Integration Details */}
+                                    <div className="space-y-3">
+                                      <h4 className="font-medium text-foreground">Integration Details</h4>
+                                      <div className="space-y-2">
+                                        <div className="flex items-center justify-between">
+                                          <span className="text-foreground">Provisioning</span>
+                                          <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">COMPLETED</span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                          <span className="text-foreground">OFAC</span>
+                                          <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">VERIFIED</span>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    {/* External Account Details */}
+                                    <div className="space-y-3">
+                                      <h4 className="font-medium text-foreground">External Account Details</h4>
+                                      <div className="text-sm text-muted-foreground space-y-1">
+                                        <div>Balance verification: <span className="text-green-600">Verified</span></div>
+                                        <div>Connection status: <span className="text-green-600">Active</span></div>
+                                        <div>Last sync: 2 hours ago</div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </TabsContent>
+                              </Tabs>
+                            </AccordionContent>
                          </AccordionItem>
 
                           {/* Check Mailing Address Accordion */}
