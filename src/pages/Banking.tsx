@@ -52,7 +52,12 @@ export default function Banking() {
       accountStatus: "Active",
       verificationStatus: "Verified",
       vendorType: "expense-reimbursement",
-      preferredPaymentMethod: "ach"
+      preferredPaymentMethod: "ach",
+      addressLine1: "123 Main Street",
+      addressLine2: "Suite 100",
+      city: "New York",
+      state: "NY",
+      zipCode: "10001"
     }
   ]);
 
@@ -202,7 +207,12 @@ export default function Banking() {
         accountStatus: "Pending",
         verificationStatus: "Pending",
         vendorType: formData.vendorType,
-        preferredPaymentMethod: formData.preferredPaymentMethod
+        preferredPaymentMethod: formData.preferredPaymentMethod,
+        addressLine1: formData.addressLine1,
+        addressLine2: formData.addressLine2,
+        city: formData.city,
+        state: formData.state,
+        zipCode: formData.zipCode
       };
       
       setUnrestrictedAccounts(prev => [...prev, newAccount]);
@@ -891,53 +901,53 @@ export default function Banking() {
                            <AccordionTrigger className="text-foreground">Check mailing address</AccordionTrigger>
                            <AccordionContent>
                              <div className="space-y-4 pt-4">
-                               <div className="grid grid-cols-2 gap-4">
-                                 <div className="space-y-2">
-                                   <Label htmlFor="editAddressLine1" className="text-foreground">Address Line 1</Label>
-                                   <Input
-                                     id="editAddressLine1"
-                                     disabled
-                                     className="bg-muted border-border text-muted-foreground"
-                                     placeholder="Address Line 1"
-                                   />
-                                 </div>
-                                 <div className="space-y-2">
-                                   <Label htmlFor="editAddressLine2" className="text-foreground">Address Line 2</Label>
-                                   <Input
-                                     id="editAddressLine2"
-                                     disabled
-                                     className="bg-muted border-border text-muted-foreground"
-                                     placeholder="Address Line 2"
-                                   />
-                                 </div>
-                                 <div className="space-y-2">
-                                   <Label htmlFor="editCity" className="text-foreground">City</Label>
-                                   <Input
-                                     id="editCity"
-                                     disabled
-                                     className="bg-muted border-border text-muted-foreground"
-                                     placeholder="City"
-                                   />
-                                 </div>
-                                 <div className="space-y-2">
-                                   <Label htmlFor="editState" className="text-foreground">State</Label>
-                                   <Input
-                                     id="editState"
-                                     disabled
-                                     className="bg-muted border-border text-muted-foreground"
-                                     placeholder="State"
-                                   />
-                                 </div>
-                                 <div className="space-y-2">
-                                   <Label htmlFor="editZipCode" className="text-foreground">ZIP Code</Label>
-                                   <Input
-                                     id="editZipCode"
-                                     disabled
-                                     className="bg-muted border-border text-muted-foreground"
-                                     placeholder="ZIP Code"
-                                   />
-                                 </div>
-                               </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div className="space-y-2">
+                                    <Label htmlFor="editAddressLine1" className="text-foreground">Address Line 1</Label>
+                                    <Input
+                                      id="editAddressLine1"
+                                      value={selectedAccount?.addressLine1 || ""}
+                                      disabled
+                                      className="bg-muted border-border text-muted-foreground"
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label htmlFor="editAddressLine2" className="text-foreground">Address Line 2</Label>
+                                    <Input
+                                      id="editAddressLine2"
+                                      value={selectedAccount?.addressLine2 || ""}
+                                      disabled
+                                      className="bg-muted border-border text-muted-foreground"
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label htmlFor="editCity" className="text-foreground">City</Label>
+                                    <Input
+                                      id="editCity"
+                                      value={selectedAccount?.city || ""}
+                                      disabled
+                                      className="bg-muted border-border text-muted-foreground"
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label htmlFor="editState" className="text-foreground">State</Label>
+                                    <Input
+                                      id="editState"
+                                      value={selectedAccount?.state || ""}
+                                      disabled
+                                      className="bg-muted border-border text-muted-foreground"
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label htmlFor="editZipCode" className="text-foreground">ZIP Code</Label>
+                                    <Input
+                                      id="editZipCode"
+                                      value={selectedAccount?.zipCode || ""}
+                                      disabled
+                                      className="bg-muted border-border text-muted-foreground"
+                                    />
+                                  </div>
+                                </div>
                              </div>
                            </AccordionContent>
                          </AccordionItem>
