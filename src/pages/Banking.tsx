@@ -755,33 +755,38 @@ export default function Banking() {
                               </TabsContent>
                               
                               <TabsContent value="status" className="space-y-4">
-                                <div className="grid grid-cols-2 gap-4">
+                                <div className="grid grid-cols-2 gap-6">
                                   <div className="space-y-4">
                                     <h4 className="font-medium text-foreground">Integration Details</h4>
-                                    <div className="flex items-center justify-between">
-                                      <span className="text-foreground">Provisioning</span>
-                                      <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">COMPLETED</span>
-                                    </div>
-                                    <div className="flex items-center justify-between">
-                                      <span className="text-foreground">OFAC</span>
-                                      <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">VERIFIED</span>
+                                    <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-foreground font-medium">Provisioning</span>
+                                        <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">COMPLETED</span>
+                                      </div>
                                     </div>
                                   </div>
                                   
                                   <div className="space-y-4">
-                                    <h4 className="font-medium text-foreground">External Account Details</h4>
-                                    <div className="space-y-2 text-sm">
-                                      <div>
-                                        <span className="text-muted-foreground">Account Status:</span>
-                                        <span className="ml-2 text-foreground">Active</span>
+                                    <h4 className="font-medium text-foreground">External Account</h4>
+                                    <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-muted-foreground">Account Status</span>
+                                        <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">ACTIVE</span>
                                       </div>
-                                      <div>
-                                        <span className="text-muted-foreground">Verification Status:</span>
-                                        <span className="ml-2 text-foreground">Verified</span>
+                                      
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-muted-foreground">EWS Status</span>
+                                        <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">OPEN</span>
                                       </div>
-                                      <div>
-                                        <span className="text-muted-foreground">Last Updated:</span>
-                                        <span className="ml-2 text-foreground">12/15/2024</span>
+                                      
+                                      <div className="space-y-2">
+                                        <div className="text-muted-foreground text-sm">Bank Name:</div>
+                                        <div className="text-foreground">US BANK NA</div>
+                                      </div>
+                                      
+                                      <div className="space-y-2">
+                                        <div className="text-muted-foreground text-sm">Bank Routing Number:</div>
+                                        <div className="text-foreground">{formData.routingNumber || "021000021"}</div>
                                       </div>
                                     </div>
                                   </div>
@@ -884,9 +889,8 @@ export default function Banking() {
                 </DialogHeader>
                 
                 <Tabs defaultValue="edit" className="w-full">
-                  <TabsList className="grid w-full grid-cols-2">
+                  <TabsList className="grid w-full grid-cols-1">
                     <TabsTrigger value="edit">EDIT</TabsTrigger>
-                    <TabsTrigger value="details">DETAILS</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="edit" className="space-y-6 mt-6">
@@ -999,37 +1003,38 @@ export default function Banking() {
                                 </TabsContent>
                                 
                                 <TabsContent value="status" className="space-y-4">
-                                  <div className="grid grid-cols-2 gap-4">
+                                  <div className="grid grid-cols-2 gap-6">
                                     <div className="space-y-4">
                                       <h4 className="font-medium text-foreground">Integration Details</h4>
-                                      <div className="flex items-center justify-between">
-                                        <span className="text-foreground">Provisioning</span>
-                                        <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">COMPLETED</span>
-                                      </div>
-                                      <div className="flex items-center justify-between">
-                                        <span className="text-foreground">OFAC</span>
-                                        <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">VERIFIED</span>
+                                      <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
+                                        <div className="flex items-center justify-between">
+                                          <span className="text-foreground font-medium">Provisioning</span>
+                                          <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">COMPLETED</span>
+                                        </div>
                                       </div>
                                     </div>
                                     
                                     <div className="space-y-4">
-                                      <h4 className="font-medium text-foreground">External Account Details</h4>
-                                      <div className="space-y-2 text-sm">
-                                        <div>
-                                          <span className="text-muted-foreground">External Status:</span>
-                                          <span className="ml-2 text-foreground">Active</span>
+                                      <h4 className="font-medium text-foreground">External Account</h4>
+                                      <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
+                                        <div className="flex items-center justify-between">
+                                          <span className="text-muted-foreground">Account Status</span>
+                                          <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">ACTIVE</span>
                                         </div>
-                                        <div>
-                                          <span className="text-muted-foreground">External Verification:</span>
-                                          <span className="ml-2 text-foreground">Verified</span>
+                                        
+                                        <div className="flex items-center justify-between">
+                                          <span className="text-muted-foreground">EWS Status</span>
+                                          <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">OPEN</span>
                                         </div>
-                                        <div>
-                                          <span className="text-muted-foreground">Last Sync:</span>
-                                          <span className="ml-2 text-foreground">12/15/2024 3:45 PM</span>
+                                        
+                                        <div className="space-y-2">
+                                          <div className="text-muted-foreground text-sm">Bank Name:</div>
+                                          <div className="text-foreground">US BANK NA</div>
                                         </div>
-                                        <div>
-                                          <span className="text-muted-foreground">External ID:</span>
-                                          <span className="ml-2 text-foreground">EXT-{selectedAccount?.id}-EDIT</span>
+                                        
+                                        <div className="space-y-2">
+                                          <div className="text-muted-foreground text-sm">Bank Routing Number:</div>
+                                          <div className="text-foreground">{selectedAccount?.routingNumber || "021000021"}</div>
                                         </div>
                                       </div>
                                     </div>
@@ -1110,55 +1115,6 @@ export default function Banking() {
                     </div>
                   </TabsContent>
                   
-                  <TabsContent value="details" className="space-y-6 mt-6">
-                    {/* Details Tab - Layout from screenshot */}
-                    <div className="grid grid-cols-2 gap-8">
-                      {/* Left Column - Integration Details */}
-                      <div className="space-y-6">
-                        <h3 className="text-foreground font-medium">Integration Details</h3>
-                        
-                        <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
-                          <div className="flex items-center justify-between">
-                            <span className="text-foreground font-medium">Provisioning</span>
-                            <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">COMPLETED</span>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Right Column - External Account */}
-                      <div className="space-y-6">
-                        <h3 className="text-foreground font-medium">External Account</h3>
-                        
-                        <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
-                          <div className="flex items-center justify-between">
-                            <span className="text-muted-foreground">Account Status</span>
-                            <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">ACTIVE</span>
-                          </div>
-                          
-                          <div className="flex items-center justify-between">
-                            <span className="text-muted-foreground">EWS Status</span>
-                            <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">OPEN</span>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <div className="text-muted-foreground text-sm">Bank Name:</div>
-                            <div className="text-foreground">US BANK NA</div>
-                          </div>
-                          
-                          <div className="space-y-2">
-                            <div className="text-muted-foreground text-sm">Bank Routing Number:</div>
-                            <div className="text-foreground">{selectedAccount?.routingNumber || "122105155"}</div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-end pt-4">
-                      <Button variant="ghost" onClick={() => setIsEditDialogOpen(false)} className="text-foreground">
-                        CLOSE
-                      </Button>
-                    </div>
-                  </TabsContent>
                 </Tabs>
               </DialogContent>
             </Dialog>
