@@ -618,82 +618,85 @@ export default function Banking() {
                       </RadioGroup>
                     </div>
 
-                    {formData.preferredPaymentMethod === "ach" && (
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="accountNumber" className="text-foreground">Account Number <span className="text-destructive">*</span></Label>
-                          <Input
-                            id="accountNumber"
-                            value={formData.accountNumber}
-                            onChange={(e) => handleFormChange("accountNumber", e.target.value)}
-                            className="bg-background border-border text-foreground"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="routingNumber" className="text-foreground">Routing Number (ACH) <span className="text-destructive">*</span></Label>
-                          <Input
-                            id="routingNumber"
-                            value={formData.routingNumber}
-                            onChange={(e) => handleFormChange("routingNumber", e.target.value)}
-                            className="bg-background border-border text-foreground"
-                          />
+                    {/* Account Number and Routing Number - Always visible */}
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="accountNumber" className="text-foreground">
+                          Account Number {formData.preferredPaymentMethod === "ach" && <span className="text-destructive">*</span>}
+                        </Label>
+                        <Input
+                          id="accountNumber"
+                          value={formData.accountNumber}
+                          onChange={(e) => handleFormChange("accountNumber", e.target.value)}
+                          className="bg-background border-border text-foreground"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="routingNumber" className="text-foreground">
+                          Routing Number (ACH) {formData.preferredPaymentMethod === "ach" && <span className="text-destructive">*</span>}
+                        </Label>
+                        <Input
+                          id="routingNumber"
+                          value={formData.routingNumber}
+                          onChange={(e) => handleFormChange("routingNumber", e.target.value)}
+                          className="bg-background border-border text-foreground"
+                        />
+                      </div>
+                    </div>
+
+                    {formData.preferredPaymentMethod === "check" && (
+                      <div className="space-y-4">
+                        <Label className="text-foreground font-medium">Mailing Address</Label>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="addressLine1" className="text-foreground">Address Line 1 <span className="text-destructive">*</span></Label>
+                            <Input
+                              id="addressLine1"
+                              value={formData.addressLine1}
+                              onChange={(e) => handleFormChange("addressLine1", e.target.value)}
+                              className="bg-background border-border text-foreground"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="addressLine2" className="text-foreground">Address Line 2</Label>
+                            <Input
+                              id="addressLine2"
+                              value={formData.addressLine2}
+                              onChange={(e) => handleFormChange("addressLine2", e.target.value)}
+                              className="bg-background border-border text-foreground"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="city" className="text-foreground">City <span className="text-destructive">*</span></Label>
+                            <Input
+                              id="city"
+                              value={formData.city}
+                              onChange={(e) => handleFormChange("city", e.target.value)}
+                              className="bg-background border-border text-foreground"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="state" className="text-foreground">State <span className="text-destructive">*</span></Label>
+                            <Input
+                              id="state"
+                              value={formData.state}
+                              onChange={(e) => handleFormChange("state", e.target.value)}
+                              className="bg-background border-border text-foreground"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="zipCode" className="text-foreground">ZIP Code <span className="text-destructive">*</span></Label>
+                            <Input
+                              id="zipCode"
+                              value={formData.zipCode}
+                              onChange={(e) => handleFormChange("zipCode", e.target.value)}
+                              className="bg-background border-border text-foreground"
+                            />
+                          </div>
                         </div>
                       </div>
                     )}
                   </div>
-
-                  {formData.preferredPaymentMethod === "check" && (
-                    <div className="space-y-4">
-                      <Label className="text-foreground font-medium">Mailing Address</Label>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="addressLine1" className="text-foreground">Address Line 1 <span className="text-destructive">*</span></Label>
-                          <Input
-                            id="addressLine1"
-                            value={formData.addressLine1}
-                            onChange={(e) => handleFormChange("addressLine1", e.target.value)}
-                            className="bg-background border-border text-foreground"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="addressLine2" className="text-foreground">Address Line 2</Label>
-                          <Input
-                            id="addressLine2"
-                            value={formData.addressLine2}
-                            onChange={(e) => handleFormChange("addressLine2", e.target.value)}
-                            className="bg-background border-border text-foreground"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="city" className="text-foreground">City <span className="text-destructive">*</span></Label>
-                          <Input
-                            id="city"
-                            value={formData.city}
-                            onChange={(e) => handleFormChange("city", e.target.value)}
-                            className="bg-background border-border text-foreground"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="state" className="text-foreground">State <span className="text-destructive">*</span></Label>
-                          <Input
-                            id="state"
-                            value={formData.state}
-                            onChange={(e) => handleFormChange("state", e.target.value)}
-                            className="bg-background border-border text-foreground"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="zipCode" className="text-foreground">ZIP Code <span className="text-destructive">*</span></Label>
-                          <Input
-                            id="zipCode"
-                            value={formData.zipCode}
-                            onChange={(e) => handleFormChange("zipCode", e.target.value)}
-                            className="bg-background border-border text-foreground"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  )}
 
                   <div className="flex justify-end gap-2 pt-4">
                     <Button variant="ghost" onClick={() => setIsUnrestrictedDialogOpen(false)} className="text-foreground">
