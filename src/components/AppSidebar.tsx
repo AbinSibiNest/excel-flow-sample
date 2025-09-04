@@ -2,6 +2,7 @@ import { useState } from "react";
 import {
   Database,
   ChevronRight,
+  ChevronDown,
   Briefcase,
   FileText,
   CreditCard,
@@ -29,7 +30,14 @@ import {
 const menuItems = [
   { title: "Cases", icon: Briefcase, url: "/cases" },
   { title: "Requests", icon: FileText },
-  { title: "Payments", icon: CreditCard },
+  { 
+    title: "Payments", 
+    icon: CreditCard,
+    subItems: [
+      { title: "Deductions", url: "/deductions" },
+      { title: "Settlements", url: "/settlements" }
+    ]
+  },
   { type: "separator" },
   { title: "Firms", icon: Building , url: "/banking" },
   { title: "Customers", icon: PersonStanding },
@@ -55,10 +63,18 @@ export function AppSidebar() {
   const navigate = useNavigate();
   const location = useLocation();
   const collapsed = state === "collapsed";
+  const [expandedItems, setExpandedItems] = useState<string[]>(["Payments"]);
 
   const handleMenuClick = (item: any) => {
     if (item.url) {
       navigate(item.url);
+    } else if (item.subItems) {
+      const isExpanded = expandedItems.includes(item.title);
+      if (isExpanded) {
+        setExpandedItems(prev => prev.filter(title => title !== item.title));
+      } else {
+        setExpandedItems(prev => [...prev, item.title]);
+      }
     }
   };
 
@@ -74,6 +90,15 @@ export function AppSidebar() {
     }
     if (item.url === "/banking") {
       return location.pathname === "/banking";
+    }
+    if (item.url === "/deductions") {
+      return location.pathname === "/deductions";
+    }
+    if (item.url === "/settlements") {
+      return location.pathname === "/settlements";
+    }
+    if (item.subItems) {
+      return item.subItems.some((subItem: any) => location.pathname === subItem.url);
     }
     return false;
   };
@@ -93,21 +118,50 @@ export function AppSidebar() {
                   {item.type === "separator" ? (
                     <div className="border-t border-gray-600 my-2 mx-3"></div>
                   ) : (
-                    <SidebarMenuItem>
-                      <SidebarMenuButton
-                        className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
-                          isActive(item)
-                            ? "bg-cyan-600/20 text-grey-400 border border-cyan-600/30"
-                            : "text-gray-300 hover:bg-gray-700 hover:text-white"
-                        }`}
-                        onClick={() => handleMenuClick(item)}
-                      >
-                        <item.icon className="h-4 w-4" />
-                        {!collapsed && (
-                          <span className="text-sm">{item.title}</span>
-                        )}
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
+                    <>
+                      <SidebarMenuItem>
+                        <SidebarMenuButton
+                          className={`flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                            isActive(item)
+                              ? "bg-cyan-600/20 text-grey-400 border border-cyan-600/30"
+                              : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                          }`}
+                          onClick={() => handleMenuClick(item)}
+                        >
+                          <item.icon className="h-4 w-4" />
+                          {!collapsed && (
+                            <>
+                              <span className="text-sm flex-1">{item.title}</span>
+                              {item.subItems && (
+                                expandedItems.includes(item.title) ? 
+                                <ChevronDown className="h-3 w-3" /> : 
+                                <ChevronRight className="h-3 w-3" />
+                              )}
+                            </>
+                          )}
+                        </SidebarMenuButton>
+                      </SidebarMenuItem>
+                      
+                      {/* Sub-menu items */}
+                      {item.subItems && expandedItems.includes(item.title) && !collapsed && (
+                        <div className="ml-6 space-y-1">
+                          {item.subItems.map((subItem: any, subIndex: number) => (
+                            <SidebarMenuItem key={subIndex}>
+                              <SidebarMenuButton
+                                className={`flex items-center gap-3 px-3 py-1 rounded-lg transition-colors text-sm ${
+                                  location.pathname === subItem.url
+                                    ? "bg-cyan-600/20 text-grey-400 border border-cyan-600/30"
+                                    : "text-gray-400 hover:bg-gray-700 hover:text-white"
+                                }`}
+                                onClick={() => navigate(subItem.url)}
+                              >
+                                <span>{subItem.title}</span>
+                              </SidebarMenuButton>
+                            </SidebarMenuItem>
+                          ))}
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               ))}

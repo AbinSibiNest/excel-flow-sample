@@ -44,26 +44,29 @@ export default function Banking() {
   const [checkAccordionOpen, setCheckAccordionOpen] = useState<string[]>([]);
   const [editAchAccordionOpen, setEditAchAccordionOpen] = useState<string[]>([]);
   const [editCheckAccordionOpen, setEditCheckAccordionOpen] = useState<string[]>([]);
-  const [unrestrictedAccounts, setUnrestrictedAccounts] = useState([
-    {
-      id: 1,
-      created: "3/12/2025",
-      name: "Operating",
-      type: "vendor",
-      achAccountType: "checking",
-      accountNumber: "8771615402",
-      routingNumber: "021000021",
-      accountStatus: "Active",
-      verificationStatus: "Verified",
-      vendorType: "expense-reimbursement",
-      preferredPaymentMethod: "ach",
-      addressLine1: "123 Main Street",
-      addressLine2: "Suite 100",
-      city: "New York",
-      state: "NY",
-      zipCode: "10001"
-    }
-  ]);
+  const [unrestrictedAccounts, setUnrestrictedAccounts] = useState(() => {
+    const saved = localStorage.getItem('unrestrictedAccounts');
+    return saved ? JSON.parse(saved) : [
+      {
+        id: 1,
+        created: "3/12/2025",
+        name: "Operating",
+        type: "vendor",
+        achAccountType: "checking",
+        accountNumber: "8771615402",
+        routingNumber: "021000021",
+        accountStatus: "Active",
+        verificationStatus: "Verified",
+        vendorType: "expense-reimbursement",
+        preferredPaymentMethod: "ach",
+        addressLine1: "123 Main Street",
+        addressLine2: "Suite 100",
+        city: "New York",
+        state: "NY",
+        zipCode: "10001"
+      }
+    ];
+  });
 
   const [formData, setFormData] = useState({
     name: "",
@@ -264,7 +267,9 @@ export default function Banking() {
         zipCode: formData.zipCode
       };
       
-      setUnrestrictedAccounts(prev => [...prev, newAccount]);
+      const updatedAccounts = [...unrestrictedAccounts, newAccount];
+      setUnrestrictedAccounts(updatedAccounts);
+      localStorage.setItem('unrestrictedAccounts', JSON.stringify(updatedAccounts));
       setIsUnrestrictedDialogOpen(false);
       setFormData({
         name: "",

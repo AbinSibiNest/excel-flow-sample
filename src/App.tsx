@@ -23,6 +23,8 @@ import UploadSettlementDocument from "./pages/UploadSettlementDocument";
 import FileUpload from "./pages/FileUpload";
 import Configuration from "./pages/Configuration";
 import Banking from "./pages/Banking";
+import Deductions from "./pages/Deductions";
+import Settlements from "./pages/Settlements";
 
 const queryClient = new QueryClient();
 
@@ -116,6 +118,8 @@ const AppContent = () => {
             <Route path="/cases/details" element={<CaseDetails />} />
             <Route path="/cases/upload-settlement" element={<UploadSettlementDocument />} />
             <Route path="/banking" element={<Banking />} />
+            <Route path="/deductions" element={<Deductions />} />
+            <Route path="/settlements" element={<Settlements />} />
             <Route path="/firm/:firmId" element={<FirmDetails />} />
             <Route path="/firm/:firmId/dashboard" element={<FirmDetails />} />
             <Route path="/firm/:firmId/upload" element={<FirmDetails />} />
