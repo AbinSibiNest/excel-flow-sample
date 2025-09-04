@@ -29,7 +29,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { ChevronLeft, Plus, MoreHorizontal, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 
 export default function Banking() {
@@ -94,6 +94,25 @@ export default function Banking() {
       { id: "li-6", name: "Court Fees", amount: 750 }
     ]
   };
+
+  // Reset form data to defaults when dialog opens
+  useEffect(() => {
+    if (isUnrestrictedDialogOpen) {
+      setFormData({
+        name: "",
+        accountType: "",
+        accountNumber: "",
+        routingNumber: "",
+        vendorType: "",
+        preferredPaymentMethod: "ach",
+        addressLine1: "",
+        addressLine2: "",
+        city: "",
+        state: "",
+        zipCode: ""
+      });
+    }
+  }, [isUnrestrictedDialogOpen]);
 
   const handleGoBack = () => {
     navigate(-1);
