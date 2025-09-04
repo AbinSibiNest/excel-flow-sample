@@ -601,22 +601,6 @@ export default function Banking() {
                         </div>
                       )}
                     </div>
-
-                    {formData.accountType && formData.accountType !== "vendor" && (
-                      <div className="space-y-2">
-                        <Label htmlFor="vendorType" className="text-foreground">Vendor Type</Label>
-                        <Select value={formData.vendorType} onValueChange={(value) => handleFormChange("vendorType", value)}>
-                          <SelectTrigger className="bg-background border-border text-foreground">
-                            <SelectValue placeholder="Select vendor type" />
-                          </SelectTrigger>
-                          <SelectContent className="bg-popover border-border">
-                            <SelectItem value="expense-reimbursement">Expense Reimbursement</SelectItem>
-                            <SelectItem value="lien-resolution">Lien Resolution</SelectItem>
-                            <SelectItem value="service-provider">Service Provider</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )}
                   </div>
 
                   <Separator className="bg-border" />
