@@ -40,6 +40,10 @@ export default function Banking() {
   const [isWithdrawDialogOpen, setIsWithdrawDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<any>(null);
+  const [achAccordionOpen, setAchAccordionOpen] = useState<string[]>(["ach"]);
+  const [checkAccordionOpen, setCheckAccordionOpen] = useState<string[]>([]);
+  const [editAchAccordionOpen, setEditAchAccordionOpen] = useState<string[]>([]);
+  const [editCheckAccordionOpen, setEditCheckAccordionOpen] = useState<string[]>([]);
   const [unrestrictedAccounts, setUnrestrictedAccounts] = useState([
     {
       id: 1,
@@ -123,15 +127,60 @@ export default function Banking() {
         state: "",
         zipCode: ""
       });
+      // Auto-open ACH accordion by default
+      setAchAccordionOpen(["ach"]);
+      setCheckAccordionOpen([]);
     }
   }, [isUnrestrictedDialogOpen]);
+
+  // Handle edit form and auto-open accordions
+  useEffect(() => {
+    if (isEditDialogOpen && selectedAccount) {
+      if (selectedAccount.preferredPaymentMethod === "ach") {
+        setEditAchAccordionOpen(["ach"]);
+        setEditCheckAccordionOpen([]);
+      } else if (selectedAccount.preferredPaymentMethod === "check") {
+        setEditAchAccordionOpen([]);
+        setEditCheckAccordionOpen(["check"]);
+      }
+    }
+  }, [isEditDialogOpen, selectedAccount]);
 
   const handleGoBack = () => {
     navigate(-1);
   };
 
+  const handleEditFormChange = (field: string, value: string) => {
+    if (selectedAccount) {
+      const updatedAccount = { ...selectedAccount, [field]: value };
+      setSelectedAccount(updatedAccount);
+      
+      // Auto-open accordions based on preferred payment method in edit
+      if (field === "preferredPaymentMethod") {
+        if (value === "ach") {
+          setEditAchAccordionOpen(["ach"]);
+          setEditCheckAccordionOpen([]);
+        } else if (value === "check") {
+          setEditAchAccordionOpen([]);
+          setEditCheckAccordionOpen(["check"]);
+        }
+      }
+    }
+  };
+
   const handleFormChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+    
+    // Auto-open accordions based on preferred payment method
+    if (field === "preferredPaymentMethod") {
+      if (value === "ach") {
+        setAchAccordionOpen(["ach"]);
+        setCheckAccordionOpen([]);
+      } else if (value === "check") {
+        setAchAccordionOpen([]);
+        setCheckAccordionOpen(["check"]);
+      }
+    }
   };
 
   const handleWithdrawChange = (field: string, value: string) => {
@@ -648,10 +697,10 @@ export default function Banking() {
                        </RadioGroup>
                      </div>
 
-                     <Accordion type="multiple" className="w-full">
-                       {/* ACH Accordion */}
-                       <AccordionItem value="ach">
-                         <AccordionTrigger className="text-foreground">ACH</AccordionTrigger>
+                      <Accordion type="multiple" value={achAccordionOpen} onValueChange={setAchAccordionOpen} className="w-full">
+                        {/* ACH Accordion */}
+                        <AccordionItem value="ach">
+                          <AccordionTrigger className="text-foreground">ACH</AccordionTrigger>
                          <AccordionContent>
                            <div className="space-y-4 pt-4">
                              <div className="space-y-2">
@@ -696,9 +745,12 @@ export default function Banking() {
                          </AccordionContent>
                        </AccordionItem>
 
-                       {/* Check Mailing Address Accordion */}
-                       <AccordionItem value="check">
-                         <AccordionTrigger className="text-foreground">Check mailing address</AccordionTrigger>
+                        {/* Check Mailing Address Accordion */}
+                      </Accordion>
+                      
+                      <Accordion type="multiple" value={checkAccordionOpen} onValueChange={setCheckAccordionOpen} className="w-full">
+                        <AccordionItem value="check">
+                          <AccordionTrigger className="text-foreground">Check mailing address</AccordionTrigger>
                          <AccordionContent>
                            <div className="space-y-4 pt-4">
                              <div className="grid grid-cols-2 gap-4">
@@ -854,10 +906,10 @@ export default function Banking() {
                          </RadioGroup>
                        </div>
 
-                       <Accordion type="multiple" className="w-full">
-                         {/* ACH Accordion */}
-                         <AccordionItem value="ach">
-                           <AccordionTrigger className="text-foreground">ACH</AccordionTrigger>
+                        <Accordion type="multiple" value={editAchAccordionOpen} onValueChange={setEditAchAccordionOpen} className="w-full">
+                          {/* ACH Accordion */}
+                          <AccordionItem value="ach">
+                            <AccordionTrigger className="text-foreground">ACH</AccordionTrigger>
                            <AccordionContent>
                              <div className="space-y-4 pt-4">
                                <div className="space-y-2">
@@ -896,9 +948,12 @@ export default function Banking() {
                            </AccordionContent>
                          </AccordionItem>
 
-                         {/* Check Mailing Address Accordion */}
-                         <AccordionItem value="check">
-                           <AccordionTrigger className="text-foreground">Check mailing address</AccordionTrigger>
+                          {/* Check Mailing Address Accordion */}
+                        </Accordion>
+                        
+                        <Accordion type="multiple" value={editCheckAccordionOpen} onValueChange={setEditCheckAccordionOpen} className="w-full">
+                          <AccordionItem value="check">
+                            <AccordionTrigger className="text-foreground">Check mailing address</AccordionTrigger>
                            <AccordionContent>
                              <div className="space-y-4 pt-4">
                                 <div className="grid grid-cols-2 gap-4">
