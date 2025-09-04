@@ -74,10 +74,10 @@ export default function Deductions() {
 
       <div className="p-6 max-w-4xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Case Section */}
+          {/* Case and Defendant Section */}
           <Card>
             <CardHeader>
-              <CardTitle>Case</CardTitle>
+              <CardTitle>Case & Defendant</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <Button 
@@ -86,10 +86,33 @@ export default function Deductions() {
               >
                 🔍 FIND CASE
               </Button>
+
+              <div>
+                <Label htmlFor="defendant">Defendant</Label>
+                <Select onValueChange={(value) => handleInputChange("defendant", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select defendant" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="defendant1">John Doe</SelectItem>
+                    <SelectItem value="defendant2">Jane Smith</SelectItem>
+                    <SelectItem value="defendant3">Mike Johnson</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex items-center space-x-2 pt-2">
+                <Switch
+                  id="assigned"
+                  checked={formData.assigned}
+                  onCheckedChange={(checked) => handleInputChange("assigned", checked)}
+                />
+                <Label htmlFor="assigned">Assigned</Label>
+              </div>
             </CardContent>
           </Card>
 
-          {/* Amount, Type, and Vendor Account Section */}
+          {/* Payment Details Section */}
           <Card>
             <CardHeader>
               <CardTitle>Payment Details</CardTitle>
@@ -134,37 +157,6 @@ export default function Deductions() {
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Defendant Section */}
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Defendant</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="defendant">Defendant</Label>
-                <Select onValueChange={(value) => handleInputChange("defendant", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select defendant" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="defendant1">John Doe</SelectItem>
-                    <SelectItem value="defendant2">Jane Smith</SelectItem>
-                    <SelectItem value="defendant3">Mike Johnson</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="flex items-center space-x-2 pt-2">
-                <Switch
-                  id="assigned"
-                  checked={formData.assigned}
-                  onCheckedChange={(checked) => handleInputChange("assigned", checked)}
-                />
-                <Label htmlFor="assigned">Assigned</Label>
               </div>
             </CardContent>
           </Card>
