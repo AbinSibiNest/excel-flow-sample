@@ -89,10 +89,10 @@ export default function Deductions() {
             </CardContent>
           </Card>
 
-          {/* Amount Section */}
+          {/* Amount, Type, and Vendor Account Section */}
           <Card>
             <CardHeader>
-              <CardTitle>Amount</CardTitle>
+              <CardTitle>Payment Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
@@ -106,11 +106,41 @@ export default function Deductions() {
                   className="mt-1"
                 />
               </div>
+
+              <div>
+                <Label htmlFor="type">Type *</Label>
+                <Select onValueChange={(value) => handleInputChange("type", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="expense">Expense</SelectItem>
+                    <SelectItem value="fee">Fee</SelectItem>
+                    <SelectItem value="reimbursement">Reimbursement</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="vendorAccount">Vendor Account *</Label>
+                <Select onValueChange={(value) => handleInputChange("vendorAccount", value)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select vendor account" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {vendorAccounts.map((account) => (
+                      <SelectItem key={account.id} value={account.id.toString()}>
+                        {account.name} - {account.achAccountType}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </CardContent>
           </Card>
 
           {/* Defendant Section */}
-          <Card>
+          <Card className="lg:col-span-2">
             <CardHeader>
               <CardTitle>Defendant</CardTitle>
             </CardHeader>
@@ -136,52 +166,6 @@ export default function Deductions() {
                   onCheckedChange={(checked) => handleInputChange("assigned", checked)}
                 />
                 <Label htmlFor="assigned">Assigned</Label>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Type Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Type</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="type">Type *</Label>
-                <Select onValueChange={(value) => handleInputChange("type", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="expense">Expense</SelectItem>
-                    <SelectItem value="fee">Fee</SelectItem>
-                    <SelectItem value="reimbursement">Reimbursement</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Vendor Account Section */}
-          <Card className="lg:col-span-2">
-            <CardHeader>
-              <CardTitle>Vendor Account</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="vendorAccount">Vendor Account *</Label>
-                <Select onValueChange={(value) => handleInputChange("vendorAccount", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select vendor account" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {vendorAccounts.map((account) => (
-                      <SelectItem key={account.id} value={account.id.toString()}>
-                        {account.name} - {account.achAccountType}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
               </div>
             </CardContent>
           </Card>
