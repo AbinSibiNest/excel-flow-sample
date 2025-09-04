@@ -828,6 +828,60 @@ export default function Banking() {
                       </div>
                     </div>
 
+                    {/* Mailing Address for Check Payment Method */}
+                    {selectedAccount?.preferredPaymentMethod === "check" && (
+                      <div className="space-y-4">
+                        <Label className="text-foreground font-medium">Mailing Address</Label>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div className="space-y-2">
+                            <Label htmlFor="editAddressLine1" className="text-foreground">Address Line 1</Label>
+                            <Input
+                              id="editAddressLine1"
+                              disabled
+                              className="bg-muted border-border text-muted-foreground"
+                              placeholder="Address Line 1"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="editAddressLine2" className="text-foreground">Address Line 2</Label>
+                            <Input
+                              id="editAddressLine2"
+                              disabled
+                              className="bg-muted border-border text-muted-foreground"
+                              placeholder="Address Line 2"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="editCity" className="text-foreground">City</Label>
+                            <Input
+                              id="editCity"
+                              disabled
+                              className="bg-muted border-border text-muted-foreground"
+                              placeholder="City"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="editState" className="text-foreground">State</Label>
+                            <Input
+                              id="editState"
+                              disabled
+                              className="bg-muted border-border text-muted-foreground"
+                              placeholder="State"
+                            />
+                          </div>
+                          <div className="space-y-2">
+                            <Label htmlFor="editZipCode" className="text-foreground">ZIP Code</Label>
+                            <Input
+                              id="editZipCode"
+                              disabled
+                              className="bg-muted border-border text-muted-foreground"
+                              placeholder="ZIP Code"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     <div className="flex justify-end gap-2 pt-4">
                       <Button variant="ghost" onClick={() => setIsEditDialogOpen(false)} className="text-foreground">
                         CANCEL
