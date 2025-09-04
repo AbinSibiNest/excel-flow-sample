@@ -26,6 +26,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Separator } from "@/components/ui/separator";
 import { ChevronLeft, Plus, MoreHorizontal, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -533,78 +534,112 @@ export default function Banking() {
                 <DialogHeader>
                   <DialogTitle className="text-foreground">Add Unrestricted Account</DialogTitle>
                 </DialogHeader>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-4 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="name" className="text-foreground">Name</Label>
-                      <Input
-                        id="name"
-                        value={formData.name}
-                        onChange={(e) => handleFormChange("name", e.target.value)}
-                        className="bg-background border-border text-foreground"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="accountType" className="text-foreground">Account Type</Label>
-                      <Select value={formData.accountType} onValueChange={(value) => handleFormChange("accountType", value)}>
-                        <SelectTrigger className="bg-background border-border text-foreground">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="bg-popover border-border">
-                          <SelectItem value="vendor">Vendor</SelectItem>
-                          <SelectItem value="firm">Firm</SelectItem>
-                          <SelectItem value="other">Other External Account</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="accountNumber" className="text-foreground">Account Number</Label>
-                      <Input
-                        id="accountNumber"
-                        value={formData.accountNumber}
-                        onChange={(e) => handleFormChange("accountNumber", e.target.value)}
-                        className="bg-background border-border text-foreground"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="routingNumber" className="text-foreground">Routing Number (ACH)</Label>
-                      <Input
-                        id="routingNumber"
-                        value={formData.routingNumber}
-                        onChange={(e) => handleFormChange("routingNumber", e.target.value)}
-                        className="bg-background border-border text-foreground"
-                      />
-                    </div>
+                <div className="space-y-6">
+                  {/* Name Field */}
+                  <div className="space-y-2">
+                    <Label htmlFor="name" className="text-foreground">Name <span className="text-destructive">*</span></Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => handleFormChange("name", e.target.value)}
+                      className="bg-background border-border text-foreground"
+                    />
                   </div>
 
-                  <div className="space-y-2">
-                    <Label htmlFor="vendorType" className="text-foreground">
-                      Vendor Type {formData.accountType === "vendor" && <span className="text-destructive">*</span>}
-                    </Label>
-                    <Select value={formData.vendorType} onValueChange={(value) => handleFormChange("vendorType", value)}>
-                      <SelectTrigger className="bg-background border-border text-foreground">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover border-border">
-                        <SelectItem value="expense-reimbursement">Expense Reimbursement</SelectItem>
-                        <SelectItem value="lien-resolution">Lien Resolution</SelectItem>
-                        <SelectItem value="service-provider">Service Provider</SelectItem>
-                      </SelectContent>
-                    </Select>
+                  <Separator className="bg-border" />
+
+                  {/* Account Type and Vendor Type */}
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="grid grid-cols-2 gap-4 items-end">
+                      <div className="space-y-2">
+                        <Label htmlFor="accountType" className="text-foreground">Account Type <span className="text-destructive">*</span></Label>
+                        <Select value={formData.accountType} onValueChange={(value) => handleFormChange("accountType", value)}>
+                          <SelectTrigger className="bg-background border-border text-foreground">
+                            <SelectValue placeholder="Select account type" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-popover border-border">
+                            <SelectItem value="savings">Savings</SelectItem>
+                            <SelectItem value="checking">Checking</SelectItem>
+                            <SelectItem value="vendor">Vendor</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      {formData.accountType === "vendor" && (
+                        <div className="space-y-2">
+                          <Label htmlFor="vendorType" className="text-foreground">Vendor Type <span className="text-destructive">*</span></Label>
+                          <Select value={formData.vendorType} onValueChange={(value) => handleFormChange("vendorType", value)}>
+                            <SelectTrigger className="bg-background border-border text-foreground">
+                              <SelectValue placeholder="Select vendor type" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-popover border-border">
+                              <SelectItem value="expense-reimbursement">Expense Reimbursement</SelectItem>
+                              <SelectItem value="lien-resolution">Lien Resolution</SelectItem>
+                              <SelectItem value="service-provider">Service Provider</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                    </div>
+
+                    {formData.accountType && formData.accountType !== "vendor" && (
+                      <div className="space-y-2">
+                        <Label htmlFor="vendorType" className="text-foreground">Vendor Type</Label>
+                        <Select value={formData.vendorType} onValueChange={(value) => handleFormChange("vendorType", value)}>
+                          <SelectTrigger className="bg-background border-border text-foreground">
+                            <SelectValue placeholder="Select vendor type" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-popover border-border">
+                            <SelectItem value="expense-reimbursement">Expense Reimbursement</SelectItem>
+                            <SelectItem value="lien-resolution">Lien Resolution</SelectItem>
+                            <SelectItem value="service-provider">Service Provider</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
                   </div>
 
-                  <div className="space-y-2">
-                    <Label className="text-foreground">Preferred Payment Method</Label>
-                    <RadioGroup value={formData.preferredPaymentMethod} onValueChange={(value) => handleFormChange("preferredPaymentMethod", value)}>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="ach" id="ach" />
-                        <Label htmlFor="ach" className="text-foreground">ACH</Label>
+                  <Separator className="bg-border" />
+
+                  {/* Preferred Payment Method and Related Fields */}
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-foreground">Preferred Payment Method <span className="text-destructive">*</span></Label>
+                      <RadioGroup value={formData.preferredPaymentMethod} onValueChange={(value) => handleFormChange("preferredPaymentMethod", value)}>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="ach" id="ach" />
+                          <Label htmlFor="ach" className="text-foreground">ACH</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <RadioGroupItem value="check" id="check" />
+                          <Label htmlFor="check" className="text-foreground">Check</Label>
+                        </div>
+                      </RadioGroup>
+                    </div>
+
+                    {formData.preferredPaymentMethod === "ach" && (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="accountNumber" className="text-foreground">Account Number <span className="text-destructive">*</span></Label>
+                          <Input
+                            id="accountNumber"
+                            value={formData.accountNumber}
+                            onChange={(e) => handleFormChange("accountNumber", e.target.value)}
+                            className="bg-background border-border text-foreground"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="routingNumber" className="text-foreground">Routing Number (ACH) <span className="text-destructive">*</span></Label>
+                          <Input
+                            id="routingNumber"
+                            value={formData.routingNumber}
+                            onChange={(e) => handleFormChange("routingNumber", e.target.value)}
+                            className="bg-background border-border text-foreground"
+                          />
+                        </div>
                       </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="check" id="check" />
-                        <Label htmlFor="check" className="text-foreground">Check</Label>
-                      </div>
-                    </RadioGroup>
+                    )}
                   </div>
 
                   {formData.preferredPaymentMethod === "check" && (
