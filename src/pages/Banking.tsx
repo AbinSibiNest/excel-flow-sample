@@ -888,12 +888,7 @@ export default function Banking() {
                   <DialogTitle className="text-foreground">Unrestricted Account</DialogTitle>
                 </DialogHeader>
                 
-                <Tabs defaultValue="edit" className="w-full">
-                  <TabsList className="grid w-full grid-cols-1">
-                    <TabsTrigger value="edit">EDIT</TabsTrigger>
-                  </TabsList>
-                  
-                  <TabsContent value="edit" className="space-y-6 mt-6">
+               
                     {/* Edit Tab - Same fields as Add dialog but name enabled, rest disabled */}
                     <div className="space-y-2">
                       <Label htmlFor="editName" className="text-foreground">Name <span className="text-destructive">*</span></Label>
@@ -1113,9 +1108,6 @@ export default function Banking() {
                         SAVE
                       </Button>
                     </div>
-                  </TabsContent>
-                  
-                </Tabs>
               </DialogContent>
             </Dialog>
             
