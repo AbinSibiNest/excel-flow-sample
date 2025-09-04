@@ -114,9 +114,8 @@ export default function Deductions() {
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="expense">Expense</SelectItem>
-                    <SelectItem value="fee">Fee</SelectItem>
-                    <SelectItem value="reimbursement">Reimbursement</SelectItem>
+                    <SelectItem value="advance">Advance</SelectItem>
+                    <SelectItem value="lien">Lien</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
