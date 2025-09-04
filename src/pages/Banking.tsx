@@ -27,6 +27,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ChevronLeft, Plus, MoreHorizontal, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -36,6 +37,8 @@ export default function Banking() {
   const navigate = useNavigate();
   const [isUnrestrictedDialogOpen, setIsUnrestrictedDialogOpen] = useState(false);
   const [isWithdrawDialogOpen, setIsWithdrawDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState<any>(null);
   const [unrestrictedAccounts, setUnrestrictedAccounts] = useState([
     {
       id: 1,
@@ -526,17 +529,25 @@ export default function Banking() {
                   <TableCell className="text-foreground">{account.preferredPaymentMethod}</TableCell>
                   <TableCell className="text-foreground">{account.accountStatus}</TableCell>
                   <TableCell className="text-foreground">{account.verificationStatus}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm" className="text-xs">
-                        ➜ MORE
-                      </Button>
-                      <Button variant="ghost" size="sm">
-                        <Trash2 className="h-4 w-4" />
-                        DELETE
-                      </Button>
-                    </div>
-                  </TableCell>
+                   <TableCell>
+                     <div className="flex items-center gap-2">
+                       <Button 
+                         variant="outline" 
+                         size="sm" 
+                         className="text-xs"
+                         onClick={() => {
+                           setSelectedAccount(account);
+                           setIsEditDialogOpen(true);
+                         }}
+                       >
+                         ➜ MORE
+                       </Button>
+                       <Button variant="ghost" size="sm">
+                         <Trash2 className="h-4 w-4" />
+                         DELETE
+                       </Button>
+                     </div>
+                   </TableCell>
                 </TableRow>
               ))}
             </TableBody>
@@ -716,6 +727,170 @@ export default function Banking() {
                 </div>
               </DialogContent>
             </Dialog>
+            
+            {/* Edit Account Dialog */}
+            <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+              <DialogContent className="max-w-4xl bg-popover border-border">
+                <DialogHeader>
+                  <DialogTitle className="text-foreground">Unrestricted Account</DialogTitle>
+                </DialogHeader>
+                
+                <Tabs defaultValue="edit" className="w-full">
+                  <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="edit">EDIT</TabsTrigger>
+                    <TabsTrigger value="details">DETAILS</TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="edit" className="space-y-6 mt-6">
+                    {/* Edit Tab - Same fields as Add dialog but name enabled, rest disabled */}
+                    <div className="space-y-2">
+                      <Label htmlFor="editName" className="text-foreground">Name <span className="text-destructive">*</span></Label>
+                      <Input
+                        id="editName"
+                        defaultValue={selectedAccount?.name || ""}
+                        className="bg-background border-border text-foreground"
+                      />
+                    </div>
+
+                    <Separator className="bg-border" />
+
+                    <div className="grid grid-cols-1 gap-4">
+                      <div className="grid grid-cols-2 gap-4 items-end">
+                        <div className="space-y-2">
+                          <Label htmlFor="editAccountType" className="text-foreground">Account Type <span className="text-destructive">*</span></Label>
+                          <Select value={selectedAccount?.accountType || ""} disabled>
+                            <SelectTrigger className="bg-muted border-border text-muted-foreground">
+                              <SelectValue placeholder="Select account type" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-popover border-border">
+                              <SelectItem value="savings">Savings</SelectItem>
+                              <SelectItem value="checking">Checking</SelectItem>
+                              <SelectItem value="vendor">Vendor</SelectItem>
+                              <SelectItem value="other">Other</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        {selectedAccount?.accountType === "vendor" && (
+                          <div className="space-y-2">
+                            <Label htmlFor="editVendorType" className="text-foreground">Vendor Type <span className="text-destructive">*</span></Label>
+                            <Select value={selectedAccount?.vendorType || ""} disabled>
+                              <SelectTrigger className="bg-muted border-border text-muted-foreground">
+                                <SelectValue placeholder="Select vendor type" />
+                              </SelectTrigger>
+                              <SelectContent className="bg-popover border-border">
+                                <SelectItem value="expense-reimbursement">Expense Reimbursement</SelectItem>
+                                <SelectItem value="lien-resolution">Lien Resolution</SelectItem>
+                                <SelectItem value="service-provider">Service Provider</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    <Separator className="bg-border" />
+
+                    <div className="space-y-4">
+                      <div className="space-y-2">
+                        <Label className="text-foreground">Preferred Payment Method <span className="text-destructive">*</span></Label>
+                        <RadioGroup value={selectedAccount?.preferredPaymentMethod || "ach"} disabled>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="ach" id="editAch" disabled />
+                            <Label htmlFor="editAch" className="text-muted-foreground">ACH</Label>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="check" id="editCheck" disabled />
+                            <Label htmlFor="editCheck" className="text-muted-foreground">Check</Label>
+                          </div>
+                        </RadioGroup>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="editAccountNumber" className="text-foreground">Account Number</Label>
+                          <Input
+                            id="editAccountNumber"
+                            value={selectedAccount?.accountNumber || ""}
+                            disabled
+                            className="bg-muted border-border text-muted-foreground"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="editRoutingNumber" className="text-foreground">Routing Number (ACH)</Label>
+                          <Input
+                            id="editRoutingNumber"
+                            value={selectedAccount?.routingNumber || ""}
+                            disabled
+                            className="bg-muted border-border text-muted-foreground"
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end gap-2 pt-4">
+                      <Button variant="ghost" onClick={() => setIsEditDialogOpen(false)} className="text-foreground">
+                        CANCEL
+                      </Button>
+                      <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                        SAVE
+                      </Button>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="details" className="space-y-6 mt-6">
+                    {/* Details Tab - Layout from screenshot */}
+                    <div className="grid grid-cols-2 gap-8">
+                      {/* Left Column - Integration Details */}
+                      <div className="space-y-6">
+                        <h3 className="text-foreground font-medium">Integration Details</h3>
+                        
+                        <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
+                          <div className="flex items-center justify-between">
+                            <span className="text-foreground font-medium">Provisioning</span>
+                            <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">COMPLETED</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right Column - External Account */}
+                      <div className="space-y-6">
+                        <h3 className="text-foreground font-medium">External Account</h3>
+                        
+                        <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
+                          <div className="flex items-center justify-between">
+                            <span className="text-muted-foreground">Account Status</span>
+                            <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">ACTIVE</span>
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <span className="text-muted-foreground">EWS Status</span>
+                            <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">OPEN</span>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <div className="text-muted-foreground text-sm">Bank Name:</div>
+                            <div className="text-foreground">US BANK NA</div>
+                          </div>
+                          
+                          <div className="space-y-2">
+                            <div className="text-muted-foreground text-sm">Bank Routing Number:</div>
+                            <div className="text-foreground">{selectedAccount?.routingNumber || "122105155"}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="flex justify-end pt-4">
+                      <Button variant="ghost" onClick={() => setIsEditDialogOpen(false)} className="text-foreground">
+                        CLOSE
+                      </Button>
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </DialogContent>
+            </Dialog>
+            
             <div className="flex items-center gap-2">
               <span className="text-sm text-muted-foreground">Rows per page:</span>
               <Select defaultValue="20">
