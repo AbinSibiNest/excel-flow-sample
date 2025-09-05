@@ -437,7 +437,7 @@ export default function Settlements() {
     
     switch (activeFilter) {
       case "to-be-paid":
-        return allItems.filter(item => item.remainingBalance > 0 && item.hasAccountDetails);
+        return allItems.filter(item => item.status === "To Be Paid");
       case "processing":
         return allItems.filter(item => item.status === "Queued" || item.status === "Processing");
       case "completed":
@@ -452,7 +452,7 @@ export default function Settlements() {
   const getFilterCounts = () => {
     const allItems = [...paymentsData.liens, ...paymentsData.expenses];
     return {
-      "to-be-paid": allItems.filter(item => item.remainingBalance > 0 && item.hasAccountDetails).length,
+      "to-be-paid": allItems.filter(item => item.status === "To Be Paid").length,
       "processing": allItems.filter(item => item.status === "Queued" || item.status === "Processing").length,
       "completed": allItems.filter(item => item.status === "Sent" || item.remainingBalance === 0).length,
       "needs-setup": allItems.filter(item => !item.hasAccountDetails || item.status === "Failed").length
