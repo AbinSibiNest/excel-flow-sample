@@ -10,7 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ChevronLeft, Plus, AlertTriangle, RotateCcw, ExternalLink } from "lucide-react";
+import { ChevronLeft, Plus, AlertTriangle, RotateCcw, ExternalLink, RefreshCw, Download, FileText, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 
@@ -26,6 +26,7 @@ export default function Settlements() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showBatchError, setShowBatchError] = useState(false);
   const [selectAllItems, setSelectAllItems] = useState(false);
+  const [activeFilter, setActiveFilter] = useState("to-be-paid");
 
   // Mock data for payments
   const [paymentsData, setPaymentsData] = useState({
@@ -359,9 +360,16 @@ export default function Settlements() {
             )
           }));
           
-          // Then simulate processing each item one by one
+          // Move items to Processing status
           setTimeout(() => {
-            simulateProcessingFlow(selectedItemIds);
+            setPaymentsData(prevData => ({
+              liens: prevData.liens.map(item => 
+                selectedItems.has(item.id) ? { ...item, status: "Processing" } : item
+              ),
+              expenses: prevData.expenses.map(item => 
+                selectedItems.has(item.id) ? { ...item, status: "Processing" } : item
+              )
+            }));
           }, 500);
           
           setSelectedItems(new Set());
@@ -373,44 +381,27 @@ export default function Settlements() {
     }, 200);
   };
 
-  const simulateProcessingFlow = async (itemIds: number[]) => {
-    for (let i = 0; i < itemIds.length; i++) {
-      const itemId = itemIds[i];
-      
-      // Move to Processing
-      setPaymentsData(prevData => ({
-        liens: prevData.liens.map(item => 
-          item.id === itemId ? { ...item, status: "Processing" } : item
-        ),
-        expenses: prevData.expenses.map(item => 
-          item.id === itemId ? { ...item, status: "Processing" } : item
-        )
-      }));
-      
-      // Wait 1 second
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Randomly assign Sent (80%) or Failed (20%)
-      const finalStatus = Math.random() > 0.2 ? "Sent" : "Failed";
-      const remainingBalance = finalStatus === "Sent" ? 0 : undefined;
-      
-      setPaymentsData(prevData => ({
-        liens: prevData.liens.map(item => 
-          item.id === itemId ? { 
-            ...item, 
-            status: finalStatus,
-            ...(remainingBalance !== undefined && { remainingBalance })
-          } : item
-        ),
-        expenses: prevData.expenses.map(item => 
-          item.id === itemId ? { 
-            ...item, 
-            status: finalStatus,
-            ...(remainingBalance !== undefined && { remainingBalance })
-          } : item
-        )
-      }));
-    }
+  const handleRefresh = (itemId: number) => {
+    // Randomly assign Sent (80%) or Failed (20%)
+    const finalStatus = Math.random() > 0.2 ? "Sent" : "Failed";
+    const remainingBalance = finalStatus === "Sent" ? 0 : undefined;
+    
+    setPaymentsData(prevData => ({
+      liens: prevData.liens.map(item => 
+        item.id === itemId ? { 
+          ...item, 
+          status: finalStatus,
+          ...(remainingBalance !== undefined && { remainingBalance })
+        } : item
+      ),
+      expenses: prevData.expenses.map(item => 
+        item.id === itemId ? { 
+          ...item, 
+          status: finalStatus,
+          ...(remainingBalance !== undefined && { remainingBalance })
+        } : item
+      )
+    }));
   };
 
   const handleRetryFailed = (itemId?: number) => {
@@ -435,6 +426,33 @@ export default function Settlements() {
         )
       }));
     }
+  };
+
+  const getFilteredData = () => {
+    const allItems = [...paymentsData.liens, ...paymentsData.expenses];
+    
+    switch (activeFilter) {
+      case "to-be-paid":
+        return allItems.filter(item => item.remainingBalance > 0 && item.hasAccountDetails);
+      case "processing":
+        return allItems.filter(item => item.status === "Queued" || item.status === "Processing");
+      case "completed":
+        return allItems.filter(item => item.status === "Sent" || item.remainingBalance === 0);
+      case "needs-setup":
+        return allItems.filter(item => !item.hasAccountDetails || item.status === "Failed");
+      default:
+        return allItems;
+    }
+  };
+
+  const getFilterCounts = () => {
+    const allItems = [...paymentsData.liens, ...paymentsData.expenses];
+    return {
+      "to-be-paid": allItems.filter(item => item.remainingBalance > 0 && item.hasAccountDetails).length,
+      "processing": allItems.filter(item => item.status === "Queued" || item.status === "Processing").length,
+      "completed": allItems.filter(item => item.status === "Sent" || item.remainingBalance === 0).length,
+      "needs-setup": allItems.filter(item => !item.hasAccountDetails || item.status === "Failed").length
+    };
   };
 
   const PaymentTable = ({ data, title }: { data: any[], title: string }) => {
@@ -534,16 +552,28 @@ export default function Settlements() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        {item.status === "Failed" && (
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleRetryFailed(item.id)}
-                          >
-                            <RotateCcw className="h-3 w-3 mr-1" />
-                            Retry
-                          </Button>
-                        )}
+                        <div className="flex items-center gap-2">
+                          {item.status === "Failed" && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleRetryFailed(item.id)}
+                            >
+                              <RotateCcw className="h-3 w-3 mr-1" />
+                              Retry
+                            </Button>
+                          )}
+                          {item.status === "Processing" && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleRefresh(item.id)}
+                            >
+                              <RefreshCw className="h-3 w-3 mr-1" />
+                              Refresh
+                            </Button>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   );
@@ -625,6 +655,69 @@ export default function Settlements() {
           
           <TabsContent value="payments" className="h-full m-0">
             <div className="space-y-6">
+              {/* Filter Banners */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                {(() => {
+                  const counts = getFilterCounts();
+                  return [
+                    {
+                      key: "to-be-paid",
+                      title: "To Be Paid",
+                      count: counts["to-be-paid"],
+                      icon: FileText,
+                      color: "bg-blue-600 border-blue-500",
+                      description: "Payable items with remaining balance"
+                    },
+                    {
+                      key: "processing",
+                      title: "Processing",
+                      count: counts["processing"],
+                      icon: RefreshCw,
+                      color: "bg-orange-600 border-orange-500",
+                      description: "Items in queued/processing states"
+                    },
+                    {
+                      key: "completed",
+                      title: "Completed",
+                      count: counts["completed"],
+                      icon: Download,
+                      color: "bg-green-600 border-green-500",
+                      description: "Sent/settled items"
+                    },
+                    {
+                      key: "needs-setup",
+                      title: "Needs Setup",
+                      count: counts["needs-setup"],
+                      icon: AlertCircle,
+                      color: "bg-red-600 border-red-500",
+                      description: "Missing vendor account or details"
+                    }
+                  ].map(({ key, title, count, icon: Icon, color, description }) => (
+                    <Card
+                      key={key}
+                      className={`cursor-pointer transition-all border-2 ${
+                        activeFilter === key
+                          ? `${color} bg-opacity-20`
+                          : "bg-gray-800 border-gray-700 hover:border-gray-600"
+                      }`}
+                      onClick={() => setActiveFilter(key)}
+                    >
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <Icon className="h-5 w-5 text-white" />
+                              <h3 className="font-semibold text-white">{title}</h3>
+                            </div>
+                            <p className="text-sm text-gray-400 mt-1">{description}</p>
+                          </div>
+                          <div className="text-2xl font-bold text-white">{count}</div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ));
+                })()}
+              </div>
               {/* Global Selection Controls */}
               <Card className="mb-6 bg-gray-800 border-gray-700">
                 <CardHeader>
@@ -712,8 +805,42 @@ export default function Settlements() {
                 </Card>
               )}
 
-              {paymentsData.liens.length > 0 && <PaymentTable data={paymentsData.liens} title="Liens" />}
-              {paymentsData.expenses.length > 0 && <PaymentTable data={paymentsData.expenses} title="Expenses" />}
+              {(() => {
+                const filteredData = getFilteredData();
+                const liens = filteredData.filter(item => paymentsData.liens.includes(item));
+                const expenses = filteredData.filter(item => paymentsData.expenses.includes(item));
+                
+                return (
+                  <>
+                    {activeFilter === "completed" && filteredData.length > 0 && (
+                      <div className="flex justify-end mb-4">
+                        <Button variant="outline" className="text-gray-300 border-gray-600 hover:bg-gray-700">
+                          <Download className="h-4 w-4 mr-2" />
+                          Export Completed Payments
+                        </Button>
+                      </div>
+                    )}
+                    {liens.length > 0 && <PaymentTable data={liens} title="Liens" />}
+                    {expenses.length > 0 && <PaymentTable data={expenses} title="Expenses" />}
+                    {filteredData.length === 0 && (
+                      <div className="text-center py-12">
+                        <div className="mx-auto w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4">
+                          <FileText className="h-8 w-8 text-gray-500" />
+                        </div>
+                        <h3 className="text-lg font-medium text-white mb-2">
+                          No items in {activeFilter.replace("-", " ")} category
+                        </h3>
+                        <p className="text-gray-400">
+                          {activeFilter === "to-be-paid" && "All payable items have been processed."}
+                          {activeFilter === "processing" && "No items are currently being processed."}
+                          {activeFilter === "completed" && "No payments have been completed yet."}
+                          {activeFilter === "needs-setup" && "All items have proper vendor setup."}
+                        </p>
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
 
               {/* Failed Items Retry */}
               {[...paymentsData.liens, ...paymentsData.expenses].some(item => item.status === "Failed") && (
