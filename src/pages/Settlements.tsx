@@ -26,7 +26,7 @@ export default function Settlements() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showBatchError, setShowBatchError] = useState(false);
   const [selectAllItems, setSelectAllItems] = useState(false);
-  const [activeFilter, setActiveFilter] = useState("to-be-paid");
+  const [activeFilter, setActiveFilter] = useState<string | null>(null);
 
   // Mock data for payments
   const [paymentsData, setPaymentsData] = useState({
@@ -431,6 +431,10 @@ export default function Settlements() {
   const getFilteredData = () => {
     const allItems = [...paymentsData.liens, ...paymentsData.expenses];
     
+    if (!activeFilter) {
+      return allItems;
+    }
+    
     switch (activeFilter) {
       case "to-be-paid":
         return allItems.filter(item => item.remainingBalance > 0 && item.hasAccountDetails);
@@ -700,7 +704,7 @@ export default function Settlements() {
                           ? `${color} bg-opacity-20`
                           : "bg-gray-800 border-gray-700 hover:border-gray-600"
                       }`}
-                      onClick={() => setActiveFilter(key)}
+                      onClick={() => setActiveFilter(activeFilter === key ? null : key)}
                     >
                       <CardContent className="p-4">
                         <div className="flex items-center justify-between">
