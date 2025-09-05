@@ -342,11 +342,6 @@ export default function Settlements() {
             Back
           </Button>
         </div>
-        
-        <div className="mb-6">
-          <h1 className="text-3xl font-bold text-white">Settlement Details</h1>
-          <p className="text-gray-400">Case #SET-2024-001 • $45,000 total settlement</p>
-        </div>
       </div>
 
       {/* Tabs Navigation */}
@@ -366,16 +361,10 @@ export default function Settlements() {
               Details
             </TabsTrigger>
             <TabsTrigger
-              value="vendor-payments"
-              className="text-gray-300 data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-cyan-400 rounded-none h-12 hover:text-white transition-colors"
-            >
-              Vendor Payments
-            </TabsTrigger>
-            <TabsTrigger
               value="payments"
               className="text-gray-300 data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-cyan-400 rounded-none h-12 hover:text-white transition-colors"
             >
-              Payments
+              Vendor Payments
             </TabsTrigger>
             <TabsTrigger
               value="timeline"
