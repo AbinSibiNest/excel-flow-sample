@@ -447,16 +447,6 @@ export default function Settlements() {
         <CardHeader>
           <div className="flex flex-col gap-3">
             <CardTitle className="text-lg">{title}</CardTitle>
-            {selectableItems.length > 0 && (
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  checked={groupSelected}
-                  onCheckedChange={(checked) => handleGroupSelect(data, checked as boolean)}
-                  className={someSelected && !groupSelected ? "data-[state=checked]:bg-primary/50" : ""}
-                />
-                <Label className="text-sm">Select all {title.toLowerCase()}</Label>
-              </div>
-            )}
           </div>
         </CardHeader>
         <CardContent>
@@ -474,6 +464,7 @@ export default function Settlements() {
                       onCheckedChange={(checked) => handleGroupSelect(data, checked as boolean)}
                       className={someSelected && !groupSelected ? "data-[state=checked]:bg-primary/50" : ""}
                     />
+                     <Label className="text-sm">Select all {title.toLowerCase()}</Label>
                   </TableHead>
                   <TableHead>Vendor</TableHead>
                   <TableHead>Line Item</TableHead>
