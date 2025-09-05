@@ -49,7 +49,7 @@ export default function Settlements() {
         preferredMethod: "Check",
         accountHint: "New York, NY 10001",
         status: "To Be Paid",
-        hasAccountDetails: false,
+        hasAccountDetails: true,
         remainingBalance: 8500
       },
       {
@@ -205,7 +205,7 @@ export default function Settlements() {
         preferredMethod: "Check",
         accountHint: "Miami, FL 33101",
         status: "To Be Paid",
-        hasAccountDetails: false,
+        hasAccountDetails: true,
         remainingBalance: 1200
       },
       {
@@ -227,7 +227,7 @@ export default function Settlements() {
         preferredMethod: "Check",
         accountHint: "Denver, CO 80202",
         status: "To Be Paid",
-        hasAccountDetails: false,
+        hasAccountDetails: true,
         remainingBalance: 500
       }
     ]
