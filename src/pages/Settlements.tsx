@@ -478,7 +478,7 @@ export default function Settlements() {
                         </div>
                       </div>
 
-                      <div className="border rounded-lg p-3 max-h-48 overflow-y-auto">
+                      <div className="border border-border bg-muted/20 rounded-lg p-3 max-h-48 overflow-y-auto">
                         <h4 className="font-medium mb-2">Selected Items</h4>
                         <div className="space-y-2">
                           {getSelectedItems().map(item => (
