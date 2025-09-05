@@ -213,7 +213,7 @@ export default function Settlements() {
     const someSelected = selectableItems.some(item => selectedItems.has(item.id));
 
     return (
-      <Card className="mb-6">
+      <Card className="mb-6 bg-gray-800 border-gray-700">
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle className="text-lg">{title}</CardTitle>
@@ -328,201 +328,238 @@ export default function Settlements() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="border-b border-border bg-card">
-        <div className="flex h-16 items-center px-6">
+    <div className="min-h-screen bg-[#1a1f26] text-gray-100">
+      {/* Settlement Header */}
+      <div className="p-6">
+        <div className="flex items-center gap-4 mb-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => navigate(-1)}
-            className="mr-4"
+            className="text-gray-300 hover:text-white"
           >
-            <ChevronLeft className="h-4 w-4 mr-1" />
-            GO BACK
+            <ChevronLeft className="h-4 w-4 mr-2" />
+            Back
           </Button>
-          <h1 className="text-xl font-semibold">Settlements</h1>
+        </div>
+        
+        <div className="mb-6">
+          <h1 className="text-3xl font-bold text-white">Settlement Details</h1>
+          <p className="text-gray-400">Case #SET-2024-001 • $45,000 total settlement</p>
         </div>
       </div>
 
-      <div className="p-6">
-        <Card>
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>Settlement Details</CardTitle>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Settlement
-              </Button>
+      {/* Tabs Navigation */}
+      <Tabs defaultValue="home" className="h-full flex flex-col">
+        <div className="border-b border-gray-700 px-6">
+          <TabsList className="grid w-full max-w-5xl grid-cols-5 bg-transparent h-12 p-0">
+            <TabsTrigger
+              value="home"
+              className="text-gray-300 data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-cyan-400 rounded-none h-12 hover:text-white transition-colors"
+            >
+              Home
+            </TabsTrigger>
+            <TabsTrigger
+              value="details"
+              className="text-gray-300 data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-cyan-400 rounded-none h-12 hover:text-white transition-colors"
+            >
+              Details
+            </TabsTrigger>
+            <TabsTrigger
+              value="vendor-payments"
+              className="text-gray-300 data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-cyan-400 rounded-none h-12 hover:text-white transition-colors"
+            >
+              Vendor Payments
+            </TabsTrigger>
+            <TabsTrigger
+              value="payments"
+              className="text-gray-300 data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-cyan-400 rounded-none h-12 hover:text-white transition-colors"
+            >
+              Payments
+            </TabsTrigger>
+            <TabsTrigger
+              value="timeline"
+              className="text-gray-300 data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-cyan-400 rounded-none h-12 hover:text-white transition-colors"
+            >
+              Timeline
+            </TabsTrigger>
+          </TabsList>
+        </div>
+
+        <div className="flex-1 p-6">
+          <TabsContent value="home" className="h-full m-0">
+            <div className="text-center py-8 text-gray-400">
+              Settlement home overview will be displayed here.
             </div>
-          </CardHeader>
-          <CardContent>
-            <Tabs defaultValue="home" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
-                <TabsTrigger value="home">HOME</TabsTrigger>
-                <TabsTrigger value="details">DETAILS</TabsTrigger>
-                <TabsTrigger value="payments">PAYMENTS</TabsTrigger>
-                <TabsTrigger value="timeline">TIMELINE</TabsTrigger>
-              </TabsList>
-              
-              <TabsContent value="home" className="mt-6">
-                <div className="text-center py-8 text-muted-foreground">
-                  Settlement overview and summary information will be displayed here.
+          </TabsContent>
+          
+          <TabsContent value="details" className="h-full m-0">
+            <div className="text-center py-8 text-gray-400">
+              Detailed settlement information will be displayed here.
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="vendor-payments" className="h-full m-0">
+            <div className="text-center py-8 text-gray-400">
+              Vendor payment details will be displayed here.
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="payments" className="h-full m-0">
+            <div className="space-y-6">
+              {/* Batch Error Banner */}
+              {showBatchError && (
+                <Alert className="border-red-600 bg-red-600/10">
+                  <AlertTriangle className="h-4 w-4 text-red-500" />
+                  <AlertDescription className="text-red-400">
+                    Failed to create payment batch. Please try again or contact support.
+                    <Button variant="link" className="p-0 ml-2 h-auto text-red-400 underline">
+                      View Details
+                    </Button>
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* Empty State */}
+              {[...paymentsData.liens, ...paymentsData.expenses].length === 0 && (
+                <div className="text-center py-12">
+                  <div className="mx-auto w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4">
+                    <Plus className="h-8 w-8 text-gray-500" />
+                  </div>
+                  <h3 className="text-lg font-medium text-white mb-2">No payment items available</h3>
+                  <p className="text-gray-400 mb-4">There are currently no payable items for this settlement.</p>
+                  <Button variant="outline" className="text-gray-300 border-gray-600 hover:bg-gray-700">
+                    Add Payment Item
+                  </Button>
                 </div>
-              </TabsContent>
-              
-              <TabsContent value="details" className="mt-6">
-                <div className="text-center py-8 text-muted-foreground">
-                  Detailed settlement information and documentation will be displayed here.
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="payments" className="mt-6">
-                <div className="space-y-6">
-                  {/* Batch Error Alert */}
-                  {showBatchError && (
-                    <Alert variant="destructive">
-                      <AlertTriangle className="h-4 w-4" />
-                      <AlertDescription>
-                        Please fix validation errors before releasing payments. Some items are missing account details for ACH payments.
-                        <Button
-                          variant="link"
-                          size="sm"
-                          className="h-auto p-0 ml-2"
-                          onClick={() => setShowBatchError(false)}
-                        >
-                          Dismiss
-                        </Button>
-                      </AlertDescription>
-                    </Alert>
-                  )}
+              )}
 
-                  {/* Processing Progress */}
-                  {isProcessing && (
-                    <Card>
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="text-sm font-medium">Processing payment batch...</span>
-                          <span className="text-sm text-muted-foreground">{batchProgress}%</span>
-                        </div>
-                        <Progress value={batchProgress} />
-                      </CardContent>
-                    </Card>
-                  )}
-
-                  <PaymentTable data={paymentsData.liens} title="Liens" />
-                  <PaymentTable data={paymentsData.expenses} title="Expenses" />
-
-                  {/* Failed Items Retry */}
-                  {[...paymentsData.liens, ...paymentsData.expenses].some(item => item.status === "Failed") && (
-                    <div className="flex justify-end">
-                      <Button variant="outline" onClick={() => handleRetryFailed()}>
-                        <RotateCcw className="h-4 w-4 mr-2" />
-                        Retry All Failed
-                      </Button>
+              {/* Processing Progress */}
+              {isProcessing && (
+                <Card className="bg-gray-800 border-gray-700">
+                  <CardContent className="p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-sm font-medium text-white">Processing payment batch...</span>
+                      <span className="text-sm text-gray-400">{batchProgress}%</span>
                     </div>
-                  )}
-                </div>
+                    <Progress value={batchProgress} className="bg-gray-700" />
+                  </CardContent>
+                </Card>
+              )}
 
-                {/* Sticky Summary Bar */}
-                {selectedItems.size > 0 && (
-                  <div className="fixed bottom-0 left-0 right-0 bg-card border-t border-border p-4 shadow-lg z-50">
-                    <div className="max-w-7xl mx-auto flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <span className="font-medium">
-                          {selectedItems.size} item{selectedItems.size !== 1 ? 's' : ''} selected
-                        </span>
-                        <span className="text-muted-foreground">
-                          Total: {formatCurrency(getSelectedTotal())}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Button variant="outline" onClick={() => setSelectedItems(new Set())}>
-                          Clear Selection
-                        </Button>
-                        <Button 
-                          onClick={handleReleasePayments}
-                          disabled={selectedItems.size === 0 || isProcessing}
-                        >
-                          Release Payments ({selectedItems.size})
-                        </Button>
+              {paymentsData.liens.length > 0 && <PaymentTable data={paymentsData.liens} title="Liens" />}
+              {paymentsData.expenses.length > 0 && <PaymentTable data={paymentsData.expenses} title="Expenses" />}
+
+              {/* Failed Items Retry */}
+              {[...paymentsData.liens, ...paymentsData.expenses].some(item => item.status === "Failed") && (
+                <div className="flex justify-end">
+                  <Button variant="outline" onClick={() => handleRetryFailed()} className="text-gray-300 border-gray-600 hover:bg-gray-700">
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Retry All Failed
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {/* Sticky Summary Bar */}
+            {selectedItems.size > 0 && (
+              <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-4 shadow-lg z-50">
+                <div className="max-w-7xl mx-auto flex items-center justify-between">
+                  <div className="flex items-center gap-4">
+                    <span className="font-medium text-white">
+                      {selectedItems.size} item{selectedItems.size !== 1 ? 's' : ''} selected
+                    </span>
+                    <span className="text-gray-400">
+                      Total: {formatCurrency(getSelectedTotal())}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" onClick={() => setSelectedItems(new Set())} className="text-gray-300 border-gray-600 hover:bg-gray-700">
+                      Clear Selection
+                    </Button>
+                    <Button 
+                      onClick={handleReleasePayments}
+                      disabled={selectedItems.size === 0 || isProcessing}
+                      className="bg-cyan-600 hover:bg-cyan-700 text-white"
+                    >
+                      Release Payments ({selectedItems.size})
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Confirmation Modal */}
+            <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
+              <DialogContent className="max-w-2xl bg-gray-800 border-gray-700 text-white">
+                <DialogHeader>
+                  <DialogTitle className="text-white">Confirm Payment Release</DialogTitle>
+                </DialogHeader>
+                
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <h4 className="font-medium text-white">Payment Summary</h4>
+                      <p className="text-sm text-gray-400">
+                        {selectedItems.size} items • {formatCurrency(getSelectedTotal())}
+                      </p>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-white">Source Accounts</h4>
+                      <div className="text-sm text-gray-400 space-y-1">
+                        {getSelectedItems().some(item => paymentsData.liens.includes(item)) && (
+                          <p>Liens → Lien Resolution Account</p>
+                        )}
+                        {getSelectedItems().some(item => paymentsData.expenses.includes(item)) && (
+                          <p>Expenses → Expense Reimbursement Account</p>
+                        )}
                       </div>
                     </div>
                   </div>
-                )}
 
-                {/* Confirmation Modal */}
-                <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
-                  <DialogContent className="max-w-2xl">
-                    <DialogHeader>
-                      <DialogTitle>Confirm Payment Release</DialogTitle>
-                    </DialogHeader>
-                    
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <h4 className="font-medium">Payment Summary</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {selectedItems.size} items • {formatCurrency(getSelectedTotal())}
-                          </p>
+                  <div className="border border-gray-600 bg-gray-700/20 rounded-lg p-3 max-h-48 overflow-y-auto">
+                    <h4 className="font-medium mb-2 text-white">Selected Items</h4>
+                    <div className="space-y-2">
+                      {getSelectedItems().map(item => (
+                        <div key={item.id} className="flex justify-between text-sm">
+                          <span className="text-gray-300">{item.vendor} - {item.lineItem}</span>
+                          <span className="text-white">{formatCurrency(item.remainingBalance)}</span>
                         </div>
-                        <div>
-                          <h4 className="font-medium">Source Accounts</h4>
-                          <div className="text-sm text-muted-foreground space-y-1">
-                            {getSelectedItems().some(item => paymentsData.liens.includes(item)) && (
-                              <p>Liens → Lien Resolution Account</p>
-                            )}
-                            {getSelectedItems().some(item => paymentsData.expenses.includes(item)) && (
-                              <p>Expenses → Expense Reimbursement Account</p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="border border-border bg-muted/20 rounded-lg p-3 max-h-48 overflow-y-auto">
-                        <h4 className="font-medium mb-2">Selected Items</h4>
-                        <div className="space-y-2">
-                          {getSelectedItems().map(item => (
-                            <div key={item.id} className="flex justify-between text-sm">
-                              <span>{item.vendor} - {item.lineItem}</span>
-                              <span>{formatCurrency(item.remainingBalance)}</span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div className="flex items-center space-x-2">
-                        <Switch
-                          id="vendor-details"
-                          checked={includeVendorDetails}
-                          onCheckedChange={setIncludeVendorDetails}
-                        />
-                        <Label htmlFor="vendor-details" className="text-sm">
-                          Include vendor details in payment notifications
-                        </Label>
-                      </div>
+                      ))}
                     </div>
+                  </div>
 
-                    <DialogFooter>
-                      <Button variant="outline" onClick={() => setShowConfirmModal(false)}>
-                        Cancel
-                      </Button>
-                      <Button onClick={confirmPaymentRelease}>
-                        Release {selectedItems.size} Payment{selectedItems.size !== 1 ? 's' : ''}
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </TabsContent>
-              
-              <TabsContent value="timeline" className="mt-6">
-                <div className="text-center py-8 text-muted-foreground">
-                  Settlement timeline and milestones will be displayed here.
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="vendor-details"
+                      checked={includeVendorDetails}
+                      onCheckedChange={setIncludeVendorDetails}
+                    />
+                    <Label htmlFor="vendor-details" className="text-sm text-gray-300">
+                      Include vendor details in payment notifications
+                    </Label>
+                  </div>
                 </div>
-              </TabsContent>
-            </Tabs>
-          </CardContent>
-        </Card>
-      </div>
+
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setShowConfirmModal(false)} className="text-gray-300 border-gray-600 hover:bg-gray-700">
+                    Cancel
+                  </Button>
+                  <Button onClick={confirmPaymentRelease} className="bg-cyan-600 hover:bg-cyan-700 text-white">
+                    Release {selectedItems.size} Payment{selectedItems.size !== 1 ? 's' : ''}
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+          </TabsContent>
+          
+          <TabsContent value="timeline" className="h-full m-0">
+            <div className="text-center py-8 text-gray-400">
+              Settlement timeline and milestones will be displayed here.
+            </div>
+          </TabsContent>
+        </div>
+      </Tabs>
     </div>
   );
 }
