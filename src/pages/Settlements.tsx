@@ -360,17 +360,19 @@ export default function Settlements() {
             )
           }));
           
-          // Move items to Processing status
-          setTimeout(() => {
-            setPaymentsData(prevData => ({
-              liens: prevData.liens.map(item => 
-                selectedItems.has(item.id) ? { ...item, status: "Processing" } : item
-              ),
-              expenses: prevData.expenses.map(item => 
-                selectedItems.has(item.id) ? { ...item, status: "Processing" } : item
-              )
-            }));
-          }, 500);
+          // Move items to Processing status one by one with 1 second delay
+          selectedItemIds.forEach((itemId, index) => {
+            setTimeout(() => {
+              setPaymentsData(prevData => ({
+                liens: prevData.liens.map(item => 
+                  item.id === itemId ? { ...item, status: "Processing" } : item
+                ),
+                expenses: prevData.expenses.map(item => 
+                  item.id === itemId ? { ...item, status: "Processing" } : item
+                )
+              }));
+            }, (index + 1) * 1000);
+          });
           
           setSelectedItems(new Set());
           setSelectAllItems(false);
@@ -545,16 +547,9 @@ export default function Settlements() {
                         </div>
                       </TableCell>
                       <TableCell className="text-muted-foreground">{item.accountHint}</TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          <Badge variant={getStatusVariant(item.status)}>{item.status}</Badge>
-                          {item.status === "Processing" && (
-                            <div className="w-16">
-                              <Progress value={75} className="h-1" />
-                            </div>
-                          )}
-                        </div>
-                      </TableCell>
+                       <TableCell>
+                         <Badge variant={getStatusVariant(item.status)}>{item.status}</Badge>
+                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-2">
                           {item.status === "Failed" && (
