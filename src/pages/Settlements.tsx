@@ -251,7 +251,7 @@ export default function Settlements() {
       case "To Be Paid": return "secondary";
       case "Queued": return "default";
       case "Sent": return "success";
-      case "Processing": return "processing";
+      case "Processing": return "warning";
       case "Failed": return "destructive";
       default: return "secondary";
     }
