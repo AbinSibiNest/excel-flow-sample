@@ -269,7 +269,7 @@ export default function Settlements() {
   const handleGroupSelect = (groupData: any[], checked: boolean) => {
     const newSelected = new Set(selectedItems);
     groupData.forEach(item => {
-      if (item.status === "To Be Paid" || item.status === "Failed") {
+      if ((item.status === "To Be Paid" || item.status === "Failed") && item.hasAccountDetails) {
         if (checked) {
           newSelected.add(item.id);
         } else {
@@ -285,7 +285,7 @@ export default function Settlements() {
     const newSelected = new Set<number>();
     if (checked) {
       [...paymentsData.liens, ...paymentsData.expenses].forEach(item => {
-        if (item.status === "To Be Paid" || item.status === "Failed") {
+        if ((item.status === "To Be Paid" || item.status === "Failed") && item.hasAccountDetails) {
           newSelected.add(item.id);
         }
       });
@@ -295,7 +295,7 @@ export default function Settlements() {
 
   const getAllSelectableItems = () => {
     const allItems = [...paymentsData.liens, ...paymentsData.expenses];
-    return allItems.filter(item => item.status === "To Be Paid" || item.status === "Failed");
+    return allItems.filter(item => (item.status === "To Be Paid" || item.status === "Failed") && item.hasAccountDetails);
   };
 
   const isAllSelected = () => {
@@ -438,7 +438,7 @@ export default function Settlements() {
   };
 
   const PaymentTable = ({ data, title }: { data: any[], title: string }) => {
-    const selectableItems = data.filter(item => item.status === "To Be Paid" || item.status === "Failed");
+    const selectableItems = data.filter(item => (item.status === "To Be Paid" || item.status === "Failed") && item.hasAccountDetails);
     const groupSelected = selectableItems.length > 0 && selectableItems.every(item => selectedItems.has(item.id));
     const someSelected = selectableItems.some(item => selectedItems.has(item.id));
 
@@ -459,12 +459,14 @@ export default function Settlements() {
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-12">
-                    <Checkbox
-                      checked={groupSelected}
-                      onCheckedChange={(checked) => handleGroupSelect(data, checked as boolean)}
-                      className={someSelected && !groupSelected ? "data-[state=checked]:bg-primary/50" : ""}
-                    />
-                     <Label className="text-sm">Select all {title.toLowerCase()}</Label>
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        checked={groupSelected}
+                        onCheckedChange={(checked) => handleGroupSelect(data, checked as boolean)}
+                        className={someSelected && !groupSelected ? "data-[state=checked]:bg-primary/50" : ""}
+                      />
+                      <Label className="text-sm">Select all {title.toLowerCase()}</Label>
+                    </div>
                   </TableHead>
                   <TableHead>Vendor</TableHead>
                   <TableHead>Line Item</TableHead>
