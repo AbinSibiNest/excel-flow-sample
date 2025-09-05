@@ -152,7 +152,7 @@ export default function Deductions() {
               <Label htmlFor="description">Description</Label>
               <Textarea
                 id="description"
-                placeholder="Enter description"
+                placeholder="Enter line item description"
                 value={formData.description}
                 onChange={(e) => handleInputChange("description", e.target.value)}
                 className="mt-1"
