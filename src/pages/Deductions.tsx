@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -10,6 +10,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -22,7 +23,8 @@ export default function Deductions() {
     assigned: false,
     amount: "",
     type: "",
-    vendorAccount: ""
+    vendorAccount: "",
+    description: ""
   });
 
   // Mock data - in real app this would come from API
@@ -73,94 +75,91 @@ export default function Deductions() {
       </div>
 
       <div className="p-6 max-w-4xl">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Case and Defendant Section - Combined */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Case & Defendant</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <Button 
-                variant="outline" 
-                className="w-full bg-primary/10 border-primary/20 text-primary hover:bg-primary/20"
-              >
-                🔍 FIND CASE
-              </Button>
-              
-              <div>
-                <Label htmlFor="defendant">Defendant</Label>
-                <Select onValueChange={(value) => handleInputChange("defendant", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select defendant" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="defendant1">John Doe</SelectItem>
-                    <SelectItem value="defendant2">Jane Smith</SelectItem>
-                    <SelectItem value="defendant3">Mike Johnson</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              
-              <div className="flex items-center space-x-2 pt-2">
-                <Switch
-                  id="assigned"
-                  checked={formData.assigned}
-                  onCheckedChange={(checked) => handleInputChange("assigned", checked)}
-                />
-                <Label htmlFor="assigned">Assigned</Label>
-              </div>
-            </CardContent>
-          </Card>
+        <Card>
+          <CardContent className="space-y-4 p-6">
+            <Button 
+              variant="outline" 
+              className="w-full bg-primary/10 border-primary/20 text-primary hover:bg-primary/20"
+            >
+              🔍 FIND CASE
+            </Button>
+            
+            <div>
+              <Label htmlFor="defendant">Defendant</Label>
+              <Select onValueChange={(value) => handleInputChange("defendant", value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select defendant" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="defendant1">John Doe</SelectItem>
+                  <SelectItem value="defendant2">Jane Smith</SelectItem>
+                  <SelectItem value="defendant3">Mike Johnson</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              <Switch
+                id="assigned"
+                checked={formData.assigned}
+                onCheckedChange={(checked) => handleInputChange("assigned", checked)}
+              />
+              <Label htmlFor="assigned">Assigned</Label>
+            </div>
 
-          {/* Payment Details Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Payment Details</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="amount">Amount *</Label>
-                <Input
-                  id="amount"
-                  type="number"
-                  placeholder="Enter amount"
-                  value={formData.amount}
-                  onChange={(e) => handleInputChange("amount", e.target.value)}
-                  className="mt-1"
-                />
-              </div>
+            <div>
+              <Label htmlFor="amount">Amount *</Label>
+              <Input
+                id="amount"
+                type="number"
+                placeholder="Enter amount"
+                value={formData.amount}
+                onChange={(e) => handleInputChange("amount", e.target.value)}
+                className="mt-1"
+              />
+            </div>
 
-              <div>
-                <Label htmlFor="type">Type *</Label>
-                <Select onValueChange={(value) => handleInputChange("type", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="advance">Advance</SelectItem>
-                    <SelectItem value="lien">Lien</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
+            <div>
+              <Label htmlFor="type">Type *</Label>
+              <Select onValueChange={(value) => handleInputChange("type", value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="advance">Advance</SelectItem>
+                  <SelectItem value="lien">Lien</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-              <div>
-                <Label htmlFor="vendorAccount">Vendor Account </Label>
-                <Select onValueChange={(value) => handleInputChange("vendorAccount", value)}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select vendor account" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {vendorAccounts.map((account) => (
-                      <SelectItem key={account.id} value={account.id.toString()}>
-                        {account.name} - {account.achAccountType}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+            <div>
+              <Label htmlFor="vendorAccount">Vendor Account</Label>
+              <Select onValueChange={(value) => handleInputChange("vendorAccount", value)}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select vendor account" />
+                </SelectTrigger>
+                <SelectContent>
+                  {vendorAccounts.map((account) => (
+                    <SelectItem key={account.id} value={account.id.toString()}>
+                      {account.name} - {account.achAccountType}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                placeholder="Enter description"
+                value={formData.description}
+                onChange={(e) => handleInputChange("description", e.target.value)}
+                className="mt-1"
+              />
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Save Button */}
         <div className="mt-6">
