@@ -25,6 +25,7 @@ export default function Settlements() {
   const [batchProgress, setBatchProgress] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showBatchError, setShowBatchError] = useState(false);
+  const [selectAllItems, setSelectAllItems] = useState(false);
 
   // Mock data for payments
   const [paymentsData, setPaymentsData] = useState({
@@ -69,7 +70,7 @@ export default function Settlements() {
         amount: 4200,
         preferredMethod: "ACH",
         accountHint: "****9876",
-        status: "Queued",
+        status: "To Be Paid",
         hasAccountDetails: true,
         remainingBalance: 4200
       },
@@ -80,7 +81,7 @@ export default function Settlements() {
         amount: 2200,
         preferredMethod: "Check",
         accountHint: "Seattle, WA 98101",
-        status: "Queued",
+        status: "To Be Paid",
         hasAccountDetails: true,
         remainingBalance: 2200
       },
@@ -91,7 +92,7 @@ export default function Settlements() {
         amount: 1500,
         preferredMethod: "ACH",
         accountHint: "****3333",
-        status: "Processing",
+        status: "To Be Paid",
         hasAccountDetails: true,
         remainingBalance: 1500
       },
@@ -102,9 +103,9 @@ export default function Settlements() {
         amount: 850,
         preferredMethod: "Check",
         accountHint: "Boston, MA 02115",
-        status: "Sent",
+        status: "To Be Paid",
         hasAccountDetails: true,
-        remainingBalance: 0
+        remainingBalance: 850
       },
       {
         id: 7,
@@ -113,7 +114,7 @@ export default function Settlements() {
         amount: 1800,
         preferredMethod: "ACH",
         accountHint: "****4321",
-        status: "Failed",
+        status: "To Be Paid",
         hasAccountDetails: false,
         remainingBalance: 1800
       }
@@ -159,7 +160,7 @@ export default function Settlements() {
         amount: 2500,
         preferredMethod: "ACH",
         accountHint: "****7890",
-        status: "Queued",
+        status: "To Be Paid",
         hasAccountDetails: true,
         remainingBalance: 2500
       },
@@ -170,7 +171,7 @@ export default function Settlements() {
         amount: 350,
         preferredMethod: "ACH",
         accountHint: "****4444",
-        status: "Queued",
+        status: "To Be Paid",
         hasAccountDetails: true,
         remainingBalance: 350
       },
@@ -181,7 +182,7 @@ export default function Settlements() {
         amount: 125,
         preferredMethod: "Check",
         accountHint: "Portland, OR 97201",
-        status: "Processing",
+        status: "To Be Paid",
         hasAccountDetails: true,
         remainingBalance: 125
       },
@@ -192,9 +193,9 @@ export default function Settlements() {
         amount: 850,
         preferredMethod: "ACH",
         accountHint: "****2222",
-        status: "Sent",
+        status: "To Be Paid",
         hasAccountDetails: true,
-        remainingBalance: 0
+        remainingBalance: 850
       },
       {
         id: 9,
@@ -203,9 +204,9 @@ export default function Settlements() {
         amount: 1200,
         preferredMethod: "Check",
         accountHint: "Miami, FL 33101",
-        status: "Sent",
+        status: "To Be Paid",
         hasAccountDetails: false,
-        remainingBalance: 0
+        remainingBalance: 1200
       },
       {
         id: 10,
@@ -214,7 +215,7 @@ export default function Settlements() {
         amount: 650,
         preferredMethod: "ACH",
         accountHint: "****1111",
-        status: "Failed",
+        status: "To Be Paid",
         hasAccountDetails: true,
         remainingBalance: 650
       },
@@ -225,7 +226,7 @@ export default function Settlements() {
         amount: 500,
         preferredMethod: "Check",
         accountHint: "Denver, CO 80202",
-        status: "Failed",
+        status: "To Be Paid",
         hasAccountDetails: false,
         remainingBalance: 500
       }
@@ -279,6 +280,34 @@ export default function Settlements() {
     setSelectedItems(newSelected);
   };
 
+  const handleSelectAll = (checked: boolean) => {
+    setSelectAllItems(checked);
+    const newSelected = new Set<number>();
+    if (checked) {
+      [...paymentsData.liens, ...paymentsData.expenses].forEach(item => {
+        if (item.status === "To Be Paid" || item.status === "Failed") {
+          newSelected.add(item.id);
+        }
+      });
+    }
+    setSelectedItems(newSelected);
+  };
+
+  const getAllSelectableItems = () => {
+    const allItems = [...paymentsData.liens, ...paymentsData.expenses];
+    return allItems.filter(item => item.status === "To Be Paid" || item.status === "Failed");
+  };
+
+  const isAllSelected = () => {
+    const selectableItems = getAllSelectableItems();
+    return selectableItems.length > 0 && selectableItems.every(item => selectedItems.has(item.id));
+  };
+
+  const isSomeSelected = () => {
+    const selectableItems = getAllSelectableItems();
+    return selectableItems.some(item => selectedItems.has(item.id));
+  };
+
   const handlePaymentMethodChange = (itemId: number, method: string) => {
     setPaymentMethods(prev => ({ ...prev, [itemId]: method }));
   };
@@ -319,22 +348,69 @@ export default function Settlements() {
           clearInterval(interval);
           setIsProcessing(false);
           
-          // Update selected items to Processing status
+          // First move selected items to Queued status
+          const selectedItemIds = Array.from(selectedItems);
           setPaymentsData(prevData => ({
             liens: prevData.liens.map(item => 
-              selectedItems.has(item.id) ? { ...item, status: "Processing" } : item
+              selectedItems.has(item.id) ? { ...item, status: "Queued" } : item
             ),
             expenses: prevData.expenses.map(item => 
-              selectedItems.has(item.id) ? { ...item, status: "Processing" } : item
+              selectedItems.has(item.id) ? { ...item, status: "Queued" } : item
             )
           }));
           
+          // Then simulate processing each item one by one
+          setTimeout(() => {
+            simulateProcessingFlow(selectedItemIds);
+          }, 500);
+          
           setSelectedItems(new Set());
+          setSelectAllItems(false);
           return 100;
         }
         return prev + 10;
       });
     }, 200);
+  };
+
+  const simulateProcessingFlow = async (itemIds: number[]) => {
+    for (let i = 0; i < itemIds.length; i++) {
+      const itemId = itemIds[i];
+      
+      // Move to Processing
+      setPaymentsData(prevData => ({
+        liens: prevData.liens.map(item => 
+          item.id === itemId ? { ...item, status: "Processing" } : item
+        ),
+        expenses: prevData.expenses.map(item => 
+          item.id === itemId ? { ...item, status: "Processing" } : item
+        )
+      }));
+      
+      // Wait 1 second
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      // Randomly assign Sent (80%) or Failed (20%)
+      const finalStatus = Math.random() > 0.2 ? "Sent" : "Failed";
+      const remainingBalance = finalStatus === "Sent" ? 0 : undefined;
+      
+      setPaymentsData(prevData => ({
+        liens: prevData.liens.map(item => 
+          item.id === itemId ? { 
+            ...item, 
+            status: finalStatus,
+            ...(remainingBalance !== undefined && { remainingBalance })
+          } : item
+        ),
+        expenses: prevData.expenses.map(item => 
+          item.id === itemId ? { 
+            ...item, 
+            status: finalStatus,
+            ...(remainingBalance !== undefined && { remainingBalance })
+          } : item
+        )
+      }));
+    }
   };
 
   const handleRetryFailed = (itemId?: number) => {
@@ -392,7 +468,13 @@ export default function Settlements() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-12">Select</TableHead>
+                  <TableHead className="w-12">
+                    <Checkbox
+                      checked={groupSelected}
+                      onCheckedChange={(checked) => handleGroupSelect(data, checked as boolean)}
+                      className={someSelected && !groupSelected ? "data-[state=checked]:bg-primary/50" : ""}
+                    />
+                  </TableHead>
                   <TableHead>Vendor</TableHead>
                   <TableHead>Line Item</TableHead>
                   <TableHead>Amount (Remaining)</TableHead>
@@ -550,31 +632,52 @@ export default function Settlements() {
           
           <TabsContent value="payments" className="h-full m-0">
             <div className="space-y-6">
-              {/* Selection Controls */}
-              {selectedItems.size > 0 && (
-                <div className="flex items-center justify-between bg-gray-800 border border-gray-700 rounded-lg p-4">
-                  <div className="flex items-center gap-4">
-                    <span className="text-sm text-gray-300">
-                      {selectedItems.size} item{selectedItems.size > 1 ? 's' : ''} selected
-                    </span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setSelectedItems(new Set())}
-                      className="text-gray-300 border-gray-600 hover:bg-gray-700"
-                    >
-                      Clear Selection
-                    </Button>
+              {/* Global Selection Controls */}
+              <Card className="mb-6 bg-gray-800 border-gray-700">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-2">
+                        <Checkbox
+                          checked={isAllSelected()}
+                          onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
+                          className={isSomeSelected() && !isAllSelected() ? "data-[state=checked]:bg-primary/50" : ""}
+                        />
+                        <Label className="text-sm text-gray-300">
+                          Select all items ({getAllSelectableItems().length} available)
+                        </Label>
+                      </div>
+                      {selectedItems.size > 0 && (
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm text-gray-300">
+                            {selectedItems.size} selected
+                          </span>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => {
+                              setSelectedItems(new Set());
+                              setSelectAllItems(false);
+                            }}
+                            className="text-gray-300 border-gray-600 hover:bg-gray-700"
+                          >
+                            Clear
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                    {selectedItems.size > 0 && (
+                      <Button
+                        onClick={handleReleasePayments}
+                        disabled={selectedItems.size === 0 || hasValidationErrors()}
+                        className="bg-blue-600 hover:bg-blue-700 text-white"
+                      >
+                        Release Payments ({selectedItems.size})
+                      </Button>
+                    )}
                   </div>
-                  <Button
-                    onClick={handleReleasePayments}
-                    disabled={selectedItems.size === 0 || hasValidationErrors()}
-                    className="bg-blue-600 hover:bg-blue-700 text-white"
-                  >
-                    Release Payments ({selectedItems.size})
-                  </Button>
-                </div>
-              )}
+                </CardHeader>
+              </Card>
 
               {/* Batch Error Banner */}
               {showBatchError && (
