@@ -52,6 +52,17 @@ export default function Settlements() {
         remainingBalance: 8500
       },
       {
+        id: 11,
+        vendor: "Rehabilitation Center",
+        lineItem: "Occupational therapy",
+        amount: 3500,
+        preferredMethod: "ACH",
+        accountHint: "****5555",
+        status: "To Be Paid",
+        hasAccountDetails: true,
+        remainingBalance: 3500
+      },
+      {
         id: 5,
         vendor: "Healthcare Provider Inc",
         lineItem: "Physical therapy services",
@@ -61,6 +72,28 @@ export default function Settlements() {
         status: "Queued",
         hasAccountDetails: true,
         remainingBalance: 4200
+      },
+      {
+        id: 12,
+        vendor: "Diagnostic Imaging",
+        lineItem: "MRI and X-ray services",
+        amount: 2200,
+        preferredMethod: "Check",
+        accountHint: "Seattle, WA 98101",
+        status: "Queued",
+        hasAccountDetails: true,
+        remainingBalance: 2200
+      },
+      {
+        id: 13,
+        vendor: "Orthopedic Specialists",
+        lineItem: "Surgery consultation",
+        amount: 1500,
+        preferredMethod: "ACH",
+        accountHint: "****3333",
+        status: "Processing",
+        hasAccountDetails: true,
+        remainingBalance: 1500
       },
       {
         id: 6,
@@ -83,28 +116,6 @@ export default function Settlements() {
         status: "Failed",
         hasAccountDetails: false,
         remainingBalance: 1800
-      },
-      {
-        id: 11,
-        vendor: "Rehabilitation Center",
-        lineItem: "Occupational therapy",
-        amount: 3500,
-        preferredMethod: "ACH",
-        accountHint: "****5555",
-        status: "To Be Paid",
-        hasAccountDetails: true,
-        remainingBalance: 3500
-      },
-      {
-        id: 12,
-        vendor: "Diagnostic Imaging",
-        lineItem: "MRI and X-ray services",
-        amount: 2200,
-        preferredMethod: "Check",
-        accountHint: "Seattle, WA 98101",
-        status: "Queued",
-        hasAccountDetails: true,
-        remainingBalance: 2200
       }
     ],
     expenses: [
@@ -131,6 +142,17 @@ export default function Settlements() {
         remainingBalance: 450
       },
       {
+        id: 16,
+        vendor: "Process Server Inc",
+        lineItem: "Legal document service",
+        amount: 275,
+        preferredMethod: "Check",
+        accountHint: "Austin, TX 78701",
+        status: "To Be Paid",
+        hasAccountDetails: true,
+        remainingBalance: 275
+      },
+      {
         id: 8,
         vendor: "Investigation Services",
         lineItem: "Accident reconstruction analysis",
@@ -140,6 +162,39 @@ export default function Settlements() {
         status: "Queued",
         hasAccountDetails: true,
         remainingBalance: 2500
+      },
+      {
+        id: 17,
+        vendor: "Medical Records Co",
+        lineItem: "Record retrieval service",
+        amount: 350,
+        preferredMethod: "ACH",
+        accountHint: "****4444",
+        status: "Queued",
+        hasAccountDetails: true,
+        remainingBalance: 350
+      },
+      {
+        id: 18,
+        vendor: "Copy Services Inc",
+        lineItem: "Document duplication",
+        amount: 125,
+        preferredMethod: "Check",
+        accountHint: "Portland, OR 97201",
+        status: "Processing",
+        hasAccountDetails: true,
+        remainingBalance: 125
+      },
+      {
+        id: 14,
+        vendor: "Deposition Services",
+        lineItem: "Court reporter fees",
+        amount: 850,
+        preferredMethod: "ACH",
+        accountHint: "****2222",
+        status: "Sent",
+        hasAccountDetails: true,
+        remainingBalance: 0
       },
       {
         id: 9,
@@ -162,28 +217,6 @@ export default function Settlements() {
         status: "Failed",
         hasAccountDetails: true,
         remainingBalance: 650
-      },
-      {
-        id: 13,
-        vendor: "Process Server Inc",
-        lineItem: "Legal document service",
-        amount: 275,
-        preferredMethod: "Check",
-        accountHint: "Austin, TX 78701",
-        status: "To Be Paid",
-        hasAccountDetails: true,
-        remainingBalance: 275
-      },
-      {
-        id: 14,
-        vendor: "Deposition Services",
-        lineItem: "Court reporter fees",
-        amount: 850,
-        preferredMethod: "ACH",
-        accountHint: "****2222",
-        status: "Sent",
-        hasAccountDetails: true,
-        remainingBalance: 0
       },
       {
         id: 15,
