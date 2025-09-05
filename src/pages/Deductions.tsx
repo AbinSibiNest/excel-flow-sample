@@ -144,7 +144,7 @@ export default function Deductions() {
               </div>
 
               <div>
-                <Label htmlFor="vendorAccount">Vendor Account *</Label>
+                <Label htmlFor="vendorAccount">Vendor Account </Label>
                 <Select onValueChange={(value) => handleInputChange("vendorAccount", value)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select vendor account" />
