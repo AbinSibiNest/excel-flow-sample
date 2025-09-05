@@ -458,8 +458,8 @@ export default function Settlements() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-12">
-                    <div className="flex items-center gap-2">
+                  <TableHead className="w-40">
+                    <div className="flex items-center gap-2 whitespace-nowrap">
                       <Checkbox
                         checked={groupSelected}
                         onCheckedChange={(checked) => handleGroupSelect(data, checked as boolean)}
