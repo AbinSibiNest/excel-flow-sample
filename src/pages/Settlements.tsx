@@ -58,7 +58,7 @@ export default function Settlements() {
         amount: 4200,
         preferredMethod: "ACH",
         accountHint: "****9876",
-        status: "To Be Paid",
+        status: "Queued",
         hasAccountDetails: true,
         remainingBalance: 4200
       },
@@ -69,9 +69,9 @@ export default function Settlements() {
         amount: 850,
         preferredMethod: "Check",
         accountHint: "Boston, MA 02115",
-        status: "To Be Paid",
+        status: "Sent",
         hasAccountDetails: true,
-        remainingBalance: 850
+        remainingBalance: 0
       },
       {
         id: 7,
@@ -80,9 +80,31 @@ export default function Settlements() {
         amount: 1800,
         preferredMethod: "ACH",
         accountHint: "****4321",
-        status: "To Be Paid",
+        status: "Failed",
         hasAccountDetails: false,
         remainingBalance: 1800
+      },
+      {
+        id: 11,
+        vendor: "Rehabilitation Center",
+        lineItem: "Occupational therapy",
+        amount: 3500,
+        preferredMethod: "ACH",
+        accountHint: "****5555",
+        status: "To Be Paid",
+        hasAccountDetails: true,
+        remainingBalance: 3500
+      },
+      {
+        id: 12,
+        vendor: "Diagnostic Imaging",
+        lineItem: "MRI and X-ray services",
+        amount: 2200,
+        preferredMethod: "Check",
+        accountHint: "Seattle, WA 98101",
+        status: "Queued",
+        hasAccountDetails: true,
+        remainingBalance: 2200
       }
     ],
     expenses: [
@@ -115,7 +137,7 @@ export default function Settlements() {
         amount: 2500,
         preferredMethod: "ACH",
         accountHint: "****7890",
-        status: "To Be Paid",
+        status: "Queued",
         hasAccountDetails: true,
         remainingBalance: 2500
       },
@@ -126,9 +148,9 @@ export default function Settlements() {
         amount: 1200,
         preferredMethod: "Check",
         accountHint: "Miami, FL 33101",
-        status: "To Be Paid",
+        status: "Sent",
         hasAccountDetails: false,
-        remainingBalance: 1200
+        remainingBalance: 0
       },
       {
         id: 10,
@@ -137,9 +159,42 @@ export default function Settlements() {
         amount: 650,
         preferredMethod: "ACH",
         accountHint: "****1111",
-        status: "To Be Paid",
+        status: "Failed",
         hasAccountDetails: true,
         remainingBalance: 650
+      },
+      {
+        id: 13,
+        vendor: "Process Server Inc",
+        lineItem: "Legal document service",
+        amount: 275,
+        preferredMethod: "Check",
+        accountHint: "Austin, TX 78701",
+        status: "To Be Paid",
+        hasAccountDetails: true,
+        remainingBalance: 275
+      },
+      {
+        id: 14,
+        vendor: "Deposition Services",
+        lineItem: "Court reporter fees",
+        amount: 850,
+        preferredMethod: "ACH",
+        accountHint: "****2222",
+        status: "Sent",
+        hasAccountDetails: true,
+        remainingBalance: 0
+      },
+      {
+        id: 15,
+        vendor: "Legal Research Co",
+        lineItem: "Case law research",
+        amount: 500,
+        preferredMethod: "Check",
+        accountHint: "Denver, CO 80202",
+        status: "Failed",
+        hasAccountDetails: false,
+        remainingBalance: 500
       }
     ]
   });
