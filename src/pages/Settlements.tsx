@@ -47,9 +47,42 @@ export default function Settlements() {
         amount: 8500,
         preferredMethod: "Check",
         accountHint: "New York, NY 10001",
-        status: "Queued",
+        status: "To Be Paid",
         hasAccountDetails: false,
         remainingBalance: 8500
+      },
+      {
+        id: 5,
+        vendor: "Healthcare Provider Inc",
+        lineItem: "Physical therapy services",
+        amount: 4200,
+        preferredMethod: "ACH",
+        accountHint: "****9876",
+        status: "To Be Paid",
+        hasAccountDetails: true,
+        remainingBalance: 4200
+      },
+      {
+        id: 6,
+        vendor: "Pharmacy Solutions",
+        lineItem: "Prescription medications",
+        amount: 850,
+        preferredMethod: "Check",
+        accountHint: "Boston, MA 02115",
+        status: "To Be Paid",
+        hasAccountDetails: true,
+        remainingBalance: 850
+      },
+      {
+        id: 7,
+        vendor: "Medical Equipment Co",
+        lineItem: "Wheelchair rental - 6 months",
+        amount: 1800,
+        preferredMethod: "ACH",
+        accountHint: "****4321",
+        status: "To Be Paid",
+        hasAccountDetails: false,
+        remainingBalance: 1800
       }
     ],
     expenses: [
@@ -60,9 +93,9 @@ export default function Settlements() {
         amount: 3200,
         preferredMethod: "ACH",
         accountHint: "****5678",
-        status: "Sent",
+        status: "To Be Paid",
         hasAccountDetails: true,
-        remainingBalance: 0
+        remainingBalance: 3200
       },
       {
         id: 4,
@@ -71,9 +104,42 @@ export default function Settlements() {
         amount: 450,
         preferredMethod: "Check",
         accountHint: "Chicago, IL 60601",
-        status: "Failed",
+        status: "To Be Paid",
         hasAccountDetails: true,
         remainingBalance: 450
+      },
+      {
+        id: 8,
+        vendor: "Investigation Services",
+        lineItem: "Accident reconstruction analysis",
+        amount: 2500,
+        preferredMethod: "ACH",
+        accountHint: "****7890",
+        status: "To Be Paid",
+        hasAccountDetails: true,
+        remainingBalance: 2500
+      },
+      {
+        id: 9,
+        vendor: "Document Review LLC",
+        lineItem: "Medical records review",
+        amount: 1200,
+        preferredMethod: "Check",
+        accountHint: "Miami, FL 33101",
+        status: "To Be Paid",
+        hasAccountDetails: false,
+        remainingBalance: 1200
+      },
+      {
+        id: 10,
+        vendor: "Travel Reimbursement",
+        lineItem: "Client travel expenses",
+        amount: 650,
+        preferredMethod: "ACH",
+        accountHint: "****1111",
+        status: "To Be Paid",
+        hasAccountDetails: true,
+        remainingBalance: 650
       }
     ]
   });
@@ -215,7 +281,7 @@ export default function Settlements() {
     return (
       <Card className="mb-6 bg-gray-800 border-gray-700">
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-3">
             <CardTitle className="text-lg">{title}</CardTitle>
             {selectableItems.length > 0 && (
               <div className="flex items-center gap-2">
@@ -396,6 +462,32 @@ export default function Settlements() {
           
           <TabsContent value="payments" className="h-full m-0">
             <div className="space-y-6">
+              {/* Selection Controls */}
+              {selectedItems.size > 0 && (
+                <div className="flex items-center justify-between bg-gray-800 border border-gray-700 rounded-lg p-4">
+                  <div className="flex items-center gap-4">
+                    <span className="text-sm text-gray-300">
+                      {selectedItems.size} item{selectedItems.size > 1 ? 's' : ''} selected
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setSelectedItems(new Set())}
+                      className="text-gray-300 border-gray-600 hover:bg-gray-700"
+                    >
+                      Clear Selection
+                    </Button>
+                  </div>
+                  <Button
+                    onClick={handleReleasePayments}
+                    disabled={selectedItems.size === 0 || hasValidationErrors()}
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    Release Payments ({selectedItems.size})
+                  </Button>
+                </div>
+              )}
+
               {/* Batch Error Banner */}
               {showBatchError && (
                 <Alert className="border-red-600 bg-red-600/10">
@@ -450,33 +542,6 @@ export default function Settlements() {
               )}
             </div>
 
-            {/* Sticky Summary Bar */}
-            {selectedItems.size > 0 && (
-              <div className="fixed bottom-0 left-0 right-0 bg-gray-800 border-t border-gray-700 p-4 shadow-lg z-50">
-                <div className="max-w-7xl mx-auto flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <span className="font-medium text-white">
-                      {selectedItems.size} item{selectedItems.size !== 1 ? 's' : ''} selected
-                    </span>
-                    <span className="text-gray-400">
-                      Total: {formatCurrency(getSelectedTotal())}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Button variant="outline" onClick={() => setSelectedItems(new Set())} className="text-gray-300 border-gray-600 hover:bg-gray-700">
-                      Clear Selection
-                    </Button>
-                    <Button 
-                      onClick={handleReleasePayments}
-                      disabled={selectedItems.size === 0 || isProcessing}
-                      className="bg-cyan-600 hover:bg-cyan-700 text-white"
-                    >
-                      Release Payments ({selectedItems.size})
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {/* Confirmation Modal */}
             <Dialog open={showConfirmModal} onOpenChange={setShowConfirmModal}>
