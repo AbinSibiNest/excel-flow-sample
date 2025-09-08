@@ -476,14 +476,14 @@ export default function Settlements() {
     
     // Calculate values
     const totalDisbursed = data.filter(item => item.status === "Sent").reduce((sum, item) => sum + item.amount, 0);
-    const totalAllocated = data.reduce((sum, item) => sum + item.remainingBalance, 0);
     const failedTransactions = data.filter(item => item.status === "Failed").length;
     const failedTransactionAmount = data.filter(item => item.status === "Failed").reduce((sum, item) => sum + item.amount, 0);
     
-    // Pre-Disbursement calculations (these do not change after processing)
+    // Pre-Disbursement calculations (constant - do not change during/after processing)
     const preTotalAvailable = initialTotalAvailable;
-    const preUnallocated = preTotalAvailable - totalAllocated;
-    const vendorPaymentsToBeDone = data.filter(item => item.remainingBalance > 0 && (item.status === "To Be Paid" || item.status === "Failed")).length;
+    const preInitialTotalAllocated = data.reduce((sum, item) => sum + item.amount, 0); // Use original amount, not remainingBalance
+    const preUnallocated = preTotalAvailable - preInitialTotalAllocated;
+    const preVendorPaymentsToBeDone = data.length; // Total number of payments initially
     
     // Post-Disbursement calculations
     const postTotalDisbursed = hasProcessingOccurred ? totalDisbursed : 0;
@@ -507,7 +507,7 @@ export default function Settlements() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Total Allocated:</span>
-                      <span className="text-white">{formatCurrency(totalAllocated)}</span>
+                      <span className="text-white">{formatCurrency(preInitialTotalAllocated)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Unallocated:</span>
@@ -515,7 +515,7 @@ export default function Settlements() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Payments To Be Done:</span>
-                      <span className="text-white">{vendorPaymentsToBeDone}</span>
+                      <span className="text-white">{preVendorPaymentsToBeDone}</span>
                     </div>
                   </div>
                 </div>
