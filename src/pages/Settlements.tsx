@@ -469,14 +469,27 @@ export default function Settlements() {
 
     // Calculate summary values
     const isLiens = title === "Liens";
-    const totalAvailable = isLiens ? 4000000 : 1000000;
-    const totalAllocated = data.reduce((sum, item) => sum + item.remainingBalance, 0);
-    const unallocated = totalAvailable - totalAllocated;
-    const vendorPaymentsToBeDone = data.filter(item => item.remainingBalance > 0 && (item.status === "To Be Paid" || item.status === "Failed")).length;
+    const initialTotalAvailable = isLiens ? 4000000 : 1000000;
     
-    // Post-disbursement values (to be filled after processing)
-    const totalRemainingAfterDisbursement = isLiens ? 3500000 : 850000;
+    // Check if any processing has occurred (items with "Sent" status)
+    const hasProcessingOccurred = data.some(item => item.status === "Sent");
+    
+    // Calculate current values based on processing state
     const totalDisbursed = data.filter(item => item.status === "Sent").reduce((sum, item) => sum + item.amount, 0);
+    const totalAllocated = data.reduce((sum, item) => sum + item.remainingBalance, 0);
+    
+    // Pre-Disbursement calculations
+    const preTotalAvailable = hasProcessingOccurred 
+      ? initialTotalAvailable - totalDisbursed 
+      : initialTotalAvailable;
+    const preUnallocated = preTotalAvailable - totalAllocated;
+    
+    // Post-Disbursement calculations
+    const postTotalRemaining = hasProcessingOccurred 
+      ? preTotalAvailable // After processing, this equals current Pre-Disbursement Total Available
+      : initialTotalAvailable; // Before processing, equals Pre-Disbursement Total Available
+    
+    const vendorPaymentsToBeDone = data.filter(item => item.remainingBalance > 0 && (item.status === "To Be Paid" || item.status === "Failed")).length;
     const manualAlternateRequired = 0;
     const failedTransactions = data.filter(item => item.status === "Failed").length;
 
@@ -493,7 +506,7 @@ export default function Settlements() {
                   <div className="space-y-1 text-xs">
                     <div className="flex justify-between">
                       <span className="text-gray-400">Total Available:</span>
-                      <span className="text-white">{formatCurrency(totalAvailable)}</span>
+                      <span className="text-white">{formatCurrency(preTotalAvailable)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Total Allocated:</span>
@@ -501,7 +514,7 @@ export default function Settlements() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Unallocated:</span>
-                      <span className="text-white">{formatCurrency(unallocated)}</span>
+                      <span className="text-white">{formatCurrency(preUnallocated)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Payments To Be Done:</span>
@@ -516,7 +529,7 @@ export default function Settlements() {
                   <div className="space-y-1 text-xs">
                     <div className="flex justify-between">
                       <span className="text-gray-400">Total Remaining:</span>
-                      <span className="text-white">{formatCurrency(totalRemainingAfterDisbursement)}</span>
+                      <span className="text-white">{formatCurrency(postTotalRemaining)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Total Disbursed:</span>
