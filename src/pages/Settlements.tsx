@@ -783,6 +783,117 @@ export default function Settlements() {
                 </CardHeader>
               </Card>
 
+              {/* List Content - Grouped Summary */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                {/* Liens Group */}
+                <Card className="bg-gray-800 border-gray-700">
+                  <CardHeader>
+                    <CardTitle className="text-lg text-white">Liens</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {/* Pre-Disbursement */}
+                    <div>
+                      <h4 className="font-semibold text-gray-300 mb-3">Pre-Disbursement</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-400">Total Available</span>
+                          <span className="text-sm text-white">{formatCurrency(4000000)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-400">Total Allocated (Platform)</span>
+                          <span className="text-sm text-white">{formatCurrency(paymentsData.liens.reduce((sum, item) => sum + item.remainingBalance, 0))}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-400">Unallocated</span>
+                          <span className="text-sm text-white">{formatCurrency(4000000 - paymentsData.liens.reduce((sum, item) => sum + item.remainingBalance, 0))}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-400">Vendor Payments To Be Done</span>
+                          <span className="text-sm text-white">{paymentsData.liens.filter(item => item.remainingBalance > 0 && (item.status === "To Be Paid" || item.status === "Failed")).length}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Post-Disbursement */}
+                    <div>
+                      <h4 className="font-semibold text-gray-300 mb-3">Post-Disbursement</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-400">Total Remaining After Disbursement</span>
+                          <span className="text-sm text-white">{formatCurrency(3500000)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-400">Total Disbursed</span>
+                          <span className="text-sm text-white">{formatCurrency(paymentsData.liens.filter(item => item.status === "Sent").reduce((sum, item) => sum + item.amount, 0))}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-400">Manual/Alternate Required</span>
+                          <span className="text-sm text-white">{formatCurrency(0)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-400">Failed Transactions</span>
+                          <span className="text-sm text-white">{paymentsData.liens.filter(item => item.status === "Failed").length}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Expenses Group */}
+                <Card className="bg-gray-800 border-gray-700">
+                  <CardHeader>
+                    <CardTitle className="text-lg text-white">Expenses</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {/* Pre-Disbursement */}
+                    <div>
+                      <h4 className="font-semibold text-gray-300 mb-3">Pre-Disbursement</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-400">Total Available</span>
+                          <span className="text-sm text-white">{formatCurrency(1000000)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-400">Total Allocated (Platform)</span>
+                          <span className="text-sm text-white">{formatCurrency(paymentsData.expenses.reduce((sum, item) => sum + item.remainingBalance, 0))}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-400">Unallocated</span>
+                          <span className="text-sm text-white">{formatCurrency(1000000 - paymentsData.expenses.reduce((sum, item) => sum + item.remainingBalance, 0))}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-400">Vendor Payments To Be Done</span>
+                          <span className="text-sm text-white">{paymentsData.expenses.filter(item => item.remainingBalance > 0 && (item.status === "To Be Paid" || item.status === "Failed")).length}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Post-Disbursement */}
+                    <div>
+                      <h4 className="font-semibold text-gray-300 mb-3">Post-Disbursement</h4>
+                      <div className="space-y-2">
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-400">Total Remaining After Disbursement</span>
+                          <span className="text-sm text-white">{formatCurrency(900000)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-400">Total Disbursed</span>
+                          <span className="text-sm text-white">{formatCurrency(paymentsData.expenses.filter(item => item.status === "Sent").reduce((sum, item) => sum + item.amount, 0))}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-400">Manual/Alternate Required</span>
+                          <span className="text-sm text-white">{formatCurrency(0)}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="text-sm text-gray-400">Failed Transactions</span>
+                          <span className="text-sm text-white">{paymentsData.expenses.filter(item => item.status === "Failed").length}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+
               {/* Batch Error Banner */}
               {showBatchError && (
                 <Alert className="border-red-600 bg-red-600/10">
