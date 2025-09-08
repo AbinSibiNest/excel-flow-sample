@@ -590,7 +590,7 @@ export default function Settlements() {
                       </TableCell>
                       <TableCell className="font-medium">{item.vendor}</TableCell>
                       <TableCell>{item.lineItem}</TableCell>
-                      <TableCell>{formatCurrency(item.remainingBalance)}</TableCell>
+                      <TableCell>{formatCurrency(item.amount)}</TableCell>
                       <TableCell>
                         <div className="space-y-1">
                           <Select
@@ -949,7 +949,7 @@ export default function Settlements() {
                       {getSelectedItems().map(item => (
                         <div key={item.id} className="flex justify-between text-sm">
                           <span className="text-gray-300">{item.vendor} - {item.lineItem}</span>
-                          <span className="text-white">{formatCurrency(item.remainingBalance)}</span>
+                          <span className="text-white">{formatCurrency(item.amount)}</span>
                         </div>
                       ))}
                     </div>
