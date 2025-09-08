@@ -494,7 +494,7 @@ export default function Settlements() {
                   </TableHead>
                   <TableHead>Vendor</TableHead>
                   <TableHead>Line Item</TableHead>
-                  <TableHead>Amount (Remaining)</TableHead>
+                  <TableHead>Amount</TableHead>
                   <TableHead>Preferred Method</TableHead>
                   <TableHead>Payee Account</TableHead>
                   <TableHead>Status</TableHead>

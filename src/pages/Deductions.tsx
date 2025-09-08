@@ -128,6 +128,7 @@ export default function Deductions() {
                 <SelectContent>
                   <SelectItem value="advance">Advance</SelectItem>
                   <SelectItem value="lien">Lien</SelectItem>
+                  <SelectItem value="serviceProvider">Service Provider</SelectItem>
                 </SelectContent>
               </Select>
             </div>
