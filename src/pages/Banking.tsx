@@ -674,8 +674,7 @@ export default function Banking() {
                                <SelectValue placeholder="Select vendor type" />
                              </SelectTrigger>
                              <SelectContent className="bg-popover border-border">
-                               <SelectItem value="expense-reimbursement">Expense Reimbursement</SelectItem>
-                               <SelectItem value="lien-resolution">Lien Resolution</SelectItem>
+                               <SelectItem value="lien-resolution">Lien Holder</SelectItem>
                                <SelectItem value="service-provider">Service Provider</SelectItem>
                              </SelectContent>
                            </Select>
