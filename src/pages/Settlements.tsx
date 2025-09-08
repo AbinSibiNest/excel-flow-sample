@@ -47,7 +47,7 @@ export default function Settlements() {
         id: 2,
         vendor: "Legal Services Corp",
         lineItem: "Attorney fees - settlement negotiation",
-        amount: 8500,
+        amount: 9000,
         preferredMethod: "Check",
         accountHint: "New York, NY 10001",
         status: "To Be Paid",
