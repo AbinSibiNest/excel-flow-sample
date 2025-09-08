@@ -102,12 +102,12 @@ export default function Settlements() {
         id: 6,
         vendor: "Pharmacy Solutions",
         lineItem: "Prescription medications",
-        amount: 850,
+        amount: 900,
         preferredMethod: "Check",
         accountHint: "Boston, MA 02115",
         status: "To Be Paid",
         hasAccountDetails: true,
-        remainingBalance: 850
+        remainingBalance: 900
       },
       {
         id: 7,
