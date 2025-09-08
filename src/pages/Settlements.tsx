@@ -52,7 +52,7 @@ export default function Settlements() {
         accountHint: "New York, NY 10001",
         status: "To Be Paid",
         hasAccountDetails: true,
-        remainingBalance: 8500
+        remainingBalance: 9000
       },
       {
         id: 11,
