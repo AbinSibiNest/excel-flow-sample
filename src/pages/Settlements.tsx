@@ -469,7 +469,7 @@ export default function Settlements() {
 
     // Calculate summary values
     const isLiens = title === "Liens";
-    const initialTotalAvailable = isLiens ? 1000 : 500;
+    const initialTotalAvailable = isLiens ? 100000 : 50000;
     
     // Check if any processing has occurred (items with "Sent" status)
     const hasProcessingOccurred = data.some(item => item.status === "Sent");
