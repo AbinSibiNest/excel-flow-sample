@@ -10,6 +10,7 @@ import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ChevronLeft, Plus, AlertTriangle, RotateCcw, ExternalLink, RefreshCw, Download, FileText, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
@@ -466,38 +467,99 @@ export default function Settlements() {
     const groupSelected = selectableItems.length > 0 && selectableItems.every(item => selectedItems.has(item.id));
     const someSelected = selectableItems.some(item => selectedItems.has(item.id));
 
+    // Calculate summary values
+    const isLiens = title === "Liens";
+    const totalAvailable = isLiens ? 4000000 : 1000000;
+    const totalAllocated = data.reduce((sum, item) => sum + item.remainingBalance, 0);
+    const unallocated = totalAvailable - totalAllocated;
+    const vendorPaymentsToBeDone = data.filter(item => item.remainingBalance > 0 && (item.status === "To Be Paid" || item.status === "Failed")).length;
+    
+    // Post-disbursement values (to be filled after processing)
+    const totalRemainingAfterDisbursement = isLiens ? 3500000 : 850000;
+    const totalDisbursed = data.filter(item => item.status === "Sent").reduce((sum, item) => sum + item.amount, 0);
+    const manualAlternateRequired = 0;
+    const failedTransactions = data.filter(item => item.status === "Failed").length;
+
     return (
-      <Card className="mb-6 bg-gray-800 border-gray-700">
-        <CardHeader>
-          <div className="flex flex-col gap-3">
-            <CardTitle className="text-lg">{title}</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          {data.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
-              <p>No {title.toLowerCase()} available for payment.</p>
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-40">
-                    <div className="flex items-center gap-2 whitespace-nowrap">
-                      <Checkbox
-                        checked={groupSelected}
-                        onCheckedChange={(checked) => handleGroupSelect(data, checked as boolean)}
-                        className={someSelected && !groupSelected ? "data-[state=checked]:bg-primary/50" : ""}
-                      />
-                      <Label className="text-sm">Select all {title.toLowerCase()}</Label>
+      <Accordion type="single" collapsible defaultValue={`${title.toLowerCase()}-table`} className="mb-6">
+        <AccordionItem value={`${title.toLowerCase()}-table`} className="bg-gray-800 border-gray-700 rounded-lg border">
+          <AccordionTrigger className="px-6 py-4 hover:no-underline">
+            <div className="flex items-center justify-between w-full">
+              <CardTitle className="text-lg text-white">{title}</CardTitle>
+              <div className="flex gap-6 mr-4">
+                {/* Pre-Disbursement Box */}
+                <div className="bg-gray-700 rounded-lg p-4 min-w-[200px]">
+                  <h4 className="font-semibold text-blue-400 mb-2 text-sm">Pre-Disbursement</h4>
+                  <div className="space-y-1 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Total Available:</span>
+                      <span className="text-white">{formatCurrency(totalAvailable)}</span>
                     </div>
-                  </TableHead>
-                  <TableHead>Vendor</TableHead>
-                  <TableHead>Line Item</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Preferred Method</TableHead>
-                  <TableHead>Payee Account</TableHead>
-                  <TableHead>Status</TableHead>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Total Allocated:</span>
+                      <span className="text-white">{formatCurrency(totalAllocated)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Unallocated:</span>
+                      <span className="text-white">{formatCurrency(unallocated)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Payments To Be Done:</span>
+                      <span className="text-white">{vendorPaymentsToBeDone}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Post-Disbursement Box */}
+                <div className="bg-gray-700 rounded-lg p-4 min-w-[200px]">
+                  <h4 className="font-semibold text-green-400 mb-2 text-sm">Post-Disbursement</h4>
+                  <div className="space-y-1 text-xs">
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Total Remaining:</span>
+                      <span className="text-white">{formatCurrency(totalRemainingAfterDisbursement)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Total Disbursed:</span>
+                      <span className="text-white">{formatCurrency(totalDisbursed)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Manual/Alternate:</span>
+                      <span className="text-white">{formatCurrency(manualAlternateRequired)}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Failed Transactions:</span>
+                      <span className="text-white">{failedTransactions}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </AccordionTrigger>
+          <AccordionContent className="px-6 pb-6">
+            {data.length === 0 ? (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>No {title.toLowerCase()} available for payment.</p>
+              </div>
+            ) : (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-40">
+                      <div className="flex items-center gap-2 whitespace-nowrap">
+                        <Checkbox
+                          checked={groupSelected}
+                          onCheckedChange={(checked) => handleGroupSelect(data, checked as boolean)}
+                          className={someSelected && !groupSelected ? "data-[state=checked]:bg-primary/50" : ""}
+                        />
+                        <Label className="text-sm">Select all {title.toLowerCase()}</Label>
+                      </div>
+                    </TableHead>
+                    <TableHead>Vendor</TableHead>
+                    <TableHead>Line Item</TableHead>
+                    <TableHead>Amount</TableHead>
+                    <TableHead>Preferred Method</TableHead>
+                    <TableHead>Payee Account</TableHead>
+                    <TableHead>Status</TableHead>
                   <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -566,14 +628,15 @@ export default function Settlements() {
                        </TableCell>
                     </TableRow>
                   );
-                })}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
-    );
-  };
+                 })}
+               </TableBody>
+             </Table>
+           )}
+         </AccordionContent>
+       </AccordionItem>
+     </Accordion>
+     );
+   };
 
   return (
     <div className="min-h-screen bg-[#1a1f26] text-gray-100">
@@ -783,115 +846,10 @@ export default function Settlements() {
                 </CardHeader>
               </Card>
 
-              {/* List Content - Grouped Summary */}
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-                {/* Liens Group */}
-                <Card className="bg-gray-800 border-gray-700">
-                  <CardHeader>
-                    <CardTitle className="text-lg text-white">Liens</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    {/* Pre-Disbursement */}
-                    <div>
-                      <h4 className="font-semibold text-gray-300 mb-3">Pre-Disbursement</h4>
-                      <div className="space-y-2">
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-400">Total Available</span>
-                          <span className="text-sm text-white">{formatCurrency(4000000)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-400">Total Allocated (Platform)</span>
-                          <span className="text-sm text-white">{formatCurrency(paymentsData.liens.reduce((sum, item) => sum + item.remainingBalance, 0))}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-400">Unallocated</span>
-                          <span className="text-sm text-white">{formatCurrency(4000000 - paymentsData.liens.reduce((sum, item) => sum + item.remainingBalance, 0))}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-400">Vendor Payments To Be Done</span>
-                          <span className="text-sm text-white">{paymentsData.liens.filter(item => item.remainingBalance > 0 && (item.status === "To Be Paid" || item.status === "Failed")).length}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Post-Disbursement */}
-                    <div>
-                      <h4 className="font-semibold text-gray-300 mb-3">Post-Disbursement</h4>
-                      <div className="space-y-2">
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-400">Total Remaining After Disbursement</span>
-                          <span className="text-sm text-white">{formatCurrency(3500000)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-400">Total Disbursed</span>
-                          <span className="text-sm text-white">{formatCurrency(paymentsData.liens.filter(item => item.status === "Sent").reduce((sum, item) => sum + item.amount, 0))}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-400">Manual/Alternate Required</span>
-                          <span className="text-sm text-white">{formatCurrency(0)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-400">Failed Transactions</span>
-                          <span className="text-sm text-white">{paymentsData.liens.filter(item => item.status === "Failed").length}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                {/* Expenses Group */}
-                <Card className="bg-gray-800 border-gray-700">
-                  <CardHeader>
-                    <CardTitle className="text-lg text-white">Expenses</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-6">
-                    {/* Pre-Disbursement */}
-                    <div>
-                      <h4 className="font-semibold text-gray-300 mb-3">Pre-Disbursement</h4>
-                      <div className="space-y-2">
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-400">Total Available</span>
-                          <span className="text-sm text-white">{formatCurrency(1000000)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-400">Total Allocated (Platform)</span>
-                          <span className="text-sm text-white">{formatCurrency(paymentsData.expenses.reduce((sum, item) => sum + item.remainingBalance, 0))}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-400">Unallocated</span>
-                          <span className="text-sm text-white">{formatCurrency(1000000 - paymentsData.expenses.reduce((sum, item) => sum + item.remainingBalance, 0))}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-400">Vendor Payments To Be Done</span>
-                          <span className="text-sm text-white">{paymentsData.expenses.filter(item => item.remainingBalance > 0 && (item.status === "To Be Paid" || item.status === "Failed")).length}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Post-Disbursement */}
-                    <div>
-                      <h4 className="font-semibold text-gray-300 mb-3">Post-Disbursement</h4>
-                      <div className="space-y-2">
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-400">Total Remaining After Disbursement</span>
-                          <span className="text-sm text-white">{formatCurrency(900000)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-400">Total Disbursed</span>
-                          <span className="text-sm text-white">{formatCurrency(paymentsData.expenses.filter(item => item.status === "Sent").reduce((sum, item) => sum + item.amount, 0))}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-400">Manual/Alternate Required</span>
-                          <span className="text-sm text-white">{formatCurrency(0)}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="text-sm text-gray-400">Failed Transactions</span>
-                          <span className="text-sm text-white">{paymentsData.expenses.filter(item => item.status === "Failed").length}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+              {/* Payment Tables */}
+              <div className="space-y-6">
+                <PaymentTable data={paymentsData.liens} title="Liens" />
+                <PaymentTable data={paymentsData.expenses} title="Expenses" />
               </div>
 
               {/* Batch Error Banner */}
@@ -934,34 +892,6 @@ export default function Settlements() {
                 </Card>
               )}
 
-              {(() => {
-                const filteredData = getFilteredData();
-                const liens = filteredData.filter(item => paymentsData.liens.includes(item));
-                const expenses = filteredData.filter(item => paymentsData.expenses.includes(item));
-                
-                return (
-                  <>
-                    {liens.length > 0 && <PaymentTable data={liens} title="Liens" />}
-                    {expenses.length > 0 && <PaymentTable data={expenses} title="Expenses" />}
-                    {filteredData.length === 0 && (
-                      <div className="text-center py-12">
-                        <div className="mx-auto w-16 h-16 bg-gray-800 rounded-full flex items-center justify-center mb-4">
-                          <FileText className="h-8 w-8 text-gray-500" />
-                        </div>
-                        <h3 className="text-lg font-medium text-white mb-2">
-                          No items in {activeFilter.replace("-", " ")} category
-                        </h3>
-                        <p className="text-gray-400">
-                          {activeFilter === "to-be-paid" && "All payable items have been processed."}
-                          {activeFilter === "processing" && "No items are currently being processed."}
-                          {activeFilter === "completed" && "No payments have been completed yet."}
-                          {activeFilter === "needs-setup" && "All items have proper vendor setup."}
-                        </p>
-                      </div>
-                    )}
-                  </>
-                );
-              })()}
 
               {/* Failed Items Retry */}
               {[...paymentsData.liens, ...paymentsData.expenses].some(item => item.status === "Failed") && (
