@@ -550,30 +550,20 @@ export default function Settlements() {
                        <TableCell>
                          <Badge variant={getStatusVariant(item.status)}>{item.status}</Badge>
                        </TableCell>
-                      <TableCell>
-                        <div className="flex items-center gap-2">
-                          {item.status === "Failed" && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleRetryFailed(item.id)}
-                            >
-                              <RotateCcw className="h-3 w-3 mr-1" />
-                              Retry
-                            </Button>
-                          )}
-                          {item.status === "Processing" && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleRefresh(item.id)}
-                            >
-                              <RefreshCw className="h-3 w-3 mr-1" />
-                              Refresh
-                            </Button>
-                          )}
-                        </div>
-                      </TableCell>
+                       <TableCell>
+                         <div className="flex items-center gap-2">
+                           {item.status === "Failed" && (
+                             <Button
+                               variant="outline"
+                               size="sm"
+                               onClick={() => handleRetryFailed(item.id)}
+                             >
+                               <RotateCcw className="h-3 w-3 mr-1" />
+                               Retry
+                             </Button>
+                           )}
+                         </div>
+                       </TableCell>
                     </TableRow>
                   );
                 })}
@@ -750,16 +740,45 @@ export default function Settlements() {
                           </Button>
                         </div>
                       )}
-                    </div>
-                    {selectedItems.size > 0 && (
-                      <Button
-                        onClick={handleReleasePayments}
-                        disabled={selectedItems.size === 0 || hasValidationErrors()}
-                        className="bg-blue-600 hover:bg-blue-700 text-white"
-                      >
-                        Release Payments ({selectedItems.size})
-                      </Button>
-                    )}
+                     </div>
+                     <div className="flex items-center gap-2">
+                       <Button
+                         variant="outline"
+                         size="sm"
+                         onClick={() => {
+                           const allItems = [...paymentsData.liens, ...paymentsData.expenses];
+                           const processingItems = allItems.filter(item => item.status === "Processing");
+                           processingItems.forEach(item => handleRefresh(item.id));
+                         }}
+                         className="text-gray-300 border-gray-600 hover:bg-gray-700"
+                       >
+                         <RefreshCw className="h-4 w-4 mr-2" />
+                         Refresh All
+                       </Button>
+                       <Button
+                         variant="outline"
+                         size="sm"
+                         onClick={() => {
+                           // Export based on current filter
+                           const filteredData = getFilteredData();
+                           console.log('Exporting filtered data:', filteredData);
+                           // Add actual export logic here
+                         }}
+                         className="text-gray-300 border-gray-600 hover:bg-gray-700"
+                       >
+                         <Download className="h-4 w-4 mr-2" />
+                         Export
+                       </Button>
+                       {selectedItems.size > 0 && (
+                         <Button
+                           onClick={handleReleasePayments}
+                           disabled={selectedItems.size === 0 || hasValidationErrors()}
+                           className="bg-blue-600 hover:bg-blue-700 text-white"
+                         >
+                           Release Payments ({selectedItems.size})
+                         </Button>
+                       )}
+                     </div>
                   </div>
                 </CardHeader>
               </Card>
@@ -811,14 +830,6 @@ export default function Settlements() {
                 
                 return (
                   <>
-                    {activeFilter === "completed" && filteredData.length > 0 && (
-                      <div className="flex justify-end mb-4">
-                        <Button variant="outline" className="text-gray-300 border-gray-600 hover:bg-gray-700">
-                          <Download className="h-4 w-4 mr-2" />
-                          Export Completed Payments
-                        </Button>
-                      </div>
-                    )}
                     {liens.length > 0 && <PaymentTable data={liens} title="Liens" />}
                     {expenses.length > 0 && <PaymentTable data={expenses} title="Expenses" />}
                     {filteredData.length === 0 && (
