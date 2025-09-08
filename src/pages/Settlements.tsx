@@ -474,24 +474,21 @@ export default function Settlements() {
     // Check if any processing has occurred (items with "Sent" status)
     const hasProcessingOccurred = data.some(item => item.status === "Sent");
     
-    // Calculate current values based on processing state
+    // Calculate values
     const totalDisbursed = data.filter(item => item.status === "Sent").reduce((sum, item) => sum + item.amount, 0);
     const totalAllocated = data.reduce((sum, item) => sum + item.remainingBalance, 0);
+    const failedTransactions = data.filter(item => item.status === "Failed").length;
+    const failedTransactionAmount = data.filter(item => item.status === "Failed").reduce((sum, item) => sum + item.amount, 0);
     
-    // Pre-Disbursement calculations
-    const preTotalAvailable = hasProcessingOccurred 
-      ? initialTotalAvailable - totalDisbursed 
-      : initialTotalAvailable;
+    // Pre-Disbursement calculations (these do not change after processing)
+    const preTotalAvailable = initialTotalAvailable;
     const preUnallocated = preTotalAvailable - totalAllocated;
+    const vendorPaymentsToBeDone = data.filter(item => item.remainingBalance > 0 && (item.status === "To Be Paid" || item.status === "Failed")).length;
     
     // Post-Disbursement calculations
-    const postTotalRemaining = hasProcessingOccurred 
-      ? preTotalAvailable // After processing, this equals current Pre-Disbursement Total Available
-      : initialTotalAvailable; // Before processing, equals Pre-Disbursement Total Available
-    
-    const vendorPaymentsToBeDone = data.filter(item => item.remainingBalance > 0 && (item.status === "To Be Paid" || item.status === "Failed")).length;
-    const manualAlternateRequired = 0;
-    const failedTransactions = data.filter(item => item.status === "Failed").length;
+    const postTotalDisbursed = hasProcessingOccurred ? totalDisbursed : 0;
+    const postManualAlternateRequired = hasProcessingOccurred ? failedTransactionAmount : 0;
+    const postTotalRemaining = hasProcessingOccurred ? preUnallocated + failedTransactionAmount : 0;
 
     return (
       <Accordion type="single" collapsible defaultValue={`${title.toLowerCase()}-table`} className="mb-6">
@@ -499,9 +496,9 @@ export default function Settlements() {
           <AccordionTrigger className="px-6 py-4 hover:no-underline">
             <div className="flex items-center justify-between w-full">
               <CardTitle className="text-lg text-white">{title}</CardTitle>
-              <div className="flex gap-6 mr-4">
+              <div className="flex gap-8 mr-4 flex-1 max-w-[800px]">
                 {/* Pre-Disbursement Box */}
-                <div className="bg-gray-700 rounded-lg p-4 min-w-[200px]">
+                <div className="bg-gray-700 rounded-lg p-4 flex-1">
                   <h4 className="font-semibold text-blue-400 mb-2 text-sm">Pre-Disbursement</h4>
                   <div className="space-y-1 text-xs">
                     <div className="flex justify-between">
@@ -524,7 +521,7 @@ export default function Settlements() {
                 </div>
                 
                 {/* Post-Disbursement Box */}
-                <div className="bg-gray-700 rounded-lg p-4 min-w-[200px]">
+                <div className="bg-gray-700 rounded-lg p-4 flex-1">
                   <h4 className="font-semibold text-green-400 mb-2 text-sm">Post-Disbursement</h4>
                   <div className="space-y-1 text-xs">
                     <div className="flex justify-between">
@@ -533,11 +530,11 @@ export default function Settlements() {
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Total Disbursed:</span>
-                      <span className="text-white">{formatCurrency(totalDisbursed)}</span>
+                      <span className="text-white">{formatCurrency(postTotalDisbursed)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Manual/Alternate:</span>
-                      <span className="text-white">{formatCurrency(manualAlternateRequired)}</span>
+                      <span className="text-white">{formatCurrency(postManualAlternateRequired)}</span>
                     </div>
                     <div className="flex justify-between">
                       <span className="text-gray-400">Failed Transactions:</span>
