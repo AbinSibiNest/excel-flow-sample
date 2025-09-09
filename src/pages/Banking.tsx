@@ -313,218 +313,235 @@ export default function Banking() {
               <CardTitle className="text-foreground">System Accounts</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {/* Revenue Recognition */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-foreground">Revenue Recognition</h3>
-                    <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">ACTIVE</span>
-                  </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">Account Number</div>
-                    <div className="text-sm text-foreground">76650000022367</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">Routing Number (ABA)</div>
-                    <div className="text-sm text-foreground">053101561</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">Current Balance</div>
-                    <div className="text-2xl font-bold text-foreground">$880.00</div>
-                  </div>
-                  <Dialog open={isWithdrawDialogOpen} onOpenChange={setIsWithdrawDialogOpen}>
-                    <DialogTrigger asChild>
-                      <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
-                        $ WITHDRAW FUNDS
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent className="max-w-2xl bg-popover border-border">
-                      <DialogHeader>
-                        <DialogTitle className="text-foreground">Withdraw Funds</DialogTitle>
-                      </DialogHeader>
-                      
-                      <div className="space-y-6">
-                        {/* Form Fields */}
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="from" className="text-foreground">From</Label>
-                            <Select value={withdrawData.from} onValueChange={(value) => handleWithdrawChange("from", value)}>
-                              <SelectTrigger className="bg-background border-border text-foreground">
-                                <SelectValue placeholder="Select account" />
-                              </SelectTrigger>
-                              <SelectContent className="bg-popover border-border">
-                                <SelectItem value="revenue-recognition">Revenue Recognition</SelectItem>
-                                <SelectItem value="expense-reimbursement">Expense Reimbursement</SelectItem>
-                                <SelectItem value="lien-resolution">Lien Resolution</SelectItem>
-                                <SelectItem value="case-clearing">Case Clearing</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
+              <Tabs defaultValue="details" className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="details">Details</TabsTrigger>
+                  <TabsTrigger value="status">Status</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="details" className="mt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    {/* Revenue Recognition */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-medium text-foreground">Revenue Recognition</h3>
+                        <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">ACTIVE</span>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Account Number</div>
+                        <div className="text-sm text-foreground">76650000022367</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Routing Number (ABA)</div>
+                        <div className="text-sm text-foreground">053101561</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Current Balance</div>
+                        <div className="text-2xl font-bold text-foreground">$880.00</div>
+                      </div>
+                      <Dialog open={isWithdrawDialogOpen} onOpenChange={setIsWithdrawDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+                            $ WITHDRAW FUNDS
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl bg-popover border-border">
+                          <DialogHeader>
+                            <DialogTitle className="text-foreground">Withdraw Funds</DialogTitle>
+                          </DialogHeader>
+                          
+                          <div className="space-y-6">
+                            {/* Form Fields */}
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="from" className="text-foreground">From</Label>
+                                <Select value={withdrawData.from} onValueChange={(value) => handleWithdrawChange("from", value)}>
+                                  <SelectTrigger className="bg-background border-border text-foreground">
+                                    <SelectValue placeholder="Select account" />
+                                  </SelectTrigger>
+                                  <SelectContent className="bg-popover border-border">
+                                    <SelectItem value="revenue-recognition">Revenue Recognition</SelectItem>
+                                    <SelectItem value="expense-reimbursement">Expense Reimbursement</SelectItem>
+                                    <SelectItem value="lien-resolution">Lien Resolution</SelectItem>
+                                    <SelectItem value="case-clearing">Case Clearing</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
 
-                          <div className="space-y-2">
-                            <Label htmlFor="to" className="text-foreground">To *</Label>
-                            <div className="space-y-2">
-                              <Select value={withdrawData.to} onValueChange={(value) => handleWithdrawChange("to", value)}>
-                                <SelectTrigger className="bg-background border-border text-foreground">
-                                  <SelectValue placeholder="Select recipient" />
-                                </SelectTrigger>
-                                <SelectContent className="bg-popover border-border">
-                                  {unrestrictedAccounts.map((account) => (
-                                     <SelectItem key={account.id} value={account.id.toString()}>
-                                       {getAccountTypeLabel(account.type)} – {account.name} ({getPaymentMethodDisplay(account)})
-                                     </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                              {withdrawData.to && getSelectedAccount() && (
-                                <div className="flex items-center gap-2">
-                                   <Badge variant="secondary" className="text-xs">
-                                     {getAccountTypeLabel(getSelectedAccount()!.type)}
-                                   </Badge>
-                                  <span className="text-xs text-muted-foreground">
-                                    Payment Method: {getPaymentMethodDisplay(getSelectedAccount()!)}
-                                  </span>
+                              <div className="space-y-2">
+                                <Label htmlFor="to" className="text-foreground">To *</Label>
+                                <div className="space-y-2">
+                                  <Select value={withdrawData.to} onValueChange={(value) => handleWithdrawChange("to", value)}>
+                                    <SelectTrigger className="bg-background border-border text-foreground">
+                                      <SelectValue placeholder="Select recipient" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-popover border-border">
+                                      {unrestrictedAccounts.map((account) => (
+                                         <SelectItem key={account.id} value={account.id.toString()}>
+                                           {getAccountTypeLabel(account.type)} – {account.name} ({getPaymentMethodDisplay(account)})
+                                         </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                  {withdrawData.to && getSelectedAccount() && (
+                                    <div className="flex items-center gap-2">
+                                       <Badge variant="secondary" className="text-xs">
+                                         {getAccountTypeLabel(getSelectedAccount()!.type)}
+                                       </Badge>
+                                      <span className="text-xs text-muted-foreground">
+                                        Payment Method: {getPaymentMethodDisplay(getSelectedAccount()!)}
+                                      </span>
+                                    </div>
+                                  )}
                                 </div>
-                              )}
+                              </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="settlement" className="text-foreground">Settlement (Optional)</Label>
+                                <Select value={withdrawData.settlement} onValueChange={(value) => handleWithdrawChange("settlement", value)}>
+                                  <SelectTrigger className="bg-background border-border text-foreground">
+                                    <SelectValue placeholder="Select settlement" />
+                                  </SelectTrigger>
+                                  <SelectContent className="bg-popover border-border">
+                                    {settlements.map((settlement) => (
+                                      <SelectItem key={settlement.id} value={settlement.id}>
+                                        {settlement.name}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+
+                              <div className="space-y-2">
+                                <Label htmlFor="lineItem" className="text-foreground">Line Item (Optional)</Label>
+                                <Select 
+                                  value={withdrawData.lineItem} 
+                                  onValueChange={(value) => handleWithdrawChange("lineItem", value)}
+                                  disabled={!withdrawData.settlement}
+                                >
+                                  <SelectTrigger className="bg-background border-border text-foreground">
+                                    <SelectValue placeholder="Select line item" />
+                                  </SelectTrigger>
+                                  <SelectContent className="bg-popover border-border">
+                                    {withdrawData.settlement && lineItems[withdrawData.settlement as keyof typeof lineItems]?.map((item) => (
+                                      <SelectItem key={item.id} value={item.id}>
+                                        {item.name} (${item.amount.toLocaleString()})
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label htmlFor="amount" className="text-foreground">Amount *</Label>
+                              <Input
+                                id="amount"
+                                type="number"
+                                value={withdrawData.amount}
+                                onChange={(e) => handleWithdrawChange("amount", e.target.value)}
+                                className="bg-background border-border text-foreground"
+                                placeholder="Enter amount"
+                              />
+                            </div>
+
+                            <div className="flex justify-end gap-2">
+                              <Button variant="ghost" onClick={() => setIsWithdrawDialogOpen(false)} className="text-foreground">
+                                CANCEL
+                              </Button>
+                              <Button
+                                disabled={!withdrawData.to || !withdrawData.amount}
+                                className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
+                              >
+                                WITHDRAW
+                              </Button>
                             </div>
                           </div>
-                        </div>
+                        </DialogContent>
+                      </Dialog>
+                    </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="space-y-2">
-                            <Label htmlFor="settlement" className="text-foreground">Settlement (Optional)</Label>
-                            <Select value={withdrawData.settlement} onValueChange={(value) => handleWithdrawChange("settlement", value)}>
-                              <SelectTrigger className="bg-background border-border text-foreground">
-                                <SelectValue placeholder="Select settlement" />
-                              </SelectTrigger>
-                              <SelectContent className="bg-popover border-border">
-                                {settlements.map((settlement) => (
-                                  <SelectItem key={settlement.id} value={settlement.id}>
-                                    {settlement.name}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-
-                          <div className="space-y-2">
-                            <Label htmlFor="lineItem" className="text-foreground">Line Item (Optional)</Label>
-                            <Select 
-                              value={withdrawData.lineItem} 
-                              onValueChange={(value) => handleWithdrawChange("lineItem", value)}
-                              disabled={!withdrawData.settlement}
-                            >
-                              <SelectTrigger className="bg-background border-border text-foreground">
-                                <SelectValue placeholder="Select line item" />
-                              </SelectTrigger>
-                              <SelectContent className="bg-popover border-border">
-                                {withdrawData.settlement && lineItems[withdrawData.settlement as keyof typeof lineItems]?.map((item) => (
-                                  <SelectItem key={item.id} value={item.id}>
-                                    {item.name} (${item.amount.toLocaleString()})
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="amount" className="text-foreground">Amount *</Label>
-                          <Input
-                            id="amount"
-                            type="number"
-                            value={withdrawData.amount}
-                            onChange={(e) => handleWithdrawChange("amount", e.target.value)}
-                            className="bg-background border-border text-foreground"
-                            placeholder="Enter amount"
-                          />
-                        </div>
-
-                        <div className="flex justify-end gap-2">
-                          <Button variant="ghost" onClick={() => setIsWithdrawDialogOpen(false)} className="text-foreground">
-                            CANCEL
-                          </Button>
-                          <Button
-                            disabled={!withdrawData.to || !withdrawData.amount}
-                            className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-                          >
-                            WITHDRAW
-                          </Button>
-                        </div>
+                    {/* Expense Reimbursement */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-medium text-foreground">Expense Reimbursement</h3>
+                        <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">ACTIVE</span>
                       </div>
-                    </DialogContent>
-                  </Dialog>
-                </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Account Number</div>
+                        <div className="text-sm text-foreground">76650000022368</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Routing Number (ABA)</div>
+                        <div className="text-sm text-foreground">053101561</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Current Balance</div>
+                        <div className="text-2xl font-bold text-foreground">$0.00</div>
+                      </div>
+                      <Button size="sm" disabled className="bg-muted text-muted-foreground cursor-not-allowed">
+                        $ WITHDRAW FUNDS
+                      </Button>
+                    </div>
 
-                {/* Expense Reimbursement */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-foreground">Expense Reimbursement</h3>
-                    <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">ACTIVE</span>
-                  </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">Account Number</div>
-                    <div className="text-sm text-foreground">76650000022368</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">Routing Number (ABA)</div>
-                    <div className="text-sm text-foreground">053101561</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">Current Balance</div>
-                    <div className="text-2xl font-bold text-foreground">$0.00</div>
-                  </div>
-                  <Button size="sm" disabled className="bg-muted text-muted-foreground cursor-not-allowed">
-                    $ WITHDRAW FUNDS
-                  </Button>
-                </div>
+                    {/* Lien Resolution */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-medium text-foreground">Lien Resolution</h3>
+                        <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">ACTIVE</span>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Account Number</div>
+                        <div className="text-sm text-foreground">76650000022369</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Routing Number (ABA)</div>
+                        <div className="text-sm text-foreground">053101561</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Current Balance</div>
+                        <div className="text-2xl font-bold text-foreground">$0.00</div>
+                      </div>
+                      <Button size="sm" disabled className="bg-muted text-muted-foreground cursor-not-allowed">
+                        $ WITHDRAW FUNDS
+                      </Button>
+                    </div>
 
-                {/* Lien Resolution */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-foreground">Lien Resolution</h3>
-                    <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">ACTIVE</span>
+                    {/* Case Clearing */}
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-medium text-foreground">Case Clearing</h3>
+                        <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">ACTIVE</span>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Account Number</div>
+                        <div className="text-sm text-foreground">76650000022370</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Routing Number (ABA)</div>
+                        <div className="text-sm text-foreground">053101561</div>
+                      </div>
+                      <div>
+                        <div className="text-xs text-muted-foreground">Current Balance</div>
+                        <div className="text-2xl font-bold text-foreground">$0.00</div>
+                      </div>
+                      <Button size="sm" disabled className="bg-muted text-muted-foreground cursor-not-allowed">
+                        $ WITHDRAW FUNDS
+                      </Button>
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">Account Number</div>
-                    <div className="text-sm text-foreground">76650000022369</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">Routing Number (ABA)</div>
-                    <div className="text-sm text-foreground">053101561</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">Current Balance</div>
-                    <div className="text-2xl font-bold text-foreground">$0.00</div>
-                  </div>
-                  <Button size="sm" disabled className="bg-muted text-muted-foreground cursor-not-allowed">
-                    $ WITHDRAW FUNDS
-                  </Button>
-                </div>
+                </TabsContent>
 
-                {/* Case Clearing */}
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-medium text-foreground">Case Clearing</h3>
-                    <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">ACTIVE</span>
+                <TabsContent value="status" className="mt-6">
+                  <div className="space-y-4">
+                    <div className="text-center text-muted-foreground">
+                      Account status information will be displayed here.
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">Account Number</div>
-                    <div className="text-sm text-foreground">76650000022370</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">Routing Number (ABA)</div>
-                    <div className="text-sm text-foreground">053101561</div>
-                  </div>
-                  <div>
-                    <div className="text-xs text-muted-foreground">Current Balance</div>
-                    <div className="text-2xl font-bold text-foreground">$0.00</div>
-                  </div>
-                  <Button size="sm" disabled className="bg-muted text-muted-foreground cursor-not-allowed">
-                    $ WITHDRAW FUNDS
-                  </Button>
-                </div>
-              </div>
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
         </div>
@@ -1001,6 +1018,77 @@ export default function Banking() {
               </div>
             </div>
           </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Trust Accounts */}
+      <div className="mt-8">
+        <Card className="bg-card">
+          <CardHeader>
+            <CardTitle className="text-foreground">Trust Accounts</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-foreground">Created</TableHead>
+                  <TableHead className="text-foreground">Name</TableHead>
+                  <TableHead className="text-foreground">Type</TableHead>
+                  <TableHead className="text-foreground">Balance</TableHead>
+                  <TableHead className="text-foreground">Account Status</TableHead>
+                  <TableHead className="text-foreground">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="text-foreground">3/12/2025</TableCell>
+                  <TableCell className="text-foreground">Client Trust Account</TableCell>
+                  <TableCell className="text-foreground">Trust</TableCell>
+                  <TableCell className="text-foreground">$25,430.00</TableCell>
+                  <TableCell className="text-foreground">Active</TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm" className="text-xs">
+                        ➜ MORE
+                      </Button>
+                      <Button variant="ghost" size="sm">
+                        <Trash2 className="h-4 w-4" />
+                        DELETE
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+            <div className="flex items-center justify-between mt-4">
+              <Button variant="outline" size="sm" className="text-primary border-primary hover:bg-primary hover:text-primary-foreground">
+                <Plus className="h-4 w-4 mr-2" />
+                ADD TRUST ACCOUNT
+              </Button>
+              
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">Rows per page:</span>
+                <Select defaultValue="20">
+                  <SelectTrigger className="w-16 h-8">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="20">20</SelectItem>
+                    <SelectItem value="50">50</SelectItem>
+                    <SelectItem value="100">100</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center gap-4">
+                <span className="text-sm text-muted-foreground">1-1 of 1</span>
+                <div className="flex gap-1">
+                  <Button variant="outline" size="sm" disabled>←</Button>
+                  <Button variant="outline" size="sm" className="bg-primary text-primary-foreground">1</Button>
+                  <Button variant="outline" size="sm" disabled>→</Button>
+                </div>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </div>
