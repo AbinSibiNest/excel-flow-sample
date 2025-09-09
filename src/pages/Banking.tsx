@@ -948,69 +948,67 @@ export default function Banking() {
                           </div>
                         </div>
 
-                        {/* Check Mailing Address Section */}
-                        <div className="space-y-4">
-                          <div className="flex items-center space-x-2">
-                            <Checkbox 
-                              id="edit-check-checkbox" 
-                              checked={selectedAccount?.checkDefaultMethod || false}
-                              disabled
-                            />
-                            <Label htmlFor="edit-check-checkbox" className="text-muted-foreground font-medium">Check mailing address</Label>
-                            <span className="text-xs text-muted-foreground">Use as default Method</span>
-                          </div>
-                          <div className="ml-6 space-y-4 border-l-2 border-border pl-4">
-                            {(selectedAccount?.checkDefaultMethod || (selectedAccount?.addressLine1 || selectedAccount?.city || selectedAccount?.state || selectedAccount?.zipCode)) && (
-                              <div className="grid grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                  <Label htmlFor="editAddressLine1" className="text-foreground">Address Line 1</Label>
-                                  <Input
-                                    id="editAddressLine1"
-                                    value={selectedAccount?.addressLine1 || ""}
-                                    disabled
-                                    className="bg-muted border-border text-muted-foreground"
-                                  />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label htmlFor="editAddressLine2" className="text-foreground">Address Line 2</Label>
-                                  <Input
-                                    id="editAddressLine2"
-                                    value={selectedAccount?.addressLine2 || ""}
-                                    disabled
-                                    className="bg-muted border-border text-muted-foreground"
-                                  />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label htmlFor="editCity" className="text-foreground">City</Label>
-                                  <Input
-                                    id="editCity"
-                                    value={selectedAccount?.city || ""}
-                                    disabled
-                                    className="bg-muted border-border text-muted-foreground"
-                                  />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label htmlFor="editState" className="text-foreground">State</Label>
-                                  <Input
-                                    id="editState"
-                                    value={selectedAccount?.state || ""}
-                                    disabled
-                                    className="bg-muted border-border text-muted-foreground"
-                                  />
-                                </div>
-                                <div className="space-y-2">
-                                  <Label htmlFor="editZipCode" className="text-foreground">ZIP Code</Label>
-                                  <Input
-                                    id="editZipCode"
-                                    value={selectedAccount?.zipCode || ""}
-                                    disabled
-                                    className="bg-muted border-border text-muted-foreground"
-                                  />
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
+                         {/* Check Mailing Address Section */}
+                         <div className="space-y-4">
+                           <div className="flex items-center space-x-2">
+                             <Checkbox 
+                               id="edit-check-checkbox" 
+                               checked={selectedAccount?.checkDefaultMethod || false}
+                               disabled
+                             />
+                             <Label htmlFor="edit-check-checkbox" className="text-muted-foreground font-medium">Check mailing address</Label>
+                             <span className="text-xs text-muted-foreground">Use as default Method</span>
+                           </div>
+                           <div className="ml-6 space-y-4 border-l-2 border-border pl-4">
+                             <div className="grid grid-cols-2 gap-4">
+                               <div className="space-y-2">
+                                 <Label htmlFor="editAddressLine1" className="text-foreground">Address Line 1</Label>
+                                 <Input
+                                   id="editAddressLine1"
+                                   value={selectedAccount?.addressLine1 || ""}
+                                   disabled
+                                   className="bg-muted border-border text-muted-foreground"
+                                 />
+                               </div>
+                               <div className="space-y-2">
+                                 <Label htmlFor="editAddressLine2" className="text-foreground">Address Line 2</Label>
+                                 <Input
+                                   id="editAddressLine2"
+                                   value={selectedAccount?.addressLine2 || ""}
+                                   disabled
+                                   className="bg-muted border-border text-muted-foreground"
+                                 />
+                               </div>
+                               <div className="space-y-2">
+                                 <Label htmlFor="editCity" className="text-foreground">City</Label>
+                                 <Input
+                                   id="editCity"
+                                   value={selectedAccount?.city || ""}
+                                   disabled
+                                   className="bg-muted border-border text-muted-foreground"
+                                 />
+                               </div>
+                               <div className="space-y-2">
+                                 <Label htmlFor="editState" className="text-foreground">State</Label>
+                                 <Input
+                                   id="editState"
+                                   value={selectedAccount?.state || ""}
+                                   disabled
+                                   className="bg-muted border-border text-muted-foreground"
+                                 />
+                               </div>
+                               <div className="space-y-2">
+                                 <Label htmlFor="editZipCode" className="text-foreground">ZIP Code</Label>
+                                 <Input
+                                   id="editZipCode"
+                                   value={selectedAccount?.zipCode || ""}
+                                   disabled
+                                   className="bg-muted border-border text-muted-foreground"
+                                 />
+                               </div>
+                             </div>
+                           </div>
+                         </div>
                       </div>
                     </div>
                   </div>
