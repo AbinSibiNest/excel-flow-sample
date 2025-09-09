@@ -654,7 +654,7 @@ export default function Banking() {
                    <div className="grid grid-cols-1 gap-4">
                      <div className="grid grid-cols-2 gap-4 items-end">
                        <div className="space-y-2">
-                         <Label htmlFor="accountType" className="text-foreground">Type <span className="text-destructive">*</span></Label>
+                         <Label htmlFor="accountType" className="text-foreground">Payee Type <span className="text-destructive">*</span></Label>
                          <Select value={formData.type} onValueChange={(value) => handleFormChange("type", value)}>
                            <SelectTrigger className="bg-background border-border text-foreground">
                              <SelectValue placeholder="Select type" />

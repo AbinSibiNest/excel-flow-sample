@@ -120,7 +120,7 @@ export default function Deductions() {
             </div>
 
             <div>
-              <Label htmlFor="type">Payee Type *</Label>
+              <Label htmlFor="type">Type *</Label>
               <Select onValueChange={(value) => handleInputChange("type", value)}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select type" />
