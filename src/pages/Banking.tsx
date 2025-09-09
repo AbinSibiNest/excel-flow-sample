@@ -40,8 +40,8 @@ export default function Banking() {
   const [isWithdrawDialogOpen, setIsWithdrawDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<any>(null);
-  const [achEnabled, setAchEnabled] = useState(true);
-  const [checkEnabled, setCheckEnabled] = useState(false);
+  const [achDefaultMethod, setAchDefaultMethod] = useState(true);
+  const [checkDefaultMethod, setCheckDefaultMethod] = useState(false);
   const [unrestrictedAccounts, setUnrestrictedAccounts] = useState(() => {
     const saved = localStorage.getItem('unrestrictedAccounts');
     return saved ? JSON.parse(saved) : [
@@ -56,8 +56,8 @@ export default function Banking() {
         accountStatus: "Active",
         verificationStatus: "Verified",
         vendorType: "expense-reimbursement",
-        achEnabled: true,
-        checkEnabled: false,
+        achDefaultMethod: true,
+        checkDefaultMethod: false,
         addressLine1: "123 Main Street",
         addressLine2: "Suite 100",
         city: "New York",
@@ -74,8 +74,8 @@ export default function Banking() {
     accountNumber: "",
     routingNumber: "",
     vendorType: "",
-    achEnabled: true,
-    checkEnabled: false,
+    achDefaultMethod: true,
+    checkDefaultMethod: false,
     addressLine1: "",
     addressLine2: "",
     city: "",
@@ -123,8 +123,8 @@ export default function Banking() {
         accountNumber: "",
         routingNumber: "",
         vendorType: "",
-        achEnabled: true,
-        checkEnabled: false,
+        achDefaultMethod: true,
+        checkDefaultMethod: false,
         addressLine1: "",
         addressLine2: "",
         city: "",
@@ -132,8 +132,8 @@ export default function Banking() {
         zipCode: ""
       });
       // Reset checkboxes to default
-      setAchEnabled(true);
-      setCheckEnabled(false);
+      setAchDefaultMethod(true);
+      setCheckDefaultMethod(false);
     }
   }, [isUnrestrictedDialogOpen]);
 
@@ -186,8 +186,8 @@ export default function Banking() {
 
   const getPaymentMethodDisplay = (account: any) => {
     const methods = [];
-    if (account.achEnabled) methods.push("ACH");
-    if (account.checkEnabled) methods.push("Check");
+    if (account.achDefaultMethod) methods.push("ACH");
+    if (account.checkDefaultMethod) methods.push("Check");
     return methods.join(", ") || "None";
   };
 
@@ -201,14 +201,14 @@ export default function Banking() {
     // Basic required fields
     if (!name || !type) return false;
     
-    // At least one payment method must be enabled
-    if (!achEnabled && !checkEnabled) return false;
+    // At least one payment method must be selected as default
+    if (!achDefaultMethod && !checkDefaultMethod) return false;
     
-    // ACH validation
-    if (achEnabled && (!achAccountType || !accountNumber || !routingNumber)) return false;
+    // ACH validation when selected as default
+    if (achDefaultMethod && (!achAccountType || !accountNumber || !routingNumber)) return false;
     
-    // Check validation
-    if (checkEnabled && (!addressLine1 || !city || !state || !zipCode)) return false;
+    // Check validation when selected as default
+    if (checkDefaultMethod && (!addressLine1 || !city || !state || !zipCode)) return false;
     
     // Vendor type required if account type is vendor
     if (type === "vendor" && !vendorType) return false;
@@ -229,8 +229,8 @@ export default function Banking() {
         accountStatus: "Pending",
         verificationStatus: "Pending",
         vendorType: formData.vendorType,
-        achEnabled: achEnabled,
-        checkEnabled: checkEnabled,
+        achDefaultMethod: achDefaultMethod,
+        checkDefaultMethod: checkDefaultMethod,
         addressLine1: formData.addressLine1,
         addressLine2: formData.addressLine2,
         city: formData.city,
@@ -249,8 +249,8 @@ export default function Banking() {
         accountNumber: "",
         routingNumber: "",
         vendorType: "",
-        achEnabled: true,
-        checkEnabled: false,
+        achDefaultMethod: true,
+        checkDefaultMethod: false,
         addressLine1: "",
         addressLine2: "",
         city: "",
@@ -436,18 +436,15 @@ export default function Banking() {
                             value={withdrawData.amount}
                             onChange={(e) => handleWithdrawChange("amount", e.target.value)}
                             className="bg-background border-border text-foreground"
-                            placeholder="Enter amount"
+                            placeholder="0.00"
                           />
                         </div>
 
-                        <div className="flex justify-end gap-2">
+                        <div className="flex justify-end gap-2 pt-4">
                           <Button variant="ghost" onClick={() => setIsWithdrawDialogOpen(false)} className="text-foreground">
                             CANCEL
                           </Button>
-                          <Button
-                            disabled={!withdrawData.to || !withdrawData.amount}
-                            className="bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50"
-                          >
+                          <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
                             WITHDRAW
                           </Button>
                         </div>
@@ -654,53 +651,55 @@ export default function Banking() {
                             <div className="flex items-center space-x-2">
                               <Checkbox 
                                 id="ach-checkbox" 
-                                checked={achEnabled}
-                                onCheckedChange={(checked) => setAchEnabled(checked as boolean)}
+                                checked={achDefaultMethod}
+                                onCheckedChange={(checked) => {
+                                  setAchDefaultMethod(checked as boolean);
+                                  if (checked) setCheckDefaultMethod(false);
+                                }}
                               />
                               <Label htmlFor="ach-checkbox" className="text-foreground font-medium">ACH</Label>
+                              <span className="text-xs text-muted-foreground">Use as default Method</span>
                             </div>
-                            {achEnabled && (
-                              <div className="ml-6 space-y-4 border-l-2 border-border pl-4">
+                            <div className="ml-6 space-y-4 border-l-2 border-border pl-4">
+                              <div className="space-y-2">
+                                <Label htmlFor="achAccountType" className="text-foreground">
+                                  Account Type {achDefaultMethod && <span className="text-destructive">*</span>}
+                                </Label>
+                                <Select value={formData.achAccountType} onValueChange={(value) => handleFormChange("achAccountType", value)}>
+                                  <SelectTrigger className="bg-background border-border text-foreground">
+                                    <SelectValue placeholder="Select account type" />
+                                  </SelectTrigger>
+                                  <SelectContent className="bg-popover border-border">
+                                    <SelectItem value="savings">Savings</SelectItem>
+                                    <SelectItem value="checking">Checking</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-2">
-                                  <Label htmlFor="achAccountType" className="text-foreground">
-                                    Account Type <span className="text-destructive">*</span>
+                                  <Label htmlFor="accountNumber" className="text-foreground">
+                                    Account Number {achDefaultMethod && <span className="text-destructive">*</span>}
                                   </Label>
-                                  <Select value={formData.achAccountType} onValueChange={(value) => handleFormChange("achAccountType", value)}>
-                                    <SelectTrigger className="bg-background border-border text-foreground">
-                                      <SelectValue placeholder="Select account type" />
-                                    </SelectTrigger>
-                                    <SelectContent className="bg-popover border-border">
-                                      <SelectItem value="savings">Savings</SelectItem>
-                                      <SelectItem value="checking">Checking</SelectItem>
-                                    </SelectContent>
-                                  </Select>
+                                  <Input
+                                    id="accountNumber"
+                                    value={formData.accountNumber}
+                                    onChange={(e) => handleFormChange("accountNumber", e.target.value)}
+                                    className="bg-background border-border text-foreground"
+                                  />
                                 </div>
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div className="space-y-2">
-                                    <Label htmlFor="accountNumber" className="text-foreground">
-                                      Account Number <span className="text-destructive">*</span>
-                                    </Label>
-                                    <Input
-                                      id="accountNumber"
-                                      value={formData.accountNumber}
-                                      onChange={(e) => handleFormChange("accountNumber", e.target.value)}
-                                      className="bg-background border-border text-foreground"
-                                    />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label htmlFor="routingNumber" className="text-foreground">
-                                      Routing Number <span className="text-destructive">*</span>
-                                    </Label>
-                                    <Input
-                                      id="routingNumber"
-                                      value={formData.routingNumber}
-                                      onChange={(e) => handleFormChange("routingNumber", e.target.value)}
-                                      className="bg-background border-border text-foreground"
-                                    />
-                                  </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="routingNumber" className="text-foreground">
+                                    Routing Number {achDefaultMethod && <span className="text-destructive">*</span>}
+                                  </Label>
+                                  <Input
+                                    id="routingNumber"
+                                    value={formData.routingNumber}
+                                    onChange={(e) => handleFormChange("routingNumber", e.target.value)}
+                                    className="bg-background border-border text-foreground"
+                                  />
                                 </div>
                               </div>
-                            )}
+                            </div>
                           </div>
 
                           {/* Check Mailing Address Section */}
@@ -708,70 +707,72 @@ export default function Banking() {
                             <div className="flex items-center space-x-2">
                               <Checkbox 
                                 id="check-checkbox" 
-                                checked={checkEnabled}
-                                onCheckedChange={(checked) => setCheckEnabled(checked as boolean)}
+                                checked={checkDefaultMethod}
+                                onCheckedChange={(checked) => {
+                                  setCheckDefaultMethod(checked as boolean);
+                                  if (checked) setAchDefaultMethod(false);
+                                }}
                               />
                               <Label htmlFor="check-checkbox" className="text-foreground font-medium">Check mailing address</Label>
+                              <span className="text-xs text-muted-foreground">Use as default Method</span>
                             </div>
-                            {checkEnabled && (
-                              <div className="ml-6 space-y-4 border-l-2 border-border pl-4">
-                                <div className="grid grid-cols-2 gap-4">
-                                  <div className="space-y-2">
-                                    <Label htmlFor="addressLine1" className="text-foreground">
-                                      Address Line 1 <span className="text-destructive">*</span>
-                                    </Label>
-                                    <Input
-                                      id="addressLine1"
-                                      value={formData.addressLine1}
-                                      onChange={(e) => handleFormChange("addressLine1", e.target.value)}
-                                      className="bg-background border-border text-foreground"
-                                    />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label htmlFor="addressLine2" className="text-foreground">Address Line 2</Label>
-                                    <Input
-                                      id="addressLine2"
-                                      value={formData.addressLine2}
-                                      onChange={(e) => handleFormChange("addressLine2", e.target.value)}
-                                      className="bg-background border-border text-foreground"
-                                    />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label htmlFor="city" className="text-foreground">
-                                      City <span className="text-destructive">*</span>
-                                    </Label>
-                                    <Input
-                                      id="city"
-                                      value={formData.city}
-                                      onChange={(e) => handleFormChange("city", e.target.value)}
-                                      className="bg-background border-border text-foreground"
-                                    />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label htmlFor="state" className="text-foreground">
-                                      State <span className="text-destructive">*</span>
-                                    </Label>
-                                    <Input
-                                      id="state"
-                                      value={formData.state}
-                                      onChange={(e) => handleFormChange("state", e.target.value)}
-                                      className="bg-background border-border text-foreground"
-                                    />
-                                  </div>
-                                  <div className="space-y-2">
-                                    <Label htmlFor="zipCode" className="text-foreground">
-                                      ZIP Code <span className="text-destructive">*</span>
-                                    </Label>
-                                    <Input
-                                      id="zipCode"
-                                      value={formData.zipCode}
-                                      onChange={(e) => handleFormChange("zipCode", e.target.value)}
-                                      className="bg-background border-border text-foreground"
-                                    />
-                                  </div>
+                            <div className="ml-6 space-y-4 border-l-2 border-border pl-4">
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <Label htmlFor="addressLine1" className="text-foreground">
+                                    Address Line 1 {checkDefaultMethod && <span className="text-destructive">*</span>}
+                                  </Label>
+                                  <Input
+                                    id="addressLine1"
+                                    value={formData.addressLine1}
+                                    onChange={(e) => handleFormChange("addressLine1", e.target.value)}
+                                    className="bg-background border-border text-foreground"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="addressLine2" className="text-foreground">Address Line 2</Label>
+                                  <Input
+                                    id="addressLine2"
+                                    value={formData.addressLine2}
+                                    onChange={(e) => handleFormChange("addressLine2", e.target.value)}
+                                    className="bg-background border-border text-foreground"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="city" className="text-foreground">
+                                    City {checkDefaultMethod && <span className="text-destructive">*</span>}
+                                  </Label>
+                                  <Input
+                                    id="city"
+                                    value={formData.city}
+                                    onChange={(e) => handleFormChange("city", e.target.value)}
+                                    className="bg-background border-border text-foreground"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="state" className="text-foreground">
+                                    State {checkDefaultMethod && <span className="text-destructive">*</span>}
+                                  </Label>
+                                  <Input
+                                    id="state"
+                                    value={formData.state}
+                                    onChange={(e) => handleFormChange("state", e.target.value)}
+                                    className="bg-background border-border text-foreground"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="zipCode" className="text-foreground">
+                                    ZIP Code {checkDefaultMethod && <span className="text-destructive">*</span>}
+                                  </Label>
+                                  <Input
+                                    id="zipCode"
+                                    value={formData.zipCode}
+                                    onChange={(e) => handleFormChange("zipCode", e.target.value)}
+                                    className="bg-background border-border text-foreground"
+                                  />
                                 </div>
                               </div>
-                            )}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -801,7 +802,7 @@ export default function Banking() {
                 </DialogHeader>
                 
                 <div className="space-y-6">
-                  {/* Edit Tab - Same fields as Add dialog but name enabled, rest disabled */}
+                  {/* Name Field */}
                   <div className="space-y-2">
                     <Label htmlFor="editName" className="text-foreground">Name <span className="text-destructive">*</span></Label>
                     <Input
@@ -813,205 +814,206 @@ export default function Banking() {
 
                   <Separator className="bg-border" />
 
-                   <div className="grid grid-cols-1 gap-4">
-                     <div className="grid grid-cols-2 gap-4 items-end">
-                       <div className="space-y-2">
-                         <Label htmlFor="editAccountType" className="text-foreground">Type <span className="text-destructive">*</span></Label>
-                         <Select value={selectedAccount?.type || ""} disabled>
-                           <SelectTrigger className="bg-muted border-border text-muted-foreground">
-                             <SelectValue placeholder="Select type" />
-                           </SelectTrigger>
-                           <SelectContent className="bg-popover border-border">
-                             <SelectItem value="vendor">Vendor</SelectItem>
-                             <SelectItem value="other">Other</SelectItem>
-                           </SelectContent>
-                         </Select>
-                       </div>
-                       
-                       {selectedAccount?.type === "vendor" && (
-                         <div className="space-y-2">
-                           <Label htmlFor="editVendorType" className="text-foreground">Vendor Type <span className="text-destructive">*</span></Label>
-                           <Select value={selectedAccount?.vendorType || ""} disabled>
-                             <SelectTrigger className="bg-muted border-border text-muted-foreground">
-                               <SelectValue placeholder="Select vendor type" />
-                             </SelectTrigger>
-                             <SelectContent className="bg-popover border-border">
-                               <SelectItem value="expense-reimbursement">Expense Reimbursement</SelectItem>
-                               <SelectItem value="lien-resolution">Lien Resolution</SelectItem>
-                               <SelectItem value="service-provider">Service Provider</SelectItem>
-                             </SelectContent>
-                           </Select>
-                         </div>
-                       )}
-                     </div>
-                   </div>
+                  {/* Account Type and Vendor Type */}
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="grid grid-cols-2 gap-4 items-end">
+                      <div className="space-y-2">
+                        <Label htmlFor="editAccountType" className="text-foreground">Type <span className="text-destructive">*</span></Label>
+                        <Select value={selectedAccount?.type || ""} disabled>
+                          <SelectTrigger className="bg-muted border-border text-muted-foreground">
+                            <SelectValue placeholder="Select type" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-popover border-border">
+                            <SelectItem value="vendor">Vendor</SelectItem>
+                            <SelectItem value="other">Other</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      
+                      {selectedAccount?.type === "vendor" && (
+                        <div className="space-y-2">
+                          <Label htmlFor="editVendorType" className="text-foreground">Vendor Type <span className="text-destructive">*</span></Label>
+                          <Select value={selectedAccount?.vendorType || ""} disabled>
+                            <SelectTrigger className="bg-muted border-border text-muted-foreground">
+                              <SelectValue placeholder="Select vendor type" />
+                            </SelectTrigger>
+                            <SelectContent className="bg-popover border-border">
+                              <SelectItem value="expense-reimbursement">Expense Reimbursement</SelectItem>
+                              <SelectItem value="lien-resolution">Lien Resolution</SelectItem>
+                              <SelectItem value="service-provider">Service Provider</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                    </div>
+                  </div>
 
                   <Separator className="bg-border" />
 
-                   {/* Payment Methods - Edit Mode */}
-                   <div className="space-y-4">
-                     <div className="space-y-4">
-                       <Label className="text-foreground">Payment Methods <span className="text-destructive">*</span></Label>
-                       <div className="space-y-6">
-                         {/* ACH Section */}
-                         <div className="space-y-4">
-                           <div className="flex items-center space-x-2">
-                             <Checkbox 
-                               id="edit-ach-checkbox" 
-                               checked={selectedAccount?.achEnabled || false}
-                               disabled
-                             />
-                             <Label htmlFor="edit-ach-checkbox" className="text-muted-foreground font-medium">ACH</Label>
-                           </div>
-                            {selectedAccount?.achEnabled && (
-                              <div className="ml-6 space-y-4 border-l-2 border-border pl-4">
-                                <Tabs defaultValue="details" className="w-full">
-                                  <TabsList className="grid w-full grid-cols-2">
-                                    <TabsTrigger value="details">Details</TabsTrigger>
-                                    <TabsTrigger value="status">Status</TabsTrigger>
-                                  </TabsList>
-                                  <TabsContent value="details" className="space-y-4">
-                                    <div className="space-y-2">
-                                      <Label htmlFor="editAchAccountType" className="text-foreground">Account Type</Label>
-                                      <Select value={selectedAccount?.achAccountType || ""} disabled>
-                                        <SelectTrigger className="bg-muted border-border text-muted-foreground">
-                                          <SelectValue placeholder="Select account type" />
-                                        </SelectTrigger>
-                                        <SelectContent className="bg-popover border-border">
-                                          <SelectItem value="savings">Savings</SelectItem>
-                                          <SelectItem value="checking">Checking</SelectItem>
-                                        </SelectContent>
-                                      </Select>
-                                    </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                      <div className="space-y-2">
-                                        <Label htmlFor="editAccountNumber" className="text-foreground">Account Number</Label>
-                                        <Input
-                                          id="editAccountNumber"
-                                          value={selectedAccount?.accountNumber || ""}
-                                          disabled
-                                          className="bg-muted border-border text-muted-foreground"
-                                        />
-                                      </div>
-                                      <div className="space-y-2">
-                                        <Label htmlFor="editRoutingNumber" className="text-foreground">Routing Number</Label>
-                                        <Input
-                                          id="editRoutingNumber"
-                                          value={selectedAccount?.routingNumber || ""}
-                                          disabled
-                                          className="bg-muted border-border text-muted-foreground"
-                                        />
-                                      </div>
-                                    </div>
-                                  </TabsContent>
-                                  <TabsContent value="status" className="space-y-4">
-                                    <div className="grid grid-cols-2 gap-6">
-                                    <div className="space-y-4">
-                                      <h4 className="font-medium text-foreground">Integration Details</h4>
-                                      <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
-                                        <div className="flex items-center justify-between">
-                                          <span className="text-foreground font-medium">Provisioning</span>
-                                          <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">COMPLETED</span>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    
-                                    <div className="space-y-4">
-                                      <h4 className="font-medium text-foreground">External Account</h4>
-                                      <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
-                                        <div className="flex items-center justify-between">
-                                          <span className="text-muted-foreground">Account Status</span>
-                                          <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">ACTIVE</span>
-                                        </div>
-                                        
-                                        <div className="flex items-center justify-between">
-                                          <span className="text-muted-foreground">EWS Status</span>
-                                          <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">OPEN</span>
-                                        </div>
-                                        
-                                        <div className="space-y-2">
-                                          <div className="text-muted-foreground text-sm">Bank Name:</div>
-                                          <div className="text-foreground">US BANK NA</div>
-                                        </div>
-                                        
-                                        <div className="space-y-2">
-                                          <div className="text-muted-foreground text-sm">Bank Routing Number:</div>
-                                          <div className="text-foreground">{selectedAccount?.routingNumber || "021000021"}</div>
-                                        </div>
+                  {/* Payment Methods - Edit Mode */}
+                  <div className="space-y-4">
+                    <div className="space-y-4">
+                      <Label className="text-foreground">Payment Methods <span className="text-destructive">*</span></Label>
+                      <div className="space-y-6">
+                        {/* ACH Section */}
+                        <div className="space-y-4">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox 
+                              id="edit-ach-checkbox" 
+                              checked={selectedAccount?.achDefaultMethod || false}
+                              disabled
+                            />
+                            <Label htmlFor="edit-ach-checkbox" className="text-muted-foreground font-medium">ACH</Label>
+                            <span className="text-xs text-muted-foreground">Use as default Method</span>
+                          </div>
+                          <div className="ml-6 space-y-4 border-l-2 border-border pl-4">
+                            <Tabs defaultValue="details" className="w-full">
+                              <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="details">Details</TabsTrigger>
+                                <TabsTrigger value="status">Status</TabsTrigger>
+                              </TabsList>
+                              <TabsContent value="details" className="space-y-4">
+                                <div className="space-y-2">
+                                  <Label htmlFor="editAchAccountType" className="text-foreground">Account Type</Label>
+                                  <Select value={selectedAccount?.achAccountType || ""} disabled>
+                                    <SelectTrigger className="bg-muted border-border text-muted-foreground">
+                                      <SelectValue placeholder="Select account type" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-popover border-border">
+                                      <SelectItem value="savings">Savings</SelectItem>
+                                      <SelectItem value="checking">Checking</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div className="space-y-2">
+                                    <Label htmlFor="editAccountNumber" className="text-foreground">Account Number</Label>
+                                    <Input
+                                      id="editAccountNumber"
+                                      value={selectedAccount?.accountNumber || ""}
+                                      disabled
+                                      className="bg-muted border-border text-muted-foreground"
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label htmlFor="editRoutingNumber" className="text-foreground">Routing Number</Label>
+                                    <Input
+                                      id="editRoutingNumber"
+                                      value={selectedAccount?.routingNumber || ""}
+                                      disabled
+                                      className="bg-muted border-border text-muted-foreground"
+                                    />
+                                  </div>
+                                </div>
+                              </TabsContent>
+                              <TabsContent value="status" className="space-y-4">
+                                <div className="grid grid-cols-2 gap-6">
+                                  <div className="space-y-4">
+                                    <h4 className="font-medium text-foreground">Integration Details</h4>
+                                    <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-foreground font-medium">Provisioning</span>
+                                        <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">COMPLETED</span>
                                       </div>
                                     </div>
                                   </div>
-                                  </TabsContent>
-                                </Tabs>
+                                  
+                                  <div className="space-y-4">
+                                    <h4 className="font-medium text-foreground">External Account</h4>
+                                    <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-muted-foreground">Account Status</span>
+                                        <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">ACTIVE</span>
+                                      </div>
+                                      
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-muted-foreground">EWS Status</span>
+                                        <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">OPEN</span>
+                                      </div>
+                                      
+                                      <div className="space-y-2">
+                                        <div className="text-muted-foreground text-sm">Bank Name:</div>
+                                        <div className="text-foreground">US BANK NA</div>
+                                      </div>
+                                      
+                                      <div className="space-y-2">
+                                        <div className="text-muted-foreground text-sm">Bank Routing Number:</div>
+                                        <div className="text-foreground">{selectedAccount?.routingNumber || "021000021"}</div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </TabsContent>
+                            </Tabs>
+                          </div>
+                        </div>
+
+                        {/* Check Mailing Address Section */}
+                        <div className="space-y-4">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox 
+                              id="edit-check-checkbox" 
+                              checked={selectedAccount?.checkDefaultMethod || false}
+                              disabled
+                            />
+                            <Label htmlFor="edit-check-checkbox" className="text-muted-foreground font-medium">Check mailing address</Label>
+                            <span className="text-xs text-muted-foreground">Use as default Method</span>
+                          </div>
+                          <div className="ml-6 space-y-4 border-l-2 border-border pl-4">
+                            {(selectedAccount?.checkDefaultMethod || (selectedAccount?.addressLine1 || selectedAccount?.city || selectedAccount?.state || selectedAccount?.zipCode)) && (
+                              <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                  <Label htmlFor="editAddressLine1" className="text-foreground">Address Line 1</Label>
+                                  <Input
+                                    id="editAddressLine1"
+                                    value={selectedAccount?.addressLine1 || ""}
+                                    disabled
+                                    className="bg-muted border-border text-muted-foreground"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="editAddressLine2" className="text-foreground">Address Line 2</Label>
+                                  <Input
+                                    id="editAddressLine2"
+                                    value={selectedAccount?.addressLine2 || ""}
+                                    disabled
+                                    className="bg-muted border-border text-muted-foreground"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="editCity" className="text-foreground">City</Label>
+                                  <Input
+                                    id="editCity"
+                                    value={selectedAccount?.city || ""}
+                                    disabled
+                                    className="bg-muted border-border text-muted-foreground"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="editState" className="text-foreground">State</Label>
+                                  <Input
+                                    id="editState"
+                                    value={selectedAccount?.state || ""}
+                                    disabled
+                                    className="bg-muted border-border text-muted-foreground"
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <Label htmlFor="editZipCode" className="text-foreground">ZIP Code</Label>
+                                  <Input
+                                    id="editZipCode"
+                                    value={selectedAccount?.zipCode || ""}
+                                    disabled
+                                    className="bg-muted border-border text-muted-foreground"
+                                  />
+                                </div>
                               </div>
                             )}
-                         </div>
-
-                         {/* Check Mailing Address Section */}
-                         <div className="space-y-4">
-                           <div className="flex items-center space-x-2">
-                             <Checkbox 
-                               id="edit-check-checkbox" 
-                               checked={selectedAccount?.checkEnabled || false}
-                               disabled
-                             />
-                             <Label htmlFor="edit-check-checkbox" className="text-muted-foreground font-medium">Check mailing address</Label>
-                           </div>
-                           {selectedAccount?.checkEnabled && (
-                             <div className="ml-6 space-y-4 border-l-2 border-border pl-4">
-                               <div className="grid grid-cols-2 gap-4">
-                                 <div className="space-y-2">
-                                   <Label htmlFor="editAddressLine1" className="text-foreground">Address Line 1</Label>
-                                   <Input
-                                     id="editAddressLine1"
-                                     value={selectedAccount?.addressLine1 || ""}
-                                     disabled
-                                     className="bg-muted border-border text-muted-foreground"
-                                   />
-                                 </div>
-                                 <div className="space-y-2">
-                                   <Label htmlFor="editAddressLine2" className="text-foreground">Address Line 2</Label>
-                                   <Input
-                                     id="editAddressLine2"
-                                     value={selectedAccount?.addressLine2 || ""}
-                                     disabled
-                                     className="bg-muted border-border text-muted-foreground"
-                                   />
-                                 </div>
-                                 <div className="space-y-2">
-                                   <Label htmlFor="editCity" className="text-foreground">City</Label>
-                                   <Input
-                                     id="editCity"
-                                     value={selectedAccount?.city || ""}
-                                     disabled
-                                     className="bg-muted border-border text-muted-foreground"
-                                   />
-                                 </div>
-                                 <div className="space-y-2">
-                                   <Label htmlFor="editState" className="text-foreground">State</Label>
-                                   <Input
-                                     id="editState"
-                                     value={selectedAccount?.state || ""}
-                                     disabled
-                                     className="bg-muted border-border text-muted-foreground"
-                                   />
-                                 </div>
-                                 <div className="space-y-2">
-                                   <Label htmlFor="editZipCode" className="text-foreground">ZIP Code</Label>
-                                   <Input
-                                     id="editZipCode"
-                                     value={selectedAccount?.zipCode || ""}
-                                     disabled
-                                     className="bg-muted border-border text-muted-foreground"
-                                   />
-                                 </div>
-                               </div>
-                             </div>
-                           )}
-                         </div>
-                       </div>
-                     </div>
-                   </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
                   <div className="flex justify-end gap-2 pt-4">
                     <Button variant="ghost" onClick={() => setIsEditDialogOpen(false)} className="text-foreground">
