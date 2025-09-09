@@ -863,42 +863,70 @@ export default function Banking() {
                              />
                              <Label htmlFor="edit-ach-checkbox" className="text-muted-foreground font-medium">ACH</Label>
                            </div>
-                           {selectedAccount?.achEnabled && (
-                             <div className="ml-6 space-y-4 border-l-2 border-border pl-4">
-                               <div className="space-y-2">
-                                 <Label htmlFor="editAchAccountType" className="text-foreground">Account Type</Label>
-                                 <Select value={selectedAccount?.achAccountType || ""} disabled>
-                                   <SelectTrigger className="bg-muted border-border text-muted-foreground">
-                                     <SelectValue placeholder="Select account type" />
-                                   </SelectTrigger>
-                                   <SelectContent className="bg-popover border-border">
-                                     <SelectItem value="savings">Savings</SelectItem>
-                                     <SelectItem value="checking">Checking</SelectItem>
-                                   </SelectContent>
-                                 </Select>
-                               </div>
-                               <div className="grid grid-cols-2 gap-4">
-                                 <div className="space-y-2">
-                                   <Label htmlFor="editAccountNumber" className="text-foreground">Account Number</Label>
-                                   <Input
-                                     id="editAccountNumber"
-                                     value={selectedAccount?.accountNumber || ""}
-                                     disabled
-                                     className="bg-muted border-border text-muted-foreground"
-                                   />
-                                 </div>
-                                 <div className="space-y-2">
-                                   <Label htmlFor="editRoutingNumber" className="text-foreground">Routing Number</Label>
-                                   <Input
-                                     id="editRoutingNumber"
-                                     value={selectedAccount?.routingNumber || ""}
-                                     disabled
-                                     className="bg-muted border-border text-muted-foreground"
-                                   />
-                                 </div>
-                               </div>
-                             </div>
-                           )}
+                            {selectedAccount?.achEnabled && (
+                              <div className="ml-6 space-y-4 border-l-2 border-border pl-4">
+                                <Tabs defaultValue="details" className="w-full">
+                                  <TabsList className="grid w-full grid-cols-2">
+                                    <TabsTrigger value="details">Details</TabsTrigger>
+                                    <TabsTrigger value="status">Status</TabsTrigger>
+                                  </TabsList>
+                                  <TabsContent value="details" className="space-y-4">
+                                    <div className="space-y-2">
+                                      <Label htmlFor="editAchAccountType" className="text-foreground">Account Type</Label>
+                                      <Select value={selectedAccount?.achAccountType || ""} disabled>
+                                        <SelectTrigger className="bg-muted border-border text-muted-foreground">
+                                          <SelectValue placeholder="Select account type" />
+                                        </SelectTrigger>
+                                        <SelectContent className="bg-popover border-border">
+                                          <SelectItem value="savings">Savings</SelectItem>
+                                          <SelectItem value="checking">Checking</SelectItem>
+                                        </SelectContent>
+                                      </Select>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                      <div className="space-y-2">
+                                        <Label htmlFor="editAccountNumber" className="text-foreground">Account Number</Label>
+                                        <Input
+                                          id="editAccountNumber"
+                                          value={selectedAccount?.accountNumber || ""}
+                                          disabled
+                                          className="bg-muted border-border text-muted-foreground"
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="editRoutingNumber" className="text-foreground">Routing Number</Label>
+                                        <Input
+                                          id="editRoutingNumber"
+                                          value={selectedAccount?.routingNumber || ""}
+                                          disabled
+                                          className="bg-muted border-border text-muted-foreground"
+                                        />
+                                      </div>
+                                    </div>
+                                  </TabsContent>
+                                  <TabsContent value="status" className="space-y-4">
+                                    <div className="grid grid-cols-2 gap-4">
+                                      <div className="space-y-2">
+                                        <Label className="text-foreground">Account Status</Label>
+                                        <div className="flex items-center gap-2">
+                                          <Badge variant={selectedAccount?.accountStatus === "Active" ? "default" : "secondary"}>
+                                            {selectedAccount?.accountStatus || "Pending"}
+                                          </Badge>
+                                        </div>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label className="text-foreground">Verification Status</Label>
+                                        <div className="flex items-center gap-2">
+                                          <Badge variant={selectedAccount?.verificationStatus === "Verified" ? "default" : "secondary"}>
+                                            {selectedAccount?.verificationStatus || "Pending"}
+                                          </Badge>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </TabsContent>
+                                </Tabs>
+                              </div>
+                            )}
                          </div>
 
                          {/* Check Mailing Address Section */}
@@ -1001,6 +1029,55 @@ export default function Banking() {
               </div>
             </div>
           </div>
+          </CardContent>
+        </Card>
+
+        {/* Trust Accounts Table */}
+        <Card className="bg-card">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-foreground">Trust Accounts</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow className="border-border">
+                  <TableHead className="text-muted-foreground">Created</TableHead>
+                  <TableHead className="text-muted-foreground">Name</TableHead>
+                  <TableHead className="text-muted-foreground">Type</TableHead>
+                  <TableHead className="text-muted-foreground">Account Number</TableHead>
+                  <TableHead className="text-muted-foreground">Routing Number</TableHead>
+                  <TableHead className="text-muted-foreground">Status</TableHead>
+                  <TableHead className="text-muted-foreground">Verification</TableHead>
+                  <TableHead className="text-muted-foreground">Payment Method</TableHead>
+                  <TableHead className="text-muted-foreground w-10"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow className="border-border">
+                  <TableCell className="text-foreground">3/12/2025</TableCell>
+                  <TableCell className="text-foreground">Trust Account</TableCell>
+                  <TableCell className="text-foreground">Trust</TableCell>
+                  <TableCell className="text-foreground">8771615403</TableCell>
+                  <TableCell className="text-foreground">053101561</TableCell>
+                  <TableCell>
+                    <Badge variant="default" className="bg-green-600 text-white">
+                      Active
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="default" className="bg-green-600 text-white">
+                      Verified
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-foreground">ACH</TableCell>
+                  <TableCell>
+                    <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
       </div>
