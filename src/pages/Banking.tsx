@@ -905,24 +905,42 @@ export default function Banking() {
                                     </div>
                                   </TabsContent>
                                   <TabsContent value="status" className="space-y-4">
-                                    <div className="grid grid-cols-2 gap-4">
-                                      <div className="space-y-2">
-                                        <Label className="text-foreground">Account Status</Label>
-                                        <div className="flex items-center gap-2">
-                                          <Badge variant={selectedAccount?.accountStatus === "Active" ? "default" : "secondary"}>
-                                            {selectedAccount?.accountStatus || "Pending"}
-                                          </Badge>
-                                        </div>
-                                      </div>
-                                      <div className="space-y-2">
-                                        <Label className="text-foreground">Verification Status</Label>
-                                        <div className="flex items-center gap-2">
-                                          <Badge variant={selectedAccount?.verificationStatus === "Verified" ? "default" : "secondary"}>
-                                            {selectedAccount?.verificationStatus || "Pending"}
-                                          </Badge>
+                                    <div className="grid grid-cols-2 gap-6">
+                                    <div className="space-y-4">
+                                      <h4 className="font-medium text-foreground">Integration Details</h4>
+                                      <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
+                                        <div className="flex items-center justify-between">
+                                          <span className="text-foreground font-medium">Provisioning</span>
+                                          <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">COMPLETED</span>
                                         </div>
                                       </div>
                                     </div>
+                                    
+                                    <div className="space-y-4">
+                                      <h4 className="font-medium text-foreground">External Account</h4>
+                                      <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
+                                        <div className="flex items-center justify-between">
+                                          <span className="text-muted-foreground">Account Status</span>
+                                          <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">ACTIVE</span>
+                                        </div>
+                                        
+                                        <div className="flex items-center justify-between">
+                                          <span className="text-muted-foreground">EWS Status</span>
+                                          <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">OPEN</span>
+                                        </div>
+                                        
+                                        <div className="space-y-2">
+                                          <div className="text-muted-foreground text-sm">Bank Name:</div>
+                                          <div className="text-foreground">US BANK NA</div>
+                                        </div>
+                                        
+                                        <div className="space-y-2">
+                                          <div className="text-muted-foreground text-sm">Bank Routing Number:</div>
+                                          <div className="text-foreground">{selectedAccount?.routingNumber || "021000021"}</div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
                                   </TabsContent>
                                 </Tabs>
                               </div>
