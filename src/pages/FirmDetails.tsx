@@ -15,7 +15,6 @@ import FileUpload from "./FileUpload";
 import PendingMigration from "./PendingMigration";
 import MigrationHistory from "./MigrationHistory";
 import Configuration from "./Configuration";
-import FirmVendor from "../components/FirmVendor";
 
 const FirmDetails = () => {
   const { firmId } = useParams();
@@ -36,8 +35,6 @@ const FirmDetails = () => {
       setActiveTab("history");
     } else if (path.includes("/config")) {
       setActiveTab("config");
-    } else if (path.includes("/vendor")) {
-      setActiveTab("vendor");
     } else {
       // Default to dashboard if no specific tab in URL
       setActiveTab("dashboard");
@@ -114,7 +111,7 @@ const FirmDetails = () => {
         className="h-full flex flex-col"
       >
         <div className="border-b border-gray-700 px-6">
-          <TabsList className="grid w-full max-w-6xl grid-cols-6 bg-transparent h-12 p-0">
+          <TabsList className="grid w-full max-w-5xl grid-cols-5 bg-transparent h-12 p-0">
             <TabsTrigger
               value="dashboard"
               className="text-gray-300 data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-cyan-400 rounded-none h-12 hover:text-white transition-colors"
@@ -145,12 +142,6 @@ const FirmDetails = () => {
             >
               Configuration
             </TabsTrigger>
-            <TabsTrigger
-              value="vendor"
-              className="text-gray-300 data-[state=active]:bg-transparent data-[state=active]:text-white data-[state=active]:border-b-2 data-[state=active]:border-cyan-400 rounded-none h-12 hover:text-white transition-colors"
-            >
-              Vendor
-            </TabsTrigger>
           </TabsList>
         </div>
 
@@ -169,9 +160,6 @@ const FirmDetails = () => {
           </TabsContent>
           <TabsContent value="config" className="h-full m-0">
             <Configuration />
-          </TabsContent>
-          <TabsContent value="vendor" className="h-full m-0">
-            <FirmVendor />
           </TabsContent>
         </div>
       </Tabs>
