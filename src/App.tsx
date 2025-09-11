@@ -26,7 +26,6 @@ import Banking from "./pages/Banking";
 import Deductions from "./pages/Deductions";
 import Settlements from "./pages/Settlements";
 import Vendors from "./pages/Vendors";
-import Vendor from "./pages/Vendor";
 
 const queryClient = new QueryClient();
 
@@ -120,7 +119,6 @@ const AppContent = () => {
             <Route path="/cases/details" element={<CaseDetails />} />
             <Route path="/cases/upload-settlement" element={<UploadSettlementDocument />} />
             <Route path="/banking" element={<Banking />} />
-            <Route path="/vendor" element={<Vendor />} />
             <Route path="/deductions" element={<Deductions />} />
             <Route path="/settlements" element={<Settlements />} />
             <Route path="/vendors" element={<Vendors />} />
