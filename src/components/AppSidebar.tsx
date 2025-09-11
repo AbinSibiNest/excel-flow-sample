@@ -14,6 +14,7 @@ import {
   FolderOpen,
   MessageSquare,
   PersonStanding,
+  Truck,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -42,6 +43,7 @@ const menuItems = [
   { title: "Firms", icon: Building , url: "/banking" },
   { title: "Customers", icon: PersonStanding },
   { title: "Defendants", icon: Scale },
+  { title: "Vendor", icon: Truck, url: "/vendor" },
   { type: "separator" },
   { title: "Case Types", icon: HelpCircle },
   { title: "Questionnaires", icon: FileText },
@@ -96,6 +98,9 @@ export function AppSidebar() {
     }
     if (item.url === "/settlements") {
       return location.pathname === "/settlements";
+    }
+    if (item.url === "/vendor") {
+      return location.pathname === "/vendor";
     }
     if (item.subItems) {
       return item.subItems.some((subItem: any) => location.pathname === subItem.url);
