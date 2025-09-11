@@ -42,9 +42,9 @@ const menuItems = [
   { type: "separator" },
   { title: "Customers", icon: PersonStanding },
   { title: "Defendants", icon: Scale },
-  { title: "Vendors", icon: Truck, url: "/vendors" },
   { type: "separator" },
   { title: "Banking", icon: CreditCard, url: "/banking" },
+  { title: "Vendor", icon: Truck, url: "/vendor" },
   { type: "separator" },
   { title: "Case Types", icon: HelpCircle },
   { title: "Questionnaires", icon: FileText },
@@ -96,6 +96,9 @@ export function AppSidebar() {
     }
     if (item.url === "/settlements") {
       return location.pathname === "/settlements";
+    }
+    if (item.url === "/vendor") {
+      return location.pathname === "/vendor";
     }
     if (item.url === "/vendors") {
       return location.pathname === "/vendors";
