@@ -1104,7 +1104,6 @@ export default function Banking() {
           </CardContent>
         </Card>
       </div>
-          </div>
         </TabsContent>
         
         <TabsContent value="vendor" className="mt-6">
