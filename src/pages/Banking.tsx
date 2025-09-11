@@ -851,96 +851,114 @@ export default function Banking() {
                   <Separator className="bg-border" />
 
                   {/* Payment Methods - Edit Mode */}
-                   <div className="grid grid-cols-2 gap-6">
-                     <div className="space-y-4">
-                       <Label className="text-foreground">Payment Methods <span className="text-destructive">*</span></Label>
-                       <div className="space-y-6">
-                         {/* ACH Section */}
-                         <div className="space-y-4">
-                           <div className="ml-6 space-y-4 border-l-2 border-border pl-4">
-                             <Tabs defaultValue="details" className="w-full">
-                               <TabsList className="grid w-full grid-cols-2">
-                                 <TabsTrigger value="details">Details</TabsTrigger>
-                                 <TabsTrigger value="status">Status</TabsTrigger>
-                               </TabsList>
-                               <TabsContent value="details" className="space-y-4">
-                                 <div className="space-y-2">
-                                   <Label htmlFor="editAchAccountType" className="text-foreground">Account Type</Label>
-                                   <Select value={selectedAccount?.achAccountType || ""} disabled>
-                                     <SelectTrigger className="bg-muted border-border text-muted-foreground">
-                                       <SelectValue placeholder="Select account type" />
-                                     </SelectTrigger>
-                                     <SelectContent className="bg-popover border-border">
-                                       <SelectItem value="savings">Savings</SelectItem>
-                                       <SelectItem value="checking">Checking</SelectItem>
-                                     </SelectContent>
-                                   </Select>
-                                 </div>
-                                 <div className="grid grid-cols-2 gap-4">
-                                   <div className="space-y-2">
-                                     <Label htmlFor="editAccountNumber" className="text-foreground">Account Number</Label>
-                                     <Input
-                                       id="editAccountNumber"
-                                       value={selectedAccount?.accountNumber || ""}
-                                       disabled
-                                       className="bg-muted border-border text-muted-foreground"
-                                     />
-                                   </div>
-                                   <div className="space-y-2">
-                                     <Label htmlFor="editRoutingNumber" className="text-foreground">Routing Number</Label>
-                                     <Input
-                                       id="editRoutingNumber"
-                                       value={selectedAccount?.routingNumber || ""}
-                                       disabled
-                                       className="bg-muted border-border text-muted-foreground"
-                                     />
-                                   </div>
-                                 </div>
-                               </TabsContent>
-                               <TabsContent value="status" className="space-y-4">
-                                 <div className="grid grid-cols-2 gap-6">
-                                   <div className="space-y-4">
-                                     <h4 className="font-medium text-foreground">Integration Details</h4>
-                                     <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
-                                       <div className="flex items-center justify-between">
-                                         <span className="text-foreground font-medium">Provisioning</span>
-                                         <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">COMPLETED</span>
-                                       </div>
-                                     </div>
-                                   </div>
-                                   
-                                   <div className="space-y-4">
-                                     <h4 className="font-medium text-foreground">External Account</h4>
-                                     <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
-                                       <div className="flex items-center justify-between">
-                                         <span className="text-muted-foreground">Account Status</span>
-                                         <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">ACTIVE</span>
-                                       </div>
-                                       
-                                       <div className="flex items-center justify-between">
-                                         <span className="text-muted-foreground">EWS Status</span>
-                                         <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">OPEN</span>
-                                       </div>
-                                       
-                                       <div className="space-y-2">
-                                         <div className="text-muted-foreground text-sm">Bank Name:</div>
-                                         <div className="text-foreground">US BANK NA</div>
-                                       </div>
-                                       
-                                       <div className="space-y-2">
-                                         <div className="text-muted-foreground text-sm">Bank Routing Number:</div>
-                                         <div className="text-foreground">{selectedAccount?.routingNumber || "021000021"}</div>
-                                       </div>
-                                     </div>
-                                   </div>
-                                 </div>
-                               </TabsContent>
-                             </Tabs>
-                           </div>
-                         </div>
+                  <div className="space-y-4">
+                    <div className="space-y-4">
+                      <Label className="text-foreground">Payment Methods <span className="text-destructive">*</span></Label>
+                      <div className="space-y-6">
+                        {/* ACH Section */}
+                        <div className="space-y-4">
+                          <div className="flex items-center space-x-2">
+                            <Checkbox 
+                              id="edit-ach-checkbox" 
+                              checked={selectedAccount?.achDefaultMethod || false}
+                              disabled
+                            />
+                            <Label htmlFor="edit-ach-checkbox" className="text-muted-foreground font-medium">ACH</Label>
+                            <span className="text-xs text-muted-foreground">Use as default Method</span>
+                          </div>
+                          <div className="ml-6 space-y-4 border-l-2 border-border pl-4">
+                            <Tabs defaultValue="details" className="w-full">
+                              <TabsList className="grid w-full grid-cols-2">
+                                <TabsTrigger value="details">Details</TabsTrigger>
+                                <TabsTrigger value="status">Status</TabsTrigger>
+                              </TabsList>
+                              <TabsContent value="details" className="space-y-4">
+                                <div className="space-y-2">
+                                  <Label htmlFor="editAchAccountType" className="text-foreground">Account Type</Label>
+                                  <Select value={selectedAccount?.achAccountType || ""} disabled>
+                                    <SelectTrigger className="bg-muted border-border text-muted-foreground">
+                                      <SelectValue placeholder="Select account type" />
+                                    </SelectTrigger>
+                                    <SelectContent className="bg-popover border-border">
+                                      <SelectItem value="savings">Savings</SelectItem>
+                                      <SelectItem value="checking">Checking</SelectItem>
+                                    </SelectContent>
+                                  </Select>
+                                </div>
+                                <div className="grid grid-cols-2 gap-4">
+                                  <div className="space-y-2">
+                                    <Label htmlFor="editAccountNumber" className="text-foreground">Account Number</Label>
+                                    <Input
+                                      id="editAccountNumber"
+                                      value={selectedAccount?.accountNumber || ""}
+                                      disabled
+                                      className="bg-muted border-border text-muted-foreground"
+                                    />
+                                  </div>
+                                  <div className="space-y-2">
+                                    <Label htmlFor="editRoutingNumber" className="text-foreground">Routing Number</Label>
+                                    <Input
+                                      id="editRoutingNumber"
+                                      value={selectedAccount?.routingNumber || ""}
+                                      disabled
+                                      className="bg-muted border-border text-muted-foreground"
+                                    />
+                                  </div>
+                                </div>
+                              </TabsContent>
+                              <TabsContent value="status" className="space-y-4">
+                                <div className="grid grid-cols-2 gap-6">
+                                  <div className="space-y-4">
+                                    <h4 className="font-medium text-foreground">Integration Details</h4>
+                                    <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-foreground font-medium">Provisioning</span>
+                                        <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">COMPLETED</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  
+                                  <div className="space-y-4">
+                                    <h4 className="font-medium text-foreground">External Account</h4>
+                                    <div className="bg-muted/30 border border-border rounded-lg p-4 space-y-4">
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-muted-foreground">Account Status</span>
+                                        <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">ACTIVE</span>
+                                      </div>
+                                      
+                                      <div className="flex items-center justify-between">
+                                        <span className="text-muted-foreground">EWS Status</span>
+                                        <span className="bg-green-600 text-white px-2 py-1 rounded text-xs">OPEN</span>
+                                      </div>
+                                      
+                                      <div className="space-y-2">
+                                        <div className="text-muted-foreground text-sm">Bank Name:</div>
+                                        <div className="text-foreground">US BANK NA</div>
+                                      </div>
+                                      
+                                      <div className="space-y-2">
+                                        <div className="text-muted-foreground text-sm">Bank Routing Number:</div>
+                                        <div className="text-foreground">{selectedAccount?.routingNumber || "021000021"}</div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </TabsContent>
+                            </Tabs>
+                          </div>
+                        </div>
 
                          {/* Check Mailing Address Section */}
                          <div className="space-y-4">
+                           <div className="flex items-center space-x-2">
+                             <Checkbox 
+                               id="edit-check-checkbox" 
+                               checked={selectedAccount?.checkDefaultMethod || false}
+                               disabled
+                             />
+                             <Label htmlFor="edit-check-checkbox" className="text-muted-foreground font-medium">Check mailing address</Label>
+                             <span className="text-xs text-muted-foreground">Use as default Method</span>
+                           </div>
                            <div className="ml-6 space-y-4 border-l-2 border-border pl-4">
                              <div className="grid grid-cols-2 gap-4">
                                <div className="space-y-2">
@@ -991,40 +1009,9 @@ export default function Banking() {
                              </div>
                            </div>
                          </div>
-                       </div>
-                     </div>
-                     
-                     {/* Right side - Checkboxes */}
-                     <div className="space-y-6">
-                       <div className="space-y-4">
-                         <div className="pt-6">
-                           <div className="space-y-6">
-                             {/* ACH Checkbox */}
-                             <div className="flex items-center space-x-2">
-                               <Checkbox 
-                                 id="edit-ach-checkbox" 
-                                 checked={selectedAccount?.achDefaultMethod || false}
-                                 disabled
-                               />
-                               <Label htmlFor="edit-ach-checkbox" className="text-muted-foreground font-medium">ACH</Label>
-                               <span className="text-xs text-muted-foreground">Use as default Method</span>
-                             </div>
-                             
-                             {/* Check Checkbox */}
-                             <div className="flex items-center space-x-2">
-                               <Checkbox 
-                                 id="edit-check-checkbox" 
-                                 checked={selectedAccount?.checkDefaultMethod || false}
-                                 disabled
-                               />
-                               <Label htmlFor="edit-check-checkbox" className="text-muted-foreground font-medium">Check mailing address</Label>
-                               <span className="text-xs text-muted-foreground">Use as default Method</span>
-                             </div>
-                           </div>
-                         </div>
-                       </div>
-                     </div>
-                   </div>
+                      </div>
+                    </div>
+                  </div>
 
                   <div className="flex justify-end gap-2 pt-4">
                     <Button variant="ghost" onClick={() => setIsEditDialogOpen(false)} className="text-foreground">
