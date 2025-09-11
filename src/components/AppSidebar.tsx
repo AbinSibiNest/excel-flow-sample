@@ -40,7 +40,6 @@ const menuItems = [
     ]
   },
   { type: "separator" },
-  { title: "Firms", icon: Building , url: "/migration-sync-config" },
   { title: "Customers", icon: PersonStanding },
   { title: "Defendants", icon: Scale },
   { title: "Vendors", icon: Truck, url: "/vendors" },
@@ -50,6 +49,7 @@ const menuItems = [
   { title: "Case Types", icon: HelpCircle },
   { title: "Questionnaires", icon: FileText },
   { title: "Snippets", icon: Code },
+  { title: "Migration Sync Configuration", icon: Database, url: "/migration-sync-config" },
   { type: "separator" },
   { title: "File Manager", icon: FolderOpen },
   { title: "Communications", icon: MessageSquare },
