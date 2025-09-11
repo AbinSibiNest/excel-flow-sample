@@ -270,23 +270,15 @@ export default function Banking() {
         </Button>
       </div>
 
-      {/* Navigation Tabs */}
-      <div className="flex gap-6 mb-8 border-b border-border">
-        {['HOME', 'USERS', 'BANKING', 'CASE TYPES', 'QUESTIONNAIRES', 'SNIPPETS', 'CASES', 'CLIENTS', 'DEFENDANTS', 'DOCUMENT REQUESTS', 'SIGNATURE REQUESTS', 'DATA REQUESTS', 'DEDUCTIONS', 'SETTLEMENTS'].map((tab) => (
-          <button
-            key={tab}
-            className={`pb-3 px-1 text-sm font-medium border-b-2 transition-colors ${
-              tab === 'BANKING' 
-                ? 'border-primary text-foreground' 
-                : 'border-transparent text-muted-foreground hover:text-foreground'
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      {/* Banking Tabs */}
+      <Tabs defaultValue="banking" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="banking">Banking</TabsTrigger>
+          <TabsTrigger value="vendor">Vendor</TabsTrigger>
+        </TabsList>
+        
+        <TabsContent value="banking" className="mt-6">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         {/* Integration Details */}
         <div className="lg:col-span-1">
           <Card className="bg-card">
@@ -1112,6 +1104,104 @@ export default function Banking() {
           </CardContent>
         </Card>
       </div>
+          </div>
+        </TabsContent>
+        
+        <TabsContent value="vendor" className="mt-6">
+          {/* Vendor Content */}
+          <Card className="bg-card">
+            <CardHeader>
+              <CardTitle className="text-foreground">Create Vendor</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="text-foreground">Address</Label>
+                  <div className="space-y-3">
+                    <Input placeholder="Address line 1" className="bg-background border-border text-foreground" />
+                    <Input placeholder="Address line 2 (optional)" className="bg-background border-border text-foreground" />
+                    <div className="grid grid-cols-3 gap-3">
+                      <Input placeholder="City" className="bg-background border-border text-foreground" />
+                      <Select>
+                        <SelectTrigger className="bg-background border-border text-foreground">
+                          <SelectValue placeholder="State" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-popover border-border">
+                          <SelectItem value="AL">AL</SelectItem>
+                          <SelectItem value="CA">CA</SelectItem>
+                          <SelectItem value="FL">FL</SelectItem>
+                          <SelectItem value="NY">NY</SelectItem>
+                          <SelectItem value="TX">TX</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Input placeholder="ZIP code" className="bg-background border-border text-foreground" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-foreground">TIN/EID</Label>
+                  <Input placeholder="Enter tax identification number" className="bg-background border-border text-foreground" />
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-foreground">Bank Account</Label>
+                  <div className="space-y-3">
+                    <Select>
+                      <SelectTrigger className="bg-background border-border text-foreground">
+                        <SelectValue placeholder="Account type" />
+                      </SelectTrigger>
+                      <SelectContent className="bg-popover border-border">
+                        <SelectItem value="checking">Checking</SelectItem>
+                        <SelectItem value="savings">Savings</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Input placeholder="Account number" className="bg-background border-border text-foreground" />
+                    <Input placeholder="Routing number" className="bg-background border-border text-foreground" />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-foreground">Preferred Payment Option</Label>
+                  <RadioGroup defaultValue="ach" className="space-y-2">
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="ach" id="ach" />
+                      <Label htmlFor="ach" className="text-foreground">ACH</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="check" id="check" />
+                      <Label htmlFor="check" className="text-foreground">Check</Label>
+                    </div>
+                  </RadioGroup>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-foreground">Type of Vendor</Label>
+                  <Select>
+                    <SelectTrigger className="bg-background border-border text-foreground">
+                      <SelectValue placeholder="Select vendor type" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-popover border-border">
+                      <SelectItem value="expense-reimbursement">Expense Reimbursement</SelectItem>
+                      <SelectItem value="lien-resolution">Lien Resolution</SelectItem>
+                      <SelectItem value="case-clearing">Case Clearing</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex gap-3 pt-4">
+                  <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                    Create Vendor
+                  </Button>
+                  <Button variant="outline" className="border-border text-foreground">
+                    Cancel
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
