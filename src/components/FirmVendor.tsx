@@ -46,61 +46,56 @@ export default function FirmVendor() {
   };
 
   const handleSave = () => {
-    console.log("Saving vendor:", formData);
+    console.log("Saving vendor for firm:", formData);
     // Here you would typically save to API
   };
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Create Vendor</h2>
-        <p className="text-gray-400">Add a new vendor for this firm</p>
-      </div>
-
-      <Card className="bg-gray-800 border-gray-700">
+    <div className="max-w-4xl">
+      <Card className="bg-[#252b32] border-gray-700">
         <CardContent className="space-y-4 p-6">
           <div>
-            <Label htmlFor="name" className="text-gray-200">Vendor Name *</Label>
+            <Label htmlFor="name" className="text-gray-300">Vendor Name *</Label>
             <Input
               id="name"
               placeholder="Enter vendor name"
               value={formData.name}
               onChange={(e) => handleInputChange("name", e.target.value)}
-              className="mt-1 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+              className="mt-1 bg-[#1a1f26] border-gray-600 text-gray-100"
             />
           </div>
 
           <div>
-            <Label htmlFor="address" className="text-gray-200">Address *</Label>
+            <Label htmlFor="address" className="text-gray-300">Address *</Label>
             <Textarea
               id="address"
               placeholder="Enter vendor address"
               value={formData.address}
               onChange={(e) => handleInputChange("address", e.target.value)}
-              className="mt-1 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+              className="mt-1 bg-[#1a1f26] border-gray-600 text-gray-100"
             />
           </div>
 
           <div>
-            <Label htmlFor="tinEid" className="text-gray-200">TIN/EID *</Label>
+            <Label htmlFor="tinEid" className="text-gray-300">TIN/EID *</Label>
             <Input
               id="tinEid"
               placeholder="Enter unique TIN/EID"
               value={formData.tinEid}
               onChange={(e) => handleInputChange("tinEid", e.target.value)}
-              className="mt-1 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+              className="mt-1 bg-[#1a1f26] border-gray-600 text-gray-100"
             />
           </div>
 
           <div>
-            <Label htmlFor="bankAccount" className="text-gray-200">Bank Account *</Label>
+            <Label htmlFor="bankAccount" className="text-gray-300">Bank Account *</Label>
             <Select onValueChange={(value) => handleInputChange("bankAccount", value)}>
-              <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+              <SelectTrigger className="bg-[#1a1f26] border-gray-600 text-gray-100">
                 <SelectValue placeholder="Select bank account" />
               </SelectTrigger>
-              <SelectContent className="bg-gray-700 border-gray-600">
+              <SelectContent className="bg-[#252b32] border-gray-600">
                 {bankAccounts.map((account) => (
-                  <SelectItem key={account.id} value={account.id.toString()} className="text-white">
+                  <SelectItem key={account.id} value={account.id.toString()} className="text-gray-100">
                     {account.name} - {account.achAccountType}
                   </SelectItem>
                 ))}
@@ -109,27 +104,27 @@ export default function FirmVendor() {
           </div>
 
           <div>
-            <Label htmlFor="preferredPayment" className="text-gray-200">Preferred Payment Option *</Label>
+            <Label htmlFor="preferredPayment" className="text-gray-300">Preferred Payment Option *</Label>
             <Select onValueChange={(value) => handleInputChange("preferredPayment", value)}>
-              <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+              <SelectTrigger className="bg-[#1a1f26] border-gray-600 text-gray-100">
                 <SelectValue placeholder="Select payment option" />
               </SelectTrigger>
-              <SelectContent className="bg-gray-700 border-gray-600">
-                <SelectItem value="ach" className="text-white">ACH</SelectItem>
-                <SelectItem value="check" className="text-white">Check</SelectItem>
+              <SelectContent className="bg-[#252b32] border-gray-600">
+                <SelectItem value="ach" className="text-gray-100">ACH</SelectItem>
+                <SelectItem value="check" className="text-gray-100">Check</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <Label htmlFor="vendorType" className="text-gray-200">Type of Vendor *</Label>
+            <Label htmlFor="vendorType" className="text-gray-300">Type of Vendor *</Label>
             <Select onValueChange={(value) => handleInputChange("vendorType", value)}>
-              <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+              <SelectTrigger className="bg-[#1a1f26] border-gray-600 text-gray-100">
                 <SelectValue placeholder="Select vendor type" />
               </SelectTrigger>
-              <SelectContent className="bg-gray-700 border-gray-600">
-                <SelectItem value="lienholder" className="text-white">Lien holder</SelectItem>
-                <SelectItem value="serviceprovider" className="text-white">Service provider</SelectItem>
+              <SelectContent className="bg-[#252b32] border-gray-600">
+                <SelectItem value="lienholder" className="text-gray-100">Lien holder</SelectItem>
+                <SelectItem value="serviceprovider" className="text-gray-100">Service provider</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -137,7 +132,7 @@ export default function FirmVendor() {
       </Card>
 
       {/* Save Button */}
-      <div>
+      <div className="mt-6">
         <Button 
           onClick={handleSave}
           className="bg-cyan-600 text-white hover:bg-cyan-700"
