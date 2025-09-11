@@ -14,7 +14,6 @@ import {
   FolderOpen,
   MessageSquare,
   PersonStanding,
-  Truck,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -40,21 +39,23 @@ const menuItems = [
     ]
   },
   { type: "separator" },
+  { title: "Firms", icon: Building , url: "/banking" },
   { title: "Customers", icon: PersonStanding },
   { title: "Defendants", icon: Scale },
-  { title: "Vendors", icon: Truck, url: "/vendors" },
-  { type: "separator" },
-  { title: "Banking", icon: CreditCard, url: "/banking" },
   { type: "separator" },
   { title: "Case Types", icon: HelpCircle },
   { title: "Questionnaires", icon: FileText },
   { title: "Snippets", icon: Code },
-  { title: "Migration Sync Configuration", icon: Database, url: "/migration-sync-config" },
   { type: "separator" },
   { title: "File Manager", icon: FolderOpen },
   { title: "Communications", icon: MessageSquare },
   { type: "separator" },
   { title: "Users", icon: Users },
+  {
+    title: "Migration Sync Config",
+    icon: Database,
+    url: "/migration-sync-config",
+  },
 ];
 
 export function AppSidebar() {
@@ -80,7 +81,6 @@ export function AppSidebar() {
   const isActive = (item: any) => {
     if (item.url === "/migration-sync-config") {
       return (
-        location.pathname === "/" ||
         location.pathname === "/migration-sync-config" ||
         location.pathname.startsWith("/firm/")
       );
@@ -96,9 +96,6 @@ export function AppSidebar() {
     }
     if (item.url === "/settlements") {
       return location.pathname === "/settlements";
-    }
-    if (item.url === "/vendors") {
-      return location.pathname === "/vendors";
     }
     if (item.subItems) {
       return item.subItems.some((subItem: any) => location.pathname === subItem.url);
