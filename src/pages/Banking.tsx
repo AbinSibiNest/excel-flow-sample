@@ -539,7 +539,7 @@ export default function Banking() {
               <TableRow>
                 <TableHead className="text-foreground">Created</TableHead>
                 <TableHead className="text-foreground">Name</TableHead>
-                <TableHead className="text-foreground">Type</TableHead>
+                <TableHead className="text-foreground">Payee Type</TableHead>
                 <TableHead className="text-foreground">Vendor Type</TableHead>
                 <TableHead className="text-foreground">Payment Methods</TableHead>
                 <TableHead className="text-foreground">Account Status</TableHead>
